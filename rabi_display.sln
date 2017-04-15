@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "rabi_splitter_WPF", "rabi_splitter_WPF\rabi_splitter_WPF.csproj", "{7BEE24D8-8C97-41A3-9F90-6C60D450C3C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "rabi_display", "rabi_splitter_WPF\rabi_display.csproj", "{7BEE24D8-8C97-41A3-9F90-6C60D450C3C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
