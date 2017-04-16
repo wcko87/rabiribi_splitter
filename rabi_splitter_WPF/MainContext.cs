@@ -120,6 +120,11 @@ namespace rabi_splitter_WPF
             }
         }
 
+        public void Log(string message)
+        {
+            this.DebugLog += message + "\n";
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -130,145 +135,196 @@ namespace rabi_splitter_WPF
     }
 
     class MainContext : INotifyPropertyChanged
-
     {
-        private bool _musicStart;
-        private bool _musicEnd;
-        private bool _computer;
-        private bool _miruDe;
-        private bool _sideCh;
-        private bool _aliusI;
-        private bool _tm2;
-        private bool _irisu1;
-        private bool _dontSplitOnReload;
-        private bool _debugArea;
+        public string oldtitle;
+        public int veridx;
+
         private int _serverPort;
         private string _gameVer;
         private string _gameMusic;
         private bool _igt;
-        public bool _autoReset;
-        public bool _autoStart;
-        public bool Noah1Reload
+
+        private string _text1;
+        private string _text2;
+        private string _text3;
+        private string _text4;
+        private string _text5;
+        private string _text6;
+        private string _text7;
+        private string _text8;
+        private string _text9;
+        private string _text10;
+        private string _text11;
+        private string _text12;
+        private string _text13;
+        private string _text14;
+        private string _text15;
+        
+        public string Text1
         {
-            get { return _noah1Reload; }
+            get { return _text1; }
             set
             {
-                if (value == _noah1Reload) return;
-                _noah1Reload = value;
-                OnPropertyChanged(nameof(Noah1Reload));
+                if (value == _text1) return;
+                _gameVer = value;
+                OnPropertyChanged(nameof(Text1));
             }
         }
 
-        public bool MusicStart
+        public string Text2
         {
-            get { return _musicStart; }
+            get { return _text2; }
             set
             {
-                if (value == _musicStart) return;
-                _musicStart = value;
-                OnPropertyChanged(nameof(MusicStart));
+                if (value == _text2) return;
+                _gameVer = value;
+                OnPropertyChanged(nameof(Text2));
             }
         }
 
-        public bool MusicEnd
+        public string Text3
         {
-            get { return _musicEnd; }
+            get { return _text3; }
             set
             {
-                if (value == _musicEnd) return;
-                _musicEnd = value;
-                OnPropertyChanged(nameof(MusicEnd));
+                if (value == _text3) return;
+                _gameVer = value;
+                OnPropertyChanged(nameof(Text3));
             }
         }
 
-        public bool Computer
+        public string Text4
         {
-            get { return _computer; }
+            get { return _text4; }
             set
             {
-                if (value == _computer) return;
-                _computer = value;
-                OnPropertyChanged(nameof(Computer));
+                if (value == _text4) return;
+                _gameVer = value;
+                OnPropertyChanged(nameof(Text4));
             }
         }
 
-        public bool MiruDe
+        public string Text5
         {
-            get { return _miruDe; }
+            get { return _text5; }
             set
             {
-                if (value == _miruDe) return;
-                _miruDe = value;
-                OnPropertyChanged(nameof(MiruDe));
+                if (value == _text5) return;
+                _gameVer = value;
+                OnPropertyChanged(nameof(Text5));
             }
         }
 
-        public bool SideCh
+        public string Text6
         {
-            get { return _sideCh; }
+            get { return _text6; }
             set
             {
-                if (value == _sideCh) return;
-                _sideCh = value;
-                OnPropertyChanged(nameof(SideCh));
+                if (value == _text6) return;
+                _gameVer = value;
+                OnPropertyChanged(nameof(Text6));
             }
         }
 
-        public bool AliusI
+        public string Text7
         {
-            get { return _aliusI; }
+            get { return _text7; }
             set
             {
-                if (value == _aliusI) return;
-                _aliusI = value;
-                OnPropertyChanged(nameof(AliusI));
+                if (value == _text7) return;
+                _gameVer = value;
+                OnPropertyChanged(nameof(Text7));
             }
         }
 
-        public bool Tm2
+        public string Text8
         {
-            get { return _tm2; }
+            get { return _text8; }
             set
             {
-                if (value == _tm2) return;
-                _tm2 = value;
-                OnPropertyChanged(nameof(Tm2));
+                if (value == _text8) return;
+                _gameVer = value;
+                OnPropertyChanged(nameof(Text8));
             }
         }
 
-        public bool Irisu1
+        public string Text9
         {
-            get { return _irisu1; }
+            get { return _text9; }
             set
             {
-                if (value == _irisu1) return;
-                _irisu1 = value;
-                OnPropertyChanged(nameof(Irisu1));
+                if (value == _text9) return;
+                _gameVer = value;
+                OnPropertyChanged(nameof(Text9));
             }
         }
 
-        public bool DontSplitOnReload
+        public string Text10
         {
-            get { return _dontSplitOnReload; }
+            get { return _text10; }
             set
             {
-                if (value == _dontSplitOnReload) return;
-                _dontSplitOnReload = value;
-                OnPropertyChanged(nameof(DontSplitOnReload));
+                if (value == _text10) return;
+                _gameVer = value;
+                OnPropertyChanged(nameof(Text10));
             }
         }
 
-        public bool DebugArea
+        public string Text11
         {
-            get { return _debugArea; }
+            get { return _text11; }
             set
             {
-                if (value == _debugArea) return;
-                _debugArea = value;
-                OnPropertyChanged(nameof(DebugArea));
+                if (value == _text11) return;
+                _gameVer = value;
+                OnPropertyChanged(nameof(Text11));
             }
         }
 
+        public string Text12
+        {
+            get { return _text12; }
+            set
+            {
+                if (value == _text12) return;
+                _gameVer = value;
+                OnPropertyChanged(nameof(Text12));
+            }
+        }
+
+        public string Text13
+        {
+            get { return _text13; }
+            set
+            {
+                if (value == _text13) return;
+                _gameVer = value;
+                OnPropertyChanged(nameof(Text13));
+            }
+        }
+
+        public string Text14
+        {
+            get { return _text14; }
+            set
+            {
+                if (value == _text14) return;
+                _gameVer = value;
+                OnPropertyChanged(nameof(Text14));
+            }
+        }
+
+        public string Text15
+        {
+            get { return _text15; }
+            set
+            {
+                if (value == _text15) return;
+                _gameVer = value;
+                OnPropertyChanged(nameof(Text15));
+            }
+        }
+        
         public int ServerPort
         {
             get { return _serverPort; }
@@ -312,63 +368,11 @@ namespace rabi_splitter_WPF
                 OnPropertyChanged(nameof(Igt));
             }
         }
-
-        public bool AutoStart
-        {
-            get { return _autoStart; }
-            set
-            {
-                if (value == _autoStart) return;
-                _autoStart = value;
-                OnPropertyChanged(nameof(AutoStart));
-            }
-        }
-
-        public bool AutoReset
-        {
-            get { return _autoReset; }
-            set
-            {
-                if (value == _autoReset) return;
-                _autoReset = value;
-                OnPropertyChanged(nameof(AutoReset));
-
-            }
-        }
-
-        public int previousBlackness = -1;
-        public string oldtitle;
-        public int veridx;
-        public int lastmoney;
-        public int lastmapid;
-        public int lastmusicid;
-        public int lastplaytime = 0;
-        public bool bossbattle;
-        public List<int> lastbosslist;
-        public int lastnoah3hp;
-        public int lastTM;
-        public DateTime LastTMAddTime;
-        private bool _noah1Reload;
-
+        
         public MainContext()
         {
-            this.MusicEnd = true;
-            this.MusicStart = false;
-            this.Computer = true;
-            this.MiruDe = true;
-            this.SideCh = true;
-            this.AliusI = true;
-            this.Tm2 = true;
-            this.Irisu1 = true;
-            this.DontSplitOnReload = false;
-            this.DebugArea = false;
             this.ServerPort = 16834;
             this.Igt = true;
-            this.Noah1Reload = false;
-            this.AutoStart = false;
-            this.AutoReset = true;
-
-
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -378,9 +382,6 @@ namespace rabi_splitter_WPF
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-
-
     }
 }
 
