@@ -6,90 +6,108 @@ using System.Text;
 
 namespace rabi_splitter_WPF
 {
+    enum GameStatus
+    {
+        INGAME,
+        MENU
+    }
+
     class RabiRibiDisplay
     {
         private MainContext mainContext;
         private DebugContext debugContext;
         private MainWindow mainWindow;
 
+        private GameStatus gameStatus = GameStatus.MENU;
+        private RabiGameState gameState;
+        private MemorySnapshot prevSnapshot;
+        private MemorySnapshot snapshot;
+
         public int previousBlackness = -1;
-        public int lastmoney;
-        public int lastmapid;
-        public int lastmusicid;
         public int lastplaytime = 0;
         public bool bossbattle;
         public List<int> lastbosslist;
-        public int lastnoah3hp;
-        public int lastTM;
         public DateTime LastTMAddTime;
-        private bool _noah1Reload;
-
+        
 
         public RabiRibiDisplay(MainContext mainContext, DebugContext debugContext, MainWindow mainWindow)
         {
             this.mainContext = mainContext;
             this.debugContext = debugContext;
             this.mainWindow = mainWindow;
+            StartNewGame();
         }
-
+        
         public void ReadMemory(Process process)
         {
-            #region read igt
+            // Snapshot Game Memory
+            snapshot = new MemorySnapshot(process, mainContext.veridx);
 
-            int igt = MemoryHelper.GetMemoryValue<int>(process, StaticData.IGTAddr[mainContext.veridx]);
-            if (igt > 0 && mainContext.Igt)
-            {
-                sendigt((float)igt / 60);
-            }
+            mainContext.Text1 = "Music: " + StaticData.GetMusicName(snapshot.musicid);
+            mainContext.Text2 = "Map: " +  StaticData.GetMapName(snapshot.mapid);
+            mainContext.Text3 = gameState == null ? "" : ("Deaths: " + gameState.nDeaths + "\n" + "Resets: " + gameState.nRestarts);
 
-            #endregion
+            mainContext.Text4 = "HP: " + snapshot.hp;
+            mainContext.Text5 = "MaxHP: " + snapshot.maxhp;
+
+            mainContext.Text6 = "Amulet: " + snapshot.amulet;
+            mainContext.Text7 = "Boost: " + snapshot.boost;
+            mainContext.Text8 = "Mana: " + snapshot.mana;
+            mainContext.Text9 = "Stamina: " + snapshot.stamina;
+
+            mainContext.Text10 = "x: " + snapshot.px;
+            mainContext.Text11 = "y: " + snapshot.py;
 
             #region Detect Reload
 
             bool reloaded = false;
-            {
-                int playtime = MemoryHelper.GetMemoryValue<int>(process, StaticData.PlaytimeAddr[mainContext.veridx]);
-                reloaded = playtime != 0 && playtime < lastplaytime;
-                if (reloaded) DebugLog("Reload Game!");
-                lastplaytime = playtime;
+            if (prevSnapshot != null) {
+                reloaded = snapshot.playtime != 0 && snapshot.playtime < prevSnapshot.playtime;
+                if (reloaded)
+                {
+                    if (InGame())
+                    {
+                        gameState.nRestarts++;
+                    }
+                    DebugLog("Reload Game!");
+                }
             }
 
+            #endregion
+
+            #region Detect Death
+
+            bool died = false;
+            if (prevSnapshot != null)
+            {
+                died = snapshot.hp == 0 && prevSnapshot.hp > 0;
+                if (died)
+                {
+                    if (InGame())
+                    {
+                        gameState.nDeaths++;
+                    }
+                    DebugLog("Death!");
+                }
+            }
+           
             #endregion
 
             #region Detect Start Game
-
-            {
-                int blackness = MemoryHelper.GetMemoryValue<int>(process, StaticData.BlacknessAddr[mainContext.veridx]);
-                if (previousBlackness == 0 && blackness >= 100000)
-                {
-                    // Sudden increase by 100000
-                    // Have to be careful, though. I don't know whether anything else causes blackness to increase by 100000
-                    DebugLog("Start Game!");
-                }
-                previousBlackness = blackness;
-            }
-
-            #endregion
-
-            #region CheckMoney
             
+            if (prevSnapshot != null && (snapshot.CurrentMusicIs(Music.MAIN_MENU) || snapshot.CurrentMusicIs(Music.ARTBOOK_INTRO))
+                && prevSnapshot.blackness == 0 && snapshot.blackness >= 100000)
             {
-                var newmoney = MemoryHelper.GetMemoryValue<int>(process, StaticData.MoneyAddress[mainContext.veridx]);
-                if (newmoney - lastmoney == 17500)
-                {
-                    sendsplit();
-                    DebugLog("get 17500 en, split");
-                }
-                lastmoney = newmoney;
+                // Sudden increase by 100000
+                DebugLog("Start Game!");
+                StartNewGame();
             }
 
             #endregion
-
-            int mapid = MemoryHelper.GetMemoryValue<int>(process, StaticData.MapAddress[mainContext.veridx]);
-            if (lastmapid != mapid)
+           
+            if (prevSnapshot == null || prevSnapshot.mapid != snapshot.mapid)
             {
-                DebugLog("newmap: " + mapid + ":" + StaticData.MapNames[mapid]);
-                lastmapid = mapid;
+                DebugLog("newmap: " + snapshot.mapid + ":" + StaticData.GetMapName(snapshot.mapid));
             }
 
 
@@ -100,22 +118,51 @@ namespace rabi_splitter_WPF
             #endregion
 
             UpdateDebugArea(process);
+
+            prevSnapshot = snapshot;
+        }
+
+        private void StartNewGame()
+        {
+            gameState = new RabiGameState();
+            gameStatus = GameStatus.INGAME;
+        }
+
+        private void ReturnToMenu()
+        {
+            gameStatus = GameStatus.MENU;
+            gameState = null;
+        }
+
+        private bool InGame()
+        {
+            return gameStatus == GameStatus.INGAME;
+        }
+
+        private bool MusicChanged()
+        {
+            return prevSnapshot != null && prevSnapshot.musicid != snapshot.musicid;
+        }
+
+        private bool MusicChangedTo(Music music)
+        {
+            return MusicChanged() && snapshot.CurrentMusicIs(music);
         }
 
         private void UpdateDebugArea(Process process)
         {
-            int ptr = MemoryHelper.GetMemoryValue<int>(process, StaticData.EnenyPtrAddr[mainContext.veridx]);
+            int ptr = snapshot.entityArrayPtr;
             //                    List<int> bosses = new List<int>();
             //                    List<int> HPS = new List<int>();
             //                    this.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => debugContext.BossList.Clear()));
             //                    ptr += StaticData.EnenyEntitySize[mainContext.veridx] * 3;
             for (var i = 0; i < 50; i++)
             {
-                ptr += StaticData.EnenyEntitySize[mainContext.veridx];
                 debugContext.BossList[i].BossID = MemoryHelper.GetMemoryValue<int>(process,
                     ptr + StaticData.EnenyEnitiyIDOffset[mainContext.veridx], false);
                 debugContext.BossList[i].BossHP = MemoryHelper.GetMemoryValue<int>(process,
                     ptr + StaticData.EnenyEnitiyHPOffset[mainContext.veridx], false);
+                ptr += StaticData.EnenyEntitySize[mainContext.veridx];
             }
 
             debugContext.BossEvent = bossbattle;

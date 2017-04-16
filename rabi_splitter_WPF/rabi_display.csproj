@@ -55,6 +55,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="RabiEnums.cs" />
+    <Compile Include="MemorySnapshot.cs" />
+    <Compile Include="RabiGameState.cs" />
     <Compile Include="RabiRibiDisplay.cs" />
     <Compile Include="StaticData.cs" />
     <Page Include="MainWindow.xaml">

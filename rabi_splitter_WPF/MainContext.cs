@@ -166,7 +166,7 @@ namespace rabi_splitter_WPF
             set
             {
                 if (value == _text1) return;
-                _gameVer = value;
+                _text1 = value;
                 OnPropertyChanged(nameof(Text1));
             }
         }
@@ -177,7 +177,7 @@ namespace rabi_splitter_WPF
             set
             {
                 if (value == _text2) return;
-                _gameVer = value;
+                _text2 = value;
                 OnPropertyChanged(nameof(Text2));
             }
         }
@@ -188,7 +188,7 @@ namespace rabi_splitter_WPF
             set
             {
                 if (value == _text3) return;
-                _gameVer = value;
+                _text3 = value;
                 OnPropertyChanged(nameof(Text3));
             }
         }
@@ -199,7 +199,7 @@ namespace rabi_splitter_WPF
             set
             {
                 if (value == _text4) return;
-                _gameVer = value;
+                _text4 = value;
                 OnPropertyChanged(nameof(Text4));
             }
         }
@@ -210,7 +210,7 @@ namespace rabi_splitter_WPF
             set
             {
                 if (value == _text5) return;
-                _gameVer = value;
+                _text5 = value;
                 OnPropertyChanged(nameof(Text5));
             }
         }
@@ -221,7 +221,7 @@ namespace rabi_splitter_WPF
             set
             {
                 if (value == _text6) return;
-                _gameVer = value;
+                _text6 = value;
                 OnPropertyChanged(nameof(Text6));
             }
         }
@@ -232,7 +232,7 @@ namespace rabi_splitter_WPF
             set
             {
                 if (value == _text7) return;
-                _gameVer = value;
+                _text7 = value;
                 OnPropertyChanged(nameof(Text7));
             }
         }
@@ -243,7 +243,7 @@ namespace rabi_splitter_WPF
             set
             {
                 if (value == _text8) return;
-                _gameVer = value;
+                _text8 = value;
                 OnPropertyChanged(nameof(Text8));
             }
         }
@@ -254,7 +254,7 @@ namespace rabi_splitter_WPF
             set
             {
                 if (value == _text9) return;
-                _gameVer = value;
+                _text9 = value;
                 OnPropertyChanged(nameof(Text9));
             }
         }
@@ -265,7 +265,7 @@ namespace rabi_splitter_WPF
             set
             {
                 if (value == _text10) return;
-                _gameVer = value;
+                _text10 = value;
                 OnPropertyChanged(nameof(Text10));
             }
         }
@@ -276,7 +276,7 @@ namespace rabi_splitter_WPF
             set
             {
                 if (value == _text11) return;
-                _gameVer = value;
+                _text11 = value;
                 OnPropertyChanged(nameof(Text11));
             }
         }
@@ -287,7 +287,7 @@ namespace rabi_splitter_WPF
             set
             {
                 if (value == _text12) return;
-                _gameVer = value;
+                _text12 = value;
                 OnPropertyChanged(nameof(Text12));
             }
         }
@@ -298,7 +298,7 @@ namespace rabi_splitter_WPF
             set
             {
                 if (value == _text13) return;
-                _gameVer = value;
+                _text13 = value;
                 OnPropertyChanged(nameof(Text13));
             }
         }
@@ -309,7 +309,7 @@ namespace rabi_splitter_WPF
             set
             {
                 if (value == _text14) return;
-                _gameVer = value;
+                _text14 = value;
                 OnPropertyChanged(nameof(Text14));
             }
         }
@@ -320,7 +320,7 @@ namespace rabi_splitter_WPF
             set
             {
                 if (value == _text15) return;
-                _gameVer = value;
+                _text15 = value;
                 OnPropertyChanged(nameof(Text15));
             }
         }
