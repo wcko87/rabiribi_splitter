@@ -11,8 +11,9 @@ namespace rabi_splitter_WPF
             {1012, Boss.Ashuri, "Ashuri"},
             {1013, Boss.Rita, "Rita"},
             {1014, Boss.Ribbon, "Ribbon"},
-            {1015, Boss.Cocoa2, "Cocoa"},
-            {1018, Boss.Cicini, "Cicini"},
+            {1015, Boss.Cocoa2, "Cocoa2"},
+            {1016, Boss.Cicini, "Cicini"},
+            {1018, Boss.Cicini2, "Cicini2"},
             {1020, Boss.Saya, "Saya"},
             {1021, Boss.Syaro, "Syaro"},
             {1022, Boss.Pandora, "Pandora"},
@@ -24,13 +25,18 @@ namespace rabi_splitter_WPF
             {1032, Boss.Vanilla, "Vanilla"},
             {1033, Boss.Chocolate, "Chocolate"},
             {1035, Boss.IllusionAlius, "Illusion Alius"},
-            {1036, Boss.PinkKotri, "Pink Kotri"},
+            {1036, Boss.Kotri, "Kotri"},
             {1037, Boss.Noah1, "Noah 1"},
             {1038, Boss.Irisu, "Irisu"},
             {1039, Boss.Miriam, "Miriam"},
             {1043, Boss.Miru, "Miru"},
             {1053, Boss.Noah3, "Noah 3"},
             {1054, Boss.KekeBunny, "Keke Bunny"},
+
+            {1056, Boss.Cats, "Plurkwood Cats"},
+            {1133, Boss.BigBox, "Big Box"},
+            {1136, Boss.RainbowMaid, "Robot Maid"},
+            {1143, Boss.TreasureCrystal, "Treasure Crystal"},
         };
 
         public static IndexEnumAssociation<Map> MapList = new IndexEnumAssociation<Map>
@@ -126,29 +132,72 @@ namespace rabi_splitter_WPF
             {Music.MISCHIEVOUS_MASQUERADE, "MISCHIEVOUS MASQUERADE"},
         };
 
-        public static int[] BossMusics = new[]
+        public static Music[] BossMusics = new[]
         {
-            44,
-            38,
-            47,
-            34,
-            51,
-            43,
-            52,
-            37,
-            39,
-            42,
-            48,
-            8,
-            54
+            Music.BOUNCE_BOUNCE,
+            Music.MIDSTREAM_JAM,
+            Music.THE_TRUTH_NEVER_SPOKEN,
+            Music.BRAWL_BREAKS_VER_2,
+            Music.BRAWL_BREAKS,
+            Music.RFN_III,
+            Music.NO_REMORSE,
+            Music.GET_ON_WITH_IT,
+            Music.FULL_ON_COMBAT,
+            Music.HI_TECH_DUEL,
+            Music.KITTY_ATTACK,
+            Music.M_R_,
+            Music.SUDDEN_DEATH,
+            Music.MISCHIEVOUS_MASQUERADE,
         };
 
+        public static ExpDescriptions HammerLevels = new ExpDescriptions
+        {
+            {600, "+Rang", "Attack Range Increase"},
+            {1000, "UpDr", "Up-drill"},
+            {1650, "Quad", "Quad-combo"},
+            {2050, "Spd1", "Combo Speed Increase (Lv.1)"},
+            {2500, "DwnDr", "Down-drill"},
+            {2750, "Dmg1", "Hammer Drill Damage Increase (Lv.1)"},// / Up-drill Exp Increase"},
+            {3100, "Penta", "Penta-combo (Ground-drill)"},
+            {3750, "Spd2", "Combo Speed Increase (Lv.2)"},
+            {5500, "-SP", "SP Usage Reduced"},
+            {6450, "Spd3", "Combo Speed Increase (Lv.3)"},
+            {7500, "Dmg2", "Hammer Drill Damage Increase (Lv.2)"},// / Up-drill/Down-drill Exp Increase"},
+        };
+
+        public static ExpDescriptions RibbonLevels = new ExpDescriptions
+        {
+            {100, "CSpd1", "Charge Speed Increase (Lv.1)"},
+            {600, "CSpd2", "Charge Speed Increase (Lv.2)"},
+            {1100, "BSpd1", "Boost Attack Speed Increase (Lv.1)"},
+            {1650, "CSpd3", "Charge Speed Increase (Lv.3)"},
+            {2800, "BSpd2", "Boost Attack Speed Increase (Lv.2)"},
+            {3300, "CSpd4", "Charge Speed Increase (Lv.4)"},
+            {3800, "BGag1", "Boost Gauge Charges Faster (Lv.1)"},
+            {4500, "BSpd3", "Boost Attack Speed Increase (Lv.3)"},
+            {5800, "BGag2", "Boost Gauge Charges Faster (Lv.2)"},
+            {7000, "BGag3", "Boost Gauge Charges Faster (Lv.3)"},
+        };
+
+        public static ExpDescriptions CarrotLevels = new ExpDescriptions
+        {
+            {7, "Del1", "Shorter Delay (Lv.1)"},
+            {25, "Dmg1", "Damage Increase (Lv.1)"},
+            {50, "Del2", "Shorter Delay (Lv.2)"},
+            {100, "Rad", "Effect Radius Increase"},
+            {175, "Dmg2", "Damage Increase (Lv.2)"},// / Exp Increase"},
+            {275, "Del3", "Shorter Delay (Lv.3)"},
+            {500, "Dmg3", "Damage Increase (Lv.3)"},// / Exp Increase"},
+        };
 
         public static int[] MapAddress =  { 0xA3353C, 0xA57020, 0xA5E0AC, 0xA600AC };
         public static int[] EnenyPtrAddr = { 0x00940EE0, 0x00964A1C, 0x0096BA3C, 0x0096DA3C };
-        public static int[] EnenyEnitiyHPOffset = { 0x4c8, 0x4d0,0x4d8, 0x4d8 };
+        public static int[] EnenyEnitiyHPOffset = { 0x4c8, 0x4d0, 0x4d8, 0x4d8 };
+        public static int[] EnenyEnitiyMaxHPOffset = { 0, 0, 0, 0x4e8 };
         public static int[] EnenyEnitiyIDOffset = { 0x4e4,0x4ec, 0x4F4, 0x4F4 };
         public static int[] EnenyEntitySize = {0x6F4, 0x6FC, 0x704, 0x704 };
+        public static int[] EnenyEnitiyIsActiveOffset = { 0, 0, 0, 0x674 };
+        public static int[] EnenyEnitiyAnimationOffset = { 0, 0, 0, 0x678 };
         public static int[] MaxEntityEntry = { 50,50,50 ,50};
         public static int[] MoneyAddress = { 0xD3823C, 0xD5B9FC, 0xD63D2C, 0xD654CC };
         public static string[] VerNames = {"1.65", "1.70","1.71","1.75"};

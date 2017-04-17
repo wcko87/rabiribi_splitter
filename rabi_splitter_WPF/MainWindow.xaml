@@ -16,7 +16,7 @@
             <TextBlock Text="GitHub" MouseUp="TextBlock_MouseUp" Cursor="Hand" Foreground="Blue" TextDecorations="Underline" VerticalAlignment="Top"   />
         </StackPanel>
         <DockPanel Margin="5" DockPanel.Dock="Top">
-            <StackPanel Margin="0,0,100,0" Width="356">
+            <StackPanel Margin="0,0,0,0" Width="500">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,3">
                     <TextBlock TextWrapping="Wrap" Text="LiveSplit Server Port" VerticalAlignment="Center" FontSize="16" Margin="0,0,10,0"/>
                     <TextBox  TextWrapping="Wrap" Text="{Binding ServerPort}" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Padding="6,0"/>
@@ -26,14 +26,14 @@
                     <TextBlock TextWrapping="Wrap" Text="Rabi-Ribi Status:" FontSize="16"/>
                     <TextBlock TextWrapping="Wrap" Text="{Binding GameVer}" FontSize="16"/>
                 </StackPanel>
-                <Grid Height="280">
+                <Grid Height="500">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="3*"/>
                         <RowDefinition Height="3*"/>
                         <RowDefinition Height="3*"/>
                         <RowDefinition Height="3*"/>
                         <RowDefinition Height="3*"/>
-                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="15*"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*"/>
@@ -56,12 +56,30 @@
                     <TextBlock Grid.Row="3" Grid.Column="1" TextWrapping="Wrap" Text="{Binding Text11}" FontSize="16"/>
                     <TextBlock Grid.Row="3" Grid.Column="2" TextWrapping="Wrap" Text="{Binding Text12}" FontSize="16"/>
 
-                    <TextBlock Grid.Row="4" Grid.Column="0" TextWrapping="Wrap" Text="{Binding Text13}" FontSize="16"/>
-                    <TextBlock Grid.Row="4" Grid.Column="1" TextWrapping="Wrap" Text="{Binding Text14}" FontSize="16"/>
-                    <TextBlock Grid.Row="4" Grid.Column="2" TextWrapping="Wrap" Text="{Binding Text15}" FontSize="16"/>
+                    <TextBlock Grid.Row="4" Grid.ColumnSpan="2" Grid.Column="0" TextWrapping="Wrap" Text="{Binding Text13}" FontSize="16"/>
+                    <TextBlock Grid.Row="4" Grid.Column="2" TextWrapping="Wrap" Text="{Binding Text14}" FontSize="16"/>
+
+                    <ScrollViewer Grid.Row="5" Grid.ColumnSpan="2" Grid.Column="0" >
+                        <TextBlock TextWrapping="Wrap" Text="{Binding Text16}" FontSize="16"/>
+                    </ScrollViewer>
+                    <TextBlock Grid.Row="5" Grid.Column="2" TextWrapping="Wrap" Text="{Binding Text17}" FontSize="16"/>
 
                 </Grid>
             </StackPanel>
+            <DockPanel x:Name="EntityDataPanel" d:DataContext="{d:DesignData local:DebugContext}">
+                <TextBox Width="100" DockPanel.Dock="Top"  TextWrapping="Wrap" Text="{Binding EntityAnalysisIndex}" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Padding="0,0"/>
+                <DataGrid Width="250"  x:Name="EntityStats" ItemsSource="{Binding EntityStatsListView}" CanUserAddRows="False"  IsReadOnly="True" AutoGenerateColumns="False"  SelectionUnit="FullRow"  
+                        d:DataContext="{d:DesignData local:EntityStatsData}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Width="2*" Binding="{Binding Addr}" ClipboardContentBinding="{Binding Addr}" Header="Addr"/>
+                        <DataGridTextColumn Width="3*" Binding="{Binding IntVal}" ClipboardContentBinding="{Binding IntVal}" Header="int"/>
+                        <DataGridTextColumn Width="3*" Binding="{Binding FloatVal}" ClipboardContentBinding="{Binding FloatVal}" Header="float"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <!--<ScrollViewer Width="250">
+                    <TextBlock TextWrapping="Wrap" Text="{Binding Text18}" FontSize="16"/>
+                </ScrollViewer>-->
+            </DockPanel>
             <DockPanel>
                 <TextBlock TextWrapping="Wrap" Text="debug area" Height="15.24" Width="352.251" DockPanel.Dock="Top"/>
                 <CheckBox x:Name="BossEventDebug" IsEnabled="False" Content="(DEBUG)BOSS event tracked" FontSize="15" VerticalAlignment="Top" HorizontalAlignment="Left" IsChecked="{Binding BossEvent, Mode=TwoWay}" DockPanel.Dock="Top"/>

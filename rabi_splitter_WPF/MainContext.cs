@@ -31,6 +31,55 @@ namespace rabi_splitter_WPF
 
         #endregion
     }
+
+    public class EntityStatsData : INotifyPropertyChanged
+    {
+        private int _addr;
+        private int _intval;
+        private float _floatval;
+
+        public int Addr
+        {
+            get { return _addr; }
+            set
+            {
+                if (value == _addr) return;
+                _addr = value;
+                OnPropertyChanged(nameof(Addr));
+            }
+        }
+
+        public int IntVal
+        {
+            get { return _intval; }
+            set
+            {
+                if (value == _intval) return;
+                _intval = value;
+                OnPropertyChanged(nameof(IntVal));
+            }
+        }
+
+        public float FloatVal
+        {
+            get { return _floatval; }
+            set
+            {
+                if (value == _floatval) return;
+                _floatval = value;
+                OnPropertyChanged(nameof(FloatVal));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
     public class BossData:INotifyPropertyChanged
     {
         private int _bossIdx;
@@ -81,20 +130,49 @@ namespace rabi_splitter_WPF
 
     class DebugContext : INotifyPropertyChanged
     {
+        private int _entityAnalysisIndex;
         private bool _bossEvent;
         private string _debugLog;
 
         public ObservableCollection<BossData> BossList = new ObservableCollection<BossData>();
+        public ObservableCollection<EntityStatsData> EntityStatsListData = new ObservableCollection<EntityStatsData>();
+        public int targetEntityListSize;
+
+        public ObservableCollection<EntityStatsData> EntityStatsListView
+        {
+            get
+            {
+                return EntityStatsListData;
+            }
+        }
 
         public DebugContext()
         {
-            BossList=new ObservableCollection<BossData>();
+            this.EntityAnalysisIndex = 0;
+
+            BossList =new ObservableCollection<BossData>();
             for (int i = 0; i < 50; i++)
             {
                 BossList.Add(new BossData()
                 {
                     BossIdx = i
                 });
+            }
+
+            while (EntityStatsListData.Count < 449)
+            {
+                EntityStatsListData.Add(new EntityStatsData() { Addr = EntityStatsListData.Count * 4 });
+            }
+        }
+
+        public int EntityAnalysisIndex
+        {
+            get { return _entityAnalysisIndex; }
+            set
+            {
+                if (value == _entityAnalysisIndex) return;
+                _entityAnalysisIndex = value;
+                OnPropertyChanged(nameof(EntityAnalysisIndex));
             }
         }
 
@@ -138,7 +216,7 @@ namespace rabi_splitter_WPF
     {
         public string oldtitle;
         public int veridx;
-
+        
         private int _serverPort;
         private string _gameVer;
         private string _gameMusic;
@@ -159,6 +237,9 @@ namespace rabi_splitter_WPF
         private string _text13;
         private string _text14;
         private string _text15;
+        private string _text16;
+        private string _text17;
+        private string _text18;
         
         public string Text1
         {
@@ -324,7 +405,40 @@ namespace rabi_splitter_WPF
                 OnPropertyChanged(nameof(Text15));
             }
         }
-        
+
+        public string Text16
+        {
+            get { return _text16; }
+            set
+            {
+                if (value == _text16) return;
+                _text16 = value;
+                OnPropertyChanged(nameof(Text16));
+            }
+        }
+
+        public string Text17
+        {
+            get { return _text17; }
+            set
+            {
+                if (value == _text17) return;
+                _text17 = value;
+                OnPropertyChanged(nameof(Text17));
+            }
+        }
+
+        public string Text18
+        {
+            get { return _text18; }
+            set
+            {
+                if (value == _text18) return;
+                _text18 = value;
+                OnPropertyChanged(nameof(Text18));
+            }
+        }
+
         public int ServerPort
         {
             get { return _serverPort; }

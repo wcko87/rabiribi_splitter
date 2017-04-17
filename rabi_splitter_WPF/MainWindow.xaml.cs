@@ -113,6 +113,8 @@ namespace rabi_splitter_WPF
             this.DataContext = mainContext;
             DebugPanel.DataContext = debugContext;
             this.Grid.ItemsSource = debugContext.BossList;
+            EntityDataPanel.DataContext = debugContext;
+            this.EntityStats.ItemsSource = debugContext.EntityStatsListView;
             BossEventDebug.DataContext = debugContext;
             rabiRibiDisplay = new RabiRibiDisplay(mainContext, debugContext, this);
             memoryThread = new Thread(() =>

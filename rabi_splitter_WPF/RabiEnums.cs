@@ -14,6 +14,7 @@ namespace rabi_splitter_WPF
         Ribbon,
         Cocoa2,
         Cicini,
+        Cicini2,
         Saya,
         Syaro,
         Pandora,
@@ -25,13 +26,17 @@ namespace rabi_splitter_WPF
         Vanilla,
         Chocolate,
         IllusionAlius,
-        PinkKotri,
+        Kotri,
         Noah1,
         Irisu,
         Miriam,
         Miru,
         Noah3,
         KekeBunny,
+        Cats,
+        BigBox,
+        RainbowMaid,
+        TreasureCrystal,
     }
 
     public enum Map
@@ -130,19 +135,30 @@ namespace rabi_splitter_WPF
         }
     }
 
+    // A set of (exp, string)
+    public class ExpDescriptions : List<Tuple<int, string, string>>
+    {
+        public void Add(int exp, string shortDescript, string description)
+        {
+            Add(new Tuple<int, string, string>(exp, shortDescript, description));
+        }
+    }
+
     public static partial class StaticData {
 
-        public static readonly Dictionary<int, Boss> _getBoss;
-        public static readonly Dictionary<int, string> _getBossName;
-        public static readonly Dictionary<Boss, string> _getBossFromType;
+        private static readonly Dictionary<int, Boss> _getBoss;
+        private static readonly Dictionary<int, string> _getBossName;
+        private static readonly Dictionary<Boss, string> _getBossFromType;
 
-        public static readonly Map[] _getMap;
-        public static readonly string[] _getMapName;
-        public static readonly Dictionary<Map, string> _getMapFromType;
+        private static readonly Map[] _getMap;
+        private static readonly string[] _getMapName;
+        private static readonly Dictionary<Map, string> _getMapFromType;
 
-        public static readonly Music[] _getMusic;
-        public static readonly string[] _getMusicName;
-        public static readonly Dictionary<Music, string> _getMusicFromType;
+        private static readonly Music[] _getMusic;
+        private static readonly string[] _getMusicName;
+        private static readonly Dictionary<Music, string> _getMusicFromType;
+
+        private static readonly bool[] _isBossMusic;
 
         static StaticData()
         {
@@ -157,6 +173,8 @@ namespace rabi_splitter_WPF
             _getMusic = MusicList.Select(t => t.Item1).ToArray();
             _getMusicName = MusicList.Select(t => t.Item2).ToArray();
             _getMusicFromType = MusicList.ToDictionary(t => t.Item1, t => t.Item2);
+
+            _isBossMusic = Enumerable.Range(0, _getMusic.Length).Select(i => BossMusics.Contains(_getMusic[i])).ToArray();
         }
 
         public static Boss? GetBoss(int id) {
@@ -175,6 +193,11 @@ namespace rabi_splitter_WPF
             string value;
             if (boss.HasValue && _getBossFromType.TryGetValue(boss.Value, out value)) return value;
             return "";
+        }
+
+        public static bool IsBoss(int id)
+        {
+            return GetBoss(id).HasValue;
         }
 
         public static Map? GetMap(int id) {
@@ -207,6 +230,29 @@ namespace rabi_splitter_WPF
             string value;
             if (music.HasValue && _getMusicFromType.TryGetValue(music.Value, out value)) return value;
             return "";
+        }
+
+        public static bool IsBossMusic(int musicId)
+        {
+            return musicId < _isBossMusic.Length && _isBossMusic[musicId];
+        }
+
+        public static Tuple<int, string, string> GetNextHammerLevel(int exp) {
+            int index = 0;
+            while (index < HammerLevels.Count && exp >= HammerLevels[index].Item1) ++index;
+            return index < HammerLevels.Count ? HammerLevels[index] : null;
+        }
+
+        public static Tuple<int, string, string> GetNextRibbonLevel(int exp) {
+            int index = 0;
+            while (index < RibbonLevels.Count && exp >= RibbonLevels[index].Item1) ++index;
+            return index < RibbonLevels.Count ? RibbonLevels[index] : null;
+        }
+
+        public static Tuple<int, string, string> GetNextCarrotLevel(int exp) {
+            int index = 0;
+            while (index < CarrotLevels.Count && exp >= CarrotLevels[index].Item1) ++index;
+            return index < CarrotLevels.Count ? CarrotLevels[index] : null;
         }
     }
 }
