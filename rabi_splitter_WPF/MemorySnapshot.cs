@@ -28,7 +28,6 @@ namespace rabi_splitter_WPF
 
         public readonly int currentSprite;
         public readonly int actionFrame;
-        public readonly int animationFrame;
 
         public readonly float amulet;
         public readonly int boost;
@@ -83,7 +82,6 @@ namespace rabi_splitter_WPF
 
             currentSprite = MemoryHelper.GetMemoryValue<int>(process, entityArrayPtr + 0x654, false);
             actionFrame = MemoryHelper.GetMemoryValue<int>(process, entityArrayPtr + 0x660, false);
-            animationFrame = MemoryHelper.GetMemoryValue<int>(process, entityArrayPtr + 0x67c, false);
 
             amulet = MemoryHelper.GetMemoryValue<float>(process, entityArrayPtr + 0x52C, false);
             boost = MemoryHelper.GetMemoryValue<int>(process, entityArrayPtr + 0x5DC, false);

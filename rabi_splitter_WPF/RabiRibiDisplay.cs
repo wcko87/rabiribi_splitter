@@ -80,19 +80,6 @@ namespace rabi_splitter_WPF
                 }
                 gameState.lastNonZeroPlayTime = snapshot.playtime;
             }
-                
-            if (gameState.IsGameStarted() && prevSnapshot != null)
-            {
-                // Issue: This sometimes detects warps as resets too.
-                if (snapshot.animationFrame < prevSnapshot.animationFrame)
-                {
-                    if (InGame())
-                    {
-                        gameState.nRestartsAlt++;
-                    }
-                    DebugLog("Reload Game (Alt)!");
-                }
-            }
 
             #endregion
 
@@ -164,7 +151,6 @@ namespace rabi_splitter_WPF
             mainContext.Text12 = "Entities: " + snapshot.entityArraySize + "\n" + "Active: " + snapshot.nActiveEntities;
 
             mainContext.Text13 = "Sprite: " + snapshot.GetCurrentSprite() + "\n" + "Action: " + snapshot.GetCurrentAction();
-            mainContext.Text14 = "AnimFrame: " + snapshot.animationFrame;
             {
                 string bosstext = "Boss Fight: " + (gameState.currentActivity == GameActivity.BOSS_BATTLE) + "\n";
                 bosstext += "Bosses: " + snapshot.bossList.Count + "\n";

@@ -16,12 +16,10 @@ namespace rabi_splitter_WPF
     {
         public int nRestarts;
         public int nDeaths;
-
-        public int nRestartsAlt;
+        
         public int nDeathsAlt;
 
         public GameActivity currentActivity;
-        public int currentBoss;
 
         public int lastNonZeroPlayTime = -1;
 
