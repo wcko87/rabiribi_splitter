@@ -5,16 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:rabi_splitter_WPF"
         mc:Ignorable="d" SizeToContent="Width"
-        Title="Irisu is watching you" d:DataContext="{d:DesignData local:MainContext}"  d:DesignWidth="835.476" Height="403.069">
+        Title="Rabi-Ribi Display" d:DataContext="{d:DesignData local:MainContext}"  d:DesignWidth="835.476" Height="403.069">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <local:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
     </Window.Resources>
     <DockPanel>
-        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Left">
+        <!--<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Left">
             <TextBlock Text="v0.3.2" Margin="0,0,30,0" VerticalAlignment="Top" />
             <TextBlock Text="GitHub" MouseUp="TextBlock_MouseUp" Cursor="Hand" Foreground="Blue" TextDecorations="Underline" VerticalAlignment="Top"   />
-        </StackPanel>
+        </StackPanel>-->
         <DockPanel Margin="5" DockPanel.Dock="Top">
             <StackPanel Margin="0,0,0,0" Width="500">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,3">
