@@ -234,7 +234,7 @@ namespace rabi_splitter_WPF
 
         public static bool IsBossMusic(int musicId)
         {
-            return musicId < _isBossMusic.Length && _isBossMusic[musicId];
+            return 0 <= musicId && musicId < _isBossMusic.Length && _isBossMusic[musicId];
         }
 
         public static Tuple<int, string, string> GetNextHammerLevel(int exp) {
