@@ -34,12 +34,21 @@ namespace rabi_splitter_WPF
             this.mainWindow = mainWindow;
             StartNewGame();
         }
-        
+
         public void ReadMemory(Process process)
         {
             // Snapshot Game Memory
             snapshot = new MemorySnapshot(process, mainContext.veridx);
 
+            Update();
+            UpdateDebugArea(process);
+            UpdateEntityData(process);
+
+            prevSnapshot = snapshot;
+        }
+
+        private void Update()
+        {
             #region Game State Machine
 
             if (gameState.CurrentActivityIs(GameActivity.STARTING)) {
@@ -161,11 +170,6 @@ namespace rabi_splitter_WPF
 
                 mainContext.Text16 = bosstext;
             }
-
-            UpdateDebugArea(process);
-            UpdateEntityData(process);
-
-            prevSnapshot = snapshot;
         }
 
         private void StartNewGame()
