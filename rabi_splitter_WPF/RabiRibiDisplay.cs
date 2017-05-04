@@ -23,6 +23,9 @@ namespace rabi_splitter_WPF
         private MemorySnapshot prevSnapshot;
         private MemorySnapshot snapshot;
 
+        // internal frame counter.
+        private int memoryReadCount;
+
         private string[] datastrings;
         
 
@@ -32,11 +35,14 @@ namespace rabi_splitter_WPF
             this.mainContext = mainContext;
             this.debugContext = debugContext;
             this.mainWindow = mainWindow;
+            this.memoryReadCount = 0;
             StartNewGame();
         }
 
         public void ReadMemory(Process process)
         {
+            ++memoryReadCount;
+
             // Snapshot Game Memory
             snapshot = new MemorySnapshot(process, mainContext.veridx);
 
@@ -244,7 +250,7 @@ namespace rabi_splitter_WPF
 
         private void DebugLog(string log)
         {
-            this.debugContext.Log(log);
+            this.debugContext.Log($"[ {memoryReadCount:D8}] {log}");
         }
 
         private void sendsplit()
