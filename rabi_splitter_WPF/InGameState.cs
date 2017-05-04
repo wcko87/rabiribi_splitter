@@ -5,37 +5,37 @@ using System.Text;
 
 namespace rabi_splitter_WPF
 {
-    enum GameActivity
+    enum InGameActivity
     {
         STARTING,
         WALKING,
         BOSS_BATTLE,
     }
 
-    class RabiGameState
+    class InGameState
     {
         public int nRestarts;
         public int nDeaths;
         
         public int nDeathsAlt;
 
-        public GameActivity currentActivity;
+        public InGameActivity currentActivity;
 
         public int lastNonZeroPlayTime = -1;
 
-        public RabiGameState()
+        public InGameState()
         {
-            currentActivity = GameActivity.STARTING;
+            currentActivity = InGameActivity.STARTING;
         }
 
-        public bool CurrentActivityIs(GameActivity gameActivity)
+        public bool CurrentActivityIs(InGameActivity gameActivity)
         {
             return currentActivity == gameActivity;
         }
 
         public bool IsGameStarted()
         {
-            return !CurrentActivityIs(GameActivity.STARTING);
+            return !CurrentActivityIs(InGameActivity.STARTING);
         }
 
 

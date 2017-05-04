@@ -19,7 +19,7 @@ namespace rabi_splitter_WPF
         private MainWindow mainWindow;
 
         private GameStatus gameStatus = GameStatus.MENU;
-        private RabiGameState gameState;
+        private InGameState inGameState;
         private MemorySnapshot prevSnapshot;
         private MemorySnapshot snapshot;
 
@@ -57,11 +57,11 @@ namespace rabi_splitter_WPF
         {
             #region Game State Machine
 
-            if (gameState.CurrentActivityIs(GameActivity.STARTING)) {
+            if (inGameState.CurrentActivityIs(InGameActivity.STARTING)) {
                 // Detect start game
                 if (0 < snapshot.playtime && snapshot.playtime < 200)
                 {
-                    gameState.currentActivity = GameActivity.WALKING;
+                    inGameState.currentActivity = InGameActivity.WALKING;
                     DebugLog("IGT start?");
                 }
             } else {
@@ -69,11 +69,11 @@ namespace rabi_splitter_WPF
                 {
                     if (StaticData.IsBossMusic(snapshot.musicid))
                     {
-                        gameState.currentActivity = GameActivity.BOSS_BATTLE;
+                        inGameState.currentActivity = InGameActivity.BOSS_BATTLE;
                     }
                     else
                     {
-                        gameState.currentActivity = GameActivity.WALKING;
+                        inGameState.currentActivity = InGameActivity.WALKING;
                     }
                 }
             }
@@ -101,17 +101,17 @@ namespace rabi_splitter_WPF
             #region Detect Reload
 
             bool reloaded = (prevSnapshot != null) && (snapshot.playtime < prevSnapshot.playtime);
-            if (gameState.IsGameStarted() && snapshot.playtime > 0)
+            if (inGameState.IsGameStarted() && snapshot.playtime > 0)
             {
-                if (snapshot.playtime < gameState.lastNonZeroPlayTime)
+                if (snapshot.playtime < inGameState.lastNonZeroPlayTime)
                 {
                     if (InGame())
                     {
-                        gameState.nRestarts++;
+                        inGameState.nRestarts++;
                     }
-                    DebugLog("Reload Game! " + snapshot.playtime + " <- " + gameState.lastNonZeroPlayTime);
+                    DebugLog("Reload Game! " + snapshot.playtime + " <- " + inGameState.lastNonZeroPlayTime);
                 }
-                gameState.lastNonZeroPlayTime = snapshot.playtime;
+                inGameState.lastNonZeroPlayTime = snapshot.playtime;
             }
 
             #endregion
@@ -124,7 +124,7 @@ namespace rabi_splitter_WPF
                 {
                     if (InGame())
                     {
-                        gameState.nDeaths++;
+                        inGameState.nDeaths++;
                     }
                     DebugLog("Death!");
                 }
@@ -136,7 +136,7 @@ namespace rabi_splitter_WPF
                 {
                     if (InGame())
                     {
-                        gameState.nDeathsAlt++;
+                        inGameState.nDeathsAlt++;
                     }
                     DebugLog("Death (Alt)!");
                 }
@@ -163,8 +163,8 @@ namespace rabi_splitter_WPF
 
             mainContext.Text1 = "Music: " + StaticData.GetMusicName(snapshot.musicid);
             mainContext.Text2 = "Map: " + StaticData.GetMapName(snapshot.mapid);
-            mainContext.Text3 = gameState == null ? "" : ("Deaths: " + gameState.nDeaths// + " [" + gameState.nDeathsAlt + "]"
-                                                 + "\n" + "Resets: " + gameState.nRestarts);// + " [" + gameState.nRestartsAlt + "]");
+            mainContext.Text3 = inGameState == null ? "" : ("Deaths: " + inGameState.nDeaths// + " [" + gameState.nDeathsAlt + "]"
+                                                 + "\n" + "Resets: " + inGameState.nRestarts);// + " [" + gameState.nRestartsAlt + "]");
 
             mainContext.Text4 = "HP: " + snapshot.hp + " / " + snapshot.maxhp;
             mainContext.Text5 = "Amulet: " + snapshot.amulet + "\n" + "Boost: " + snapshot.boost;
@@ -188,7 +188,7 @@ namespace rabi_splitter_WPF
             mainContext.Text14 = $"PLAYTIME: {snapshot.playtime}";
 
             {
-                string bosstext = "Boss Fight: " + (gameState.currentActivity == GameActivity.BOSS_BATTLE) + "\n";
+                string bosstext = "Boss Fight: " + (inGameState.currentActivity == InGameActivity.BOSS_BATTLE) + "\n";
                 bosstext += "Bosses: " + snapshot.bossList.Count + "\n";
                 foreach (var boss in snapshot.bossList)
                 {
@@ -201,14 +201,14 @@ namespace rabi_splitter_WPF
 
         private void StartNewGame()
         {
-            gameState = new RabiGameState();
+            inGameState = new InGameState();
             gameStatus = GameStatus.INGAME;
         }
 
         private void ReturnToMenu()
         {
             gameStatus = GameStatus.MENU;
-            gameState = null;
+            inGameState = null;
         }
 
         private bool InGame()
@@ -266,7 +266,7 @@ namespace rabi_splitter_WPF
                 ptr += StaticData.EnenyEntitySize[mainContext.veridx];
             }
 
-            debugContext.BossEvent = gameState.currentActivity == GameActivity.BOSS_BATTLE;
+            debugContext.BossEvent = inGameState.currentActivity == InGameActivity.BOSS_BATTLE;
         }
 
         private void DebugLog(string log)
