@@ -202,9 +202,9 @@ namespace rabi_splitter_WPF
                                     {
                                         if (mainContext.MusicStart || mainContext.MusicEnd)
                                         {
-                                            SpeedrunSendSplit();
-                                            DebugLog("new boss music, split");
-
+                                            if (!mainContext.DontSplitOnReload || !reloaded) SpeedrunSendSplit();
+                                            if (!reloaded) PracticeModeSendTrigger(SplitTrigger.BossEnd);
+                                            DebugLog("new boss music, " + (reloaded ? "don't split (reload)" : "split"));
                                         }
                                         if (musicid == 37)
                                         {
