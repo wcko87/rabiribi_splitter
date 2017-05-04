@@ -166,6 +166,9 @@ namespace rabi_splitter_WPF
             mainContext.Text12 = "Entities: " + snapshot.entityArraySize + "\n" + "Active: " + snapshot.nActiveEntities;
 
             mainContext.Text13 = "Sprite: " + snapshot.GetCurrentSprite() + "\n" + "Action: " + snapshot.GetCurrentAction();
+
+            mainContext.Text14 = $"PLAYTIME: {snapshot.playtime}";
+
             {
                 string bosstext = "Boss Fight: " + (gameState.currentActivity == GameActivity.BOSS_BATTLE) + "\n";
                 bosstext += "Bosses: " + snapshot.bossList.Count + "\n";
