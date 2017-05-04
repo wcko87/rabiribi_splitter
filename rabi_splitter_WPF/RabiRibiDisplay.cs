@@ -20,12 +20,8 @@ namespace rabi_splitter_WPF
         // internal frame counter.
         private int memoryReadCount;
 
-        private string[] datastrings;
-        
-
         public RabiRibiDisplay(MainContext mainContext, DebugContext debugContext, MainWindow mainWindow)
         {
-            this.datastrings = new string[StaticData.EnenyEntitySize[mainContext.veridx]];
             this.rabiRibiState = new RabiRibiState();
             this.mainContext = mainContext;
             this.debugContext = debugContext;
