@@ -59,7 +59,7 @@ namespace rabi_splitter_WPF
 
             if (gameState.CurrentActivityIs(GameActivity.STARTING)) {
                 // Detect start game
-                if (snapshot.playtime < 200)
+                if (0 < snapshot.playtime && snapshot.playtime < 200)
                 {
                     gameState.currentActivity = GameActivity.WALKING;
                     DebugLog("IGT start?");
