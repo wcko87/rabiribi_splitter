@@ -6,19 +6,13 @@ using System.Text;
 
 namespace rabi_splitter_WPF
 {
-    enum GameStatus
-    {
-        INGAME,
-        MENU
-    }
-
     class RabiRibiDisplay
     {
         private MainContext mainContext;
         private DebugContext debugContext;
         private MainWindow mainWindow;
-
-        private GameStatus gameStatus = GameStatus.MENU;
+        
+        private RabiRibiState rabiRibiState;
         private InGameState inGameState;
         private MemorySnapshot prevSnapshot;
         private MemorySnapshot snapshot;
@@ -32,6 +26,7 @@ namespace rabi_splitter_WPF
         public RabiRibiDisplay(MainContext mainContext, DebugContext debugContext, MainWindow mainWindow)
         {
             this.datastrings = new string[StaticData.EnenyEntitySize[mainContext.veridx]];
+            this.rabiRibiState = new RabiRibiState();
             this.mainContext = mainContext;
             this.debugContext = debugContext;
             this.mainWindow = mainWindow;
@@ -202,18 +197,18 @@ namespace rabi_splitter_WPF
         private void StartNewGame()
         {
             inGameState = new InGameState();
-            gameStatus = GameStatus.INGAME;
+            rabiRibiState.gameStatus = GameStatus.INGAME;
         }
 
         private void ReturnToMenu()
         {
-            gameStatus = GameStatus.MENU;
+            rabiRibiState.gameStatus = GameStatus.MENU;
             inGameState = null;
         }
 
         private bool InGame()
         {
-            return gameStatus == GameStatus.INGAME;
+            return rabiRibiState.gameStatus == GameStatus.INGAME;
         }
 
         private bool MusicChanged()
