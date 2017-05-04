@@ -45,6 +45,7 @@ namespace rabi_splitter_WPF
             UpdateDebugArea(process);
             UpdateEntityData(process);
 
+            if (snapshot.musicid >= 0) rabiRibiState.lastValidMusicId = snapshot.musicid;
             prevSnapshot = snapshot;
         }
 
@@ -77,9 +78,14 @@ namespace rabi_splitter_WPF
 
             #region Detect Music change
 
-            if (MusicChanged())
+            if (MusicChanged() && !ValidMusicChanged())
             {
-                DebugLog($"Music Change: {StaticData.GetMusicName(prevSnapshot.musicid)} -> {StaticData.GetMusicName(snapshot.musicid)}");
+                DebugLog($"Invalid Music Change: {StaticData.GetMusicName(prevSnapshot.musicid)} -> {StaticData.GetMusicName(snapshot.musicid)}");
+            }
+
+            if (ValidMusicChanged())
+            {
+                DebugLog($"Valid Music Change: {StaticData.GetMusicName(rabiRibiState.lastValidMusicId)} -> {StaticData.GetMusicName(snapshot.musicid)}");
             }
 
             #endregion
@@ -214,6 +220,11 @@ namespace rabi_splitter_WPF
         private bool MusicChanged()
         {
             return prevSnapshot != null && prevSnapshot.musicid != snapshot.musicid;
+        }
+
+        private bool ValidMusicChanged()
+        {
+            return rabiRibiState.lastValidMusicId >= 0 && snapshot.musicid >= 0 && rabiRibiState.lastValidMusicId != snapshot.musicid;
         }
 
         private bool MusicChangedTo(Music music)

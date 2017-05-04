@@ -14,5 +14,6 @@ namespace rabi_splitter_WPF
     class RabiRibiState
     {
         public GameStatus gameStatus = GameStatus.MENU;
+        public int lastValidMusicId = -1;
     }
 }
