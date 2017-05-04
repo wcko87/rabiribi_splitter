@@ -79,9 +79,27 @@ namespace rabi_splitter_WPF
             }
 
             #endregion
-            
+
+            #region Detect Music change
+
+            if (MusicChanged())
+            {
+                DebugLog($"Music Change: {StaticData.GetMusicName(prevSnapshot.musicid)} -> {StaticData.GetMusicName(snapshot.musicid)}");
+            }
+
+            #endregion
+
+            #region Detect Minimap Change
+
+            if (prevSnapshot != null && (prevSnapshot.minimapPosition != snapshot.minimapPosition))
+            {
+                DebugLog($"Minimap Shift! {prevSnapshot.minimapPosition} -> {snapshot.minimapPosition}");
+            }
+
+            #endregion
+
             #region Detect Reload
-            
+
             bool reloaded = (prevSnapshot != null) && (snapshot.playtime < prevSnapshot.playtime);
             if (gameState.IsGameStarted() && snapshot.playtime > 0)
             {

@@ -53,6 +53,7 @@ namespace rabi_splitter_WPF
         public readonly int nPackUps;
         public readonly int nRegenUps;
 
+        public readonly int minimapPosition;
 
         public MemorySnapshot(Process process, int veridx)
         {
@@ -67,7 +68,9 @@ namespace rabi_splitter_WPF
             carrotXp = MemoryHelper.GetMemoryValue<int>(process, 0xD654BC);
             hammerXp = MemoryHelper.GetMemoryValue<int>(process, 0xD654B4);
             ribbonXp = MemoryHelper.GetMemoryValue<int>(process, 0xD654B8);
-            itemPercent = MemoryHelper.GetMemoryValue<int>(process, 0xA730E8);
+            itemPercent = MemoryHelper.GetMemoryValue<float>(process, 0xA730E8);
+
+            minimapPosition = MemoryHelper.GetMemoryValue<int>(process, 0xA72E08);
 
             nAttackUps = countItems(process, 0xD6352C, 0xD63628);
             nHpUps = countItems(process, 0xD6342C, 0xD63528);
