@@ -106,6 +106,7 @@ namespace rabi_splitter_WPF
                     if (InGame())
                     {
                         inGameState.nRestarts++;
+                        UpdateTextFile();
                     }
                     DebugLog("Reload Game! " + snapshot.playtime + " <- " + inGameState.lastNonZeroPlayTime);
                 }
@@ -123,6 +124,7 @@ namespace rabi_splitter_WPF
                     if (InGame())
                     {
                         inGameState.nDeaths++;
+                        UpdateTextFile();
                     }
                     DebugLog("Death!");
                 }
@@ -195,6 +197,14 @@ namespace rabi_splitter_WPF
 
                 mainContext.Text16 = bosstext;
             }
+        }
+
+        private void UpdateTextFile()
+        {
+            string text = $"Deaths: {inGameState.nDeaths}\nResets: {inGameState.nRestarts}";
+            System.IO.StreamWriter file = new System.IO.StreamWriter("deaths_restarts.txt");
+            file.WriteLine(text);
+            file.Close();
         }
 
         private void StartNewGame()
