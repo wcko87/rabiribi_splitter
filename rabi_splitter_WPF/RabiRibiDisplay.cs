@@ -92,6 +92,30 @@ namespace rabi_splitter_WPF
             if (prevSnapshot != null && (prevSnapshot.minimapPosition != snapshot.minimapPosition))
             {
                 DebugLog($"Minimap Shift! {prevSnapshot.minimapPosition} -> {snapshot.minimapPosition}");
+                if (snapshot.minimapPosition == 1)
+                {
+                    DebugLog($"Fighting Boss: {string.Join(", ", snapshot.bossList.Select(boss => StaticData.GetBossName(boss.id)))}");
+                }
+            }
+
+            #endregion
+
+            #region Detect Boss Change
+
+            if (prevSnapshot != null)
+            {
+                var currBosses = new HashSet<int>(snapshot.bossList.Select(bossStats => bossStats.id));
+                var prevBosses = new HashSet<int>(prevSnapshot.bossList.Select(bossStats => bossStats.id));
+
+                foreach (var enteringBoss in currBosses.Except(prevBosses))
+                {
+                    DebugLog($"Boss Enters: {StaticData.GetBossName(enteringBoss)}");
+                }
+
+                foreach (var leavingBoss in prevBosses.Except(currBosses))
+                {
+                    DebugLog($"Boss Leaves: {StaticData.GetBossName(leavingBoss)}");
+                }
             }
 
             #endregion
