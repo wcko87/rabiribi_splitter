@@ -55,44 +55,44 @@ namespace rabi_splitter_WPF
 
         public readonly int minimapPosition;
 
-        public MemorySnapshot(Process process, int veridx)
+        public MemorySnapshot(MemoryHelper memoryHelper, int veridx)
         {
-            t_playtime = MemoryHelper.GetMemoryValue<int>(process, StaticData.IGTAddr[veridx]);
-            playtime = MemoryHelper.GetMemoryValue<int>(process, StaticData.PlaytimeAddr[veridx]);
-            blackness = MemoryHelper.GetMemoryValue<int>(process, StaticData.BlacknessAddr[veridx]);
+            t_playtime = memoryHelper.GetMemoryValue<int>(StaticData.IGTAddr[veridx]);
+            playtime = memoryHelper.GetMemoryValue<int>(StaticData.PlaytimeAddr[veridx]);
+            blackness = memoryHelper.GetMemoryValue<int>(StaticData.BlacknessAddr[veridx]);
 
-            mapid = MemoryHelper.GetMemoryValue<int>(process, StaticData.MapAddress[veridx]);
-            musicid = MemoryHelper.GetMemoryValue<int>(process, StaticData.MusicAddr[veridx]);
-            money = MemoryHelper.GetMemoryValue<int>(process, StaticData.MoneyAddress[veridx]);
+            mapid = memoryHelper.GetMemoryValue<int>(StaticData.MapAddress[veridx]);
+            musicid = memoryHelper.GetMemoryValue<int>(StaticData.MusicAddr[veridx]);
+            money = memoryHelper.GetMemoryValue<int>(StaticData.MoneyAddress[veridx]);
 
-            carrotXp = MemoryHelper.GetMemoryValue<int>(process, 0xD654BC);
-            hammerXp = MemoryHelper.GetMemoryValue<int>(process, 0xD654B4);
-            ribbonXp = MemoryHelper.GetMemoryValue<int>(process, 0xD654B8);
-            itemPercent = MemoryHelper.GetMemoryValue<float>(process, 0xA730E8);
+            carrotXp = memoryHelper.GetMemoryValue<int>(0xD654BC);
+            hammerXp = memoryHelper.GetMemoryValue<int>(0xD654B4);
+            ribbonXp = memoryHelper.GetMemoryValue<int>(0xD654B8);
+            itemPercent = memoryHelper.GetMemoryValue<float>(0xA730E8);
 
-            minimapPosition = MemoryHelper.GetMemoryValue<int>(process, 0xA72E08);
+            minimapPosition = memoryHelper.GetMemoryValue<int>(0xA72E08);
 
-            nAttackUps = countItems(process, 0xD6352C, 0xD63628);
-            nHpUps = countItems(process, 0xD6342C, 0xD63528);
-            nManaUps = countItems(process, 0xD6362C, 0xD63728);
-            nPackUps = countItems(process, 0xD6382C, 0xD63928);
-            nRegenUps = countItems(process, 0xD6372C, 0xD63828);
+            nAttackUps = countItems(memoryHelper, 0xD6352C, 0xD63628);
+            nHpUps = countItems(memoryHelper, 0xD6342C, 0xD63528);
+            nManaUps = countItems(memoryHelper, 0xD6362C, 0xD63728);
+            nPackUps = countItems(memoryHelper, 0xD6382C, 0xD63928);
+            nRegenUps = countItems(memoryHelper, 0xD6372C, 0xD63828);
 
-            entityArrayPtr = MemoryHelper.GetMemoryValue<int>(process, StaticData.EnenyPtrAddr[veridx]);
+            entityArrayPtr = memoryHelper.GetMemoryValue<int>(StaticData.EnenyPtrAddr[veridx]);
 
-            hp = MemoryHelper.GetMemoryValue<int>(process, entityArrayPtr + 0x4D8, false);
-            maxhp = MemoryHelper.GetMemoryValue<int>(process, entityArrayPtr + 0x4E8, false);
+            hp = memoryHelper.GetMemoryValue<int>(entityArrayPtr + 0x4D8, false);
+            maxhp = memoryHelper.GetMemoryValue<int>(entityArrayPtr + 0x4E8, false);
 
-            currentSprite = MemoryHelper.GetMemoryValue<int>(process, entityArrayPtr + 0x654, false);
-            actionFrame = MemoryHelper.GetMemoryValue<int>(process, entityArrayPtr + 0x660, false);
+            currentSprite = memoryHelper.GetMemoryValue<int>(entityArrayPtr + 0x654, false);
+            actionFrame = memoryHelper.GetMemoryValue<int>(entityArrayPtr + 0x660, false);
 
-            amulet = MemoryHelper.GetMemoryValue<float>(process, entityArrayPtr + 0x52C, false);
-            boost = MemoryHelper.GetMemoryValue<int>(process, entityArrayPtr + 0x5DC, false);
-            mana = MemoryHelper.GetMemoryValue<float>(process, entityArrayPtr + 0x6B8, false);
-            stamina = MemoryHelper.GetMemoryValue<int>(process, entityArrayPtr + 0x5B4, false);
+            amulet = memoryHelper.GetMemoryValue<float>(entityArrayPtr + 0x52C, false);
+            boost = memoryHelper.GetMemoryValue<int>(entityArrayPtr + 0x5DC, false);
+            mana = memoryHelper.GetMemoryValue<float>(entityArrayPtr + 0x6B8, false);
+            stamina = memoryHelper.GetMemoryValue<int>(entityArrayPtr + 0x5B4, false);
 
-            px = MemoryHelper.GetMemoryValue<float>(process, entityArrayPtr + 0xC, false);
-            py = MemoryHelper.GetMemoryValue<float>(process, entityArrayPtr + 0x10, false);
+            px = memoryHelper.GetMemoryValue<float>(entityArrayPtr + 0xC, false);
+            py = memoryHelper.GetMemoryValue<float>(entityArrayPtr + 0x10, false);
             
 
             // Read Entity Array and Search for boss data
@@ -103,16 +103,16 @@ namespace rabi_splitter_WPF
             int currArrayPtr = entityArrayPtr + entitySize * 4;
             for (int i=0; i<500; ++i) {
                 // (Hard limit of reading 500 entries)
-                int entityId = MemoryHelper.GetMemoryValue<int>(process,
+                int entityId = memoryHelper.GetMemoryValue<int>(
                     currArrayPtr + StaticData.EnenyEnitiyIDOffset[veridx], false);
-                int entityMaxHp = MemoryHelper.GetMemoryValue<int>(process,
+                int entityMaxHp = memoryHelper.GetMemoryValue<int>(
                     currArrayPtr + StaticData.EnenyEnitiyMaxHPOffset[veridx], false);
 
                 if (entityId == 0 && entityMaxHp == 0) break;
 
-                int activeFlag = MemoryHelper.GetMemoryValue<int>(process,
+                int activeFlag = memoryHelper.GetMemoryValue<int>(
                     currArrayPtr + StaticData.EnenyEnitiyIsActiveOffset[veridx], false);
-                int animationState = MemoryHelper.GetMemoryValue<int>(process,
+                int animationState = memoryHelper.GetMemoryValue<int>(
                     currArrayPtr + StaticData.EnenyEnitiyAnimationOffset[veridx], false);
 
                 bool isAlive = activeFlag == 1 && animationState >= 0;
@@ -122,7 +122,7 @@ namespace rabi_splitter_WPF
                     BossStats boss;
                     boss.entityArrayIndex = entityArraySize;
                     boss.id = entityId;
-                    boss.hp = MemoryHelper.GetMemoryValue<int>(process, currArrayPtr + StaticData.EnenyEnitiyHPOffset[veridx], false);
+                    boss.hp = memoryHelper.GetMemoryValue<int>(currArrayPtr + StaticData.EnenyEnitiyHPOffset[veridx], false);
                     boss.type = StaticData.GetBoss(entityId).Value;
                     boss.maxHp = entityMaxHp;
 
@@ -136,12 +136,12 @@ namespace rabi_splitter_WPF
             }
         }
 
-        private int countItems(Process process, int addrFirst, int addrLast)
+        private int countItems(MemoryHelper memoryHelper, int addrFirst, int addrLast)
         {
             int count = 0;
             for (int addr = addrFirst; addr <= addrLast; ++addr)
             {
-                count += MemoryHelper.GetMemoryValue<int>(process, addr) == 1 ? 1 : 0;
+                count += memoryHelper.GetMemoryValue<int>(addr) == 1 ? 1 : 0;
             }
             return count;
         }

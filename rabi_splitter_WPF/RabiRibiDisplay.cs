@@ -38,17 +38,20 @@ namespace rabi_splitter_WPF
         public void ReadMemory(Process process)
         {
             ++memoryReadCount;
+            var memoryHelper = new MemoryHelper(process);
 
             // Snapshot Game Memory
-            snapshot = new MemorySnapshot(process, mainContext.veridx);
+            snapshot = new MemorySnapshot(memoryHelper, mainContext.veridx);
 
             Update();
-            UpdateDebugArea(process);
-            UpdateEntityData(process);
+            UpdateDebugArea(memoryHelper);
+            UpdateEntityData(memoryHelper);
             UpdateFps();
 
             if (snapshot.musicid >= 0) rabiRibiState.lastValidMusicId = snapshot.musicid;
             prevSnapshot = snapshot;
+
+            memoryHelper.Dispose();
         }
         
         private void UpdateFps()
@@ -284,7 +287,7 @@ namespace rabi_splitter_WPF
             return MusicChanged() && snapshot.CurrentMusicIs(music);
         }
         
-        private void UpdateEntityData(Process process)
+        private void UpdateEntityData(MemoryHelper memoryHelper)
         {
             // Read entire entity data for specific entity
             {
@@ -300,15 +303,15 @@ namespace rabi_splitter_WPF
                 for (int i = 0; i < length; i += 4)
                 {
                     int index = i / 4;
-                    int value_int = MemoryHelper.GetMemoryValue<int>(process, baseArrayPtr + i, false);
-                    float value_float = MemoryHelper.GetMemoryValue<float>(process, baseArrayPtr + i, false);
+                    int value_int = memoryHelper.GetMemoryValue<int>(baseArrayPtr + i, false);
+                    float value_float = memoryHelper.GetMemoryValue<float>(baseArrayPtr + i, false);
                     entityStatsList[index].IntVal = value_int;
                     entityStatsList[index].FloatVal = value_float;
                 }
             }
         }
 
-        private void UpdateDebugArea(Process process)
+        private void UpdateDebugArea(MemoryHelper memoryHelper)
         {
             int ptr = snapshot.entityArrayPtr;
             //                    List<int> bosses = new List<int>();
@@ -317,9 +320,9 @@ namespace rabi_splitter_WPF
             //                    ptr += StaticData.EnenyEntitySize[mainContext.veridx] * 3;
             for (var i = 0; i < 50; i++)
             {
-                debugContext.BossList[i].BossID = MemoryHelper.GetMemoryValue<int>(process,
+                debugContext.BossList[i].BossID = memoryHelper.GetMemoryValue<int>(
                     ptr + StaticData.EnenyEnitiyIDOffset[mainContext.veridx], false);
-                debugContext.BossList[i].BossHP = MemoryHelper.GetMemoryValue<int>(process,
+                debugContext.BossList[i].BossHP = memoryHelper.GetMemoryValue<int>(
                     ptr + StaticData.EnenyEnitiyHPOffset[mainContext.veridx], false);
                 ptr += StaticData.EnenyEntitySize[mainContext.veridx];
             }
