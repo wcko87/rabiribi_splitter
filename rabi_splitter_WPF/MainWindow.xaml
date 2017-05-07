@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:rabi_splitter_WPF"
         mc:Ignorable="d" SizeToContent="Width"
-        Title="Rabi-Ribi Display" d:DataContext="{d:DesignData local:MainContext}"  d:DesignWidth="835.476" Height="403.069">
+        Title="Rabi-Ribi Display" d:DataContext="{d:DesignData local:MainContext}"  d:DesignWidth="900" Height="600">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <local:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
@@ -33,7 +33,11 @@
                         <RowDefinition Height="3*"/>
                         <RowDefinition Height="3*"/>
                         <RowDefinition Height="3*"/>
-                        <RowDefinition Height="15*"/>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="3*"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*"/>
@@ -59,10 +63,15 @@
                     <TextBlock Grid.Row="4" Grid.ColumnSpan="2" Grid.Column="0" TextWrapping="Wrap" Text="{Binding Text13}" FontSize="16"/>
                     <TextBlock Grid.Row="4" Grid.Column="2" TextWrapping="Wrap" Text="{Binding Text14}" FontSize="16"/>
 
-                    <ScrollViewer Grid.Row="5" Grid.ColumnSpan="2" Grid.Column="0" >
+                    <ScrollViewer Grid.Row="5" Grid.RowSpan="5" Grid.ColumnSpan="2" Grid.Column="0" >
                         <TextBlock TextWrapping="Wrap" Text="{Binding Text16}" FontSize="16"/>
                     </ScrollViewer>
-                    <TextBlock Grid.Row="5" Grid.Column="2" TextWrapping="Wrap" Text="{Binding Text17}" FontSize="16"/>
+                    <TextBlock Grid.Row="5" Grid.Column="2" TextWrapping="Wrap" Text="{Binding Text15}" FontSize="16"/>
+
+                    <TextBlock Grid.Row="6" Grid.Column="2" TextWrapping="Wrap" Text="{Binding Text16}" FontSize="16"/>
+                    <TextBlock Grid.Row="7" Grid.Column="2" TextWrapping="Wrap" Text="{Binding Text17}" FontSize="16"/>
+                    <TextBlock Grid.Row="8" Grid.Column="2" TextWrapping="Wrap" Text="{Binding Text18}" FontSize="16"/>
+                    <TextBlock Grid.Row="9" Grid.Column="2" TextWrapping="Wrap" Text="{Binding Text19}" FontSize="16"/>
 
                 </Grid>
             </StackPanel>
