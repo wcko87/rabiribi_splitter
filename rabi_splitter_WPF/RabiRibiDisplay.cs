@@ -122,7 +122,7 @@ namespace rabi_splitter_WPF
 
             #region Detect Reload
 
-            bool reloaded = (prevSnapshot != null) && (snapshot.playtime < prevSnapshot.playtime);
+            bool reloading = snapshot.playtime == 0 || ((prevSnapshot != null) && (snapshot.playtime < prevSnapshot.playtime));
             if (inGameState.IsGameStarted() && snapshot.playtime > 0)
             {
                 if (snapshot.playtime < inGameState.lastNonZeroPlayTime)
