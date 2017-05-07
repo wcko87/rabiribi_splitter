@@ -94,7 +94,8 @@ namespace rabi_splitter_WPF
                 DebugLog($"Minimap Shift! {prevSnapshot.minimapPosition} -> {snapshot.minimapPosition}");
                 if (snapshot.minimapPosition == 1)
                 {
-                    DebugLog($"Fighting Boss: {string.Join(", ", snapshot.bossList.Select(boss => StaticData.GetBossName(boss.id)))}");
+                    DebugLog($"BOSS FIGHT: {BossFightIdentifier.IdentifyBossFight(snapshot).displayName}");
+                    DebugLog($"Fighting Bosses: {string.Join(", ", snapshot.bossList.Select(boss => StaticData.GetBossName(boss.id)))}");
                 }
             }
 

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace rabi_splitter_WPF
 {
-    struct BossStats
+    public struct BossStats
     {
         public int entityArrayIndex;
         public int id;
@@ -15,7 +15,7 @@ namespace rabi_splitter_WPF
         public int maxHp;
     }
 
-    class MemorySnapshot
+    public class MemorySnapshot
     {
         public readonly int t_playtime;
         public readonly int playtime;

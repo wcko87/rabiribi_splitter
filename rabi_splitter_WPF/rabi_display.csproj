@@ -55,6 +55,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BossFightIdentifier.cs" />
+    <Compile Include="BossFightConfig.cs" />
+    <Compile Include="BossFightEnum.cs" />
     <Compile Include="InGameState.cs" />
     <Compile Include="RabiEnums.cs" />
     <Compile Include="MemorySnapshot.cs" />
