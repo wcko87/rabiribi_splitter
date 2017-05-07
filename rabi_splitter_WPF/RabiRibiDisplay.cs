@@ -17,6 +17,11 @@ namespace rabi_splitter_WPF
         private MemorySnapshot prevSnapshot;
         private MemorySnapshot snapshot;
 
+        // Variables used for tracking frequency of memory reads.
+        private static readonly DateTime UNIX_START = new DateTime(1970, 1, 1);
+        private double readFps = -1;
+        long previousFrameMillisecond = -1;
+
         // internal frame counter.
         private int memoryReadCount;
 
@@ -40,9 +45,24 @@ namespace rabi_splitter_WPF
             Update();
             UpdateDebugArea(process);
             UpdateEntityData(process);
+            UpdateFps();
 
             if (snapshot.musicid >= 0) rabiRibiState.lastValidMusicId = snapshot.musicid;
             prevSnapshot = snapshot;
+        }
+        
+        private void UpdateFps()
+        {
+            long currentFrameMillisecond = (long)(DateTime.Now - UNIX_START).TotalMilliseconds;
+            if (previousFrameMillisecond != -1)
+            {
+                double newFps = 1000.0 / (currentFrameMillisecond - previousFrameMillisecond);
+                if (readFps < 0) readFps = newFps;
+                else readFps = 0.9 * readFps + 0.1 * newFps;
+
+                mainContext.Text19 = $"Reads Per Second:\n{readFps:.0.00}";
+            }
+            previousFrameMillisecond = currentFrameMillisecond;
         }
 
         private void Update()
