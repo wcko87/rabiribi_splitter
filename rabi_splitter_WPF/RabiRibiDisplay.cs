@@ -81,17 +81,25 @@ namespace rabi_splitter_WPF
                     DebugLog("IGT start?");
                 }
             } else {
-                if (MusicChanged())
+            }
+
+            #endregion
+
+            #region Detect Reload
+
+            bool reloading = snapshot.playtime == 0 || ((prevSnapshot != null) && (snapshot.playtime < prevSnapshot.playtime));
+            if (inGameState.IsGameStarted() && snapshot.playtime > 0)
+            {
+                if (snapshot.playtime < inGameState.lastNonZeroPlayTime)
                 {
-                    if (StaticData.IsBossMusic(snapshot.musicid))
+                    if (InGame())
                     {
-                        inGameState.currentActivity = InGameActivity.BOSS_BATTLE;
+                        inGameState.nRestarts++;
+                        UpdateTextFile();
                     }
-                    else
-                    {
-                        inGameState.currentActivity = InGameActivity.WALKING;
-                    }
+                    DebugLog("Reload Game! " + snapshot.playtime + " <- " + inGameState.lastNonZeroPlayTime);
                 }
+                inGameState.lastNonZeroPlayTime = snapshot.playtime;
             }
 
             #endregion
@@ -117,8 +125,22 @@ namespace rabi_splitter_WPF
                 DebugLog($"Minimap Shift! {prevSnapshot.minimapPosition} -> {snapshot.minimapPosition}");
                 if (snapshot.minimapPosition == 1)
                 {
-                    DebugLog($"BOSS FIGHT: {BossFightIdentifier.IdentifyBossFight(snapshot).displayName}");
+                    var bossFight = BossFightIdentifier.IdentifyBossFight(snapshot);
+                    DebugLog($"BOSS FIGHT: {bossFight.displayName}");
                     DebugLog($"Fighting Bosses: {string.Join(", ", snapshot.bossList.Select(boss => StaticData.GetBossName(boss.id)))}");
+
+                    inGameState.StartBossFight(bossFight);
+                }
+                else // snapshot.minimapPosition == 0
+                {
+                    if (reloading)
+                    {
+                        inGameState.StopBossFight();
+                    }
+                    else
+                    {
+                        inGameState.FinishBossFight();
+                    }
                 }
             }
 
@@ -143,26 +165,7 @@ namespace rabi_splitter_WPF
             }
 
             #endregion
-
-            #region Detect Reload
-
-            bool reloading = snapshot.playtime == 0 || ((prevSnapshot != null) && (snapshot.playtime < prevSnapshot.playtime));
-            if (inGameState.IsGameStarted() && snapshot.playtime > 0)
-            {
-                if (snapshot.playtime < inGameState.lastNonZeroPlayTime)
-                {
-                    if (InGame())
-                    {
-                        inGameState.nRestarts++;
-                        UpdateTextFile();
-                    }
-                    DebugLog("Reload Game! " + snapshot.playtime + " <- " + inGameState.lastNonZeroPlayTime);
-                }
-                inGameState.lastNonZeroPlayTime = snapshot.playtime;
-            }
-
-            #endregion
-
+            
             #region Detect Death
             
             if (prevSnapshot != null)
@@ -236,6 +239,29 @@ namespace rabi_splitter_WPF
             mainContext.Text14 = $"PLAYTIME: {snapshot.playtime}";
 
             mainContext.Text15 = $"Map Tile: ({snapshot.mapTile.x}, {snapshot.mapTile.y})";
+
+            {
+                if (inGameState.CurrentActivityIs(InGameActivity.BOSS_BATTLE))
+                {
+                    var time = DateTime.Now - inGameState.currentBossStartTime;
+                    mainContext.Text16 = $"Boss: {inGameState.currentBossFight.displayName}\n" +
+                                         $"Time: {time:mm\\:ss\\.ff}";
+                }
+                else
+                {
+                    mainContext.Text16 = "Not in boss fight";
+                }
+
+                if (inGameState.lastBossFight != null)
+                {
+                    mainContext.Text17 = $"Last Boss: {inGameState.lastBossFight.displayName}\n" +
+                                         $"Time: {inGameState.lastBossFightDuration:mm\\:ss\\.ff}";
+                }
+                else
+                {
+                    mainContext.Text17 = "Last Boss: None";
+                }
+            }
 
             {
                 string bosstext = "Boss Fight: " + (inGameState.currentActivity == InGameActivity.BOSS_BATTLE) + "\n";
