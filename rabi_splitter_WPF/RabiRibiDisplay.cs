@@ -251,6 +251,7 @@ namespace rabi_splitter_WPF
 
         private void UpdateTextFile()
         {
+            //return;
             string text = $"Deaths: {inGameState.nDeaths}\nResets: {inGameState.nRestarts}";
             System.IO.StreamWriter file = new System.IO.StreamWriter("deaths_restarts.txt");
             file.WriteLine(text);
