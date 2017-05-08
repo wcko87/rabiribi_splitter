@@ -79,6 +79,7 @@ namespace rabi_splitter_WPF
             }
         }
 
+        // Convenience function for BossFightConfig.cs
         private static MapTileCoordinate Tile(int x, int y)
         {
             return new MapTileCoordinate(x, y);
