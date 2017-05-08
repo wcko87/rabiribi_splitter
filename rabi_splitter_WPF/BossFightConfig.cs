@@ -50,7 +50,7 @@ namespace rabi_splitter_WPF
             new BossFight (
                 displayName: "Rita",
                 music: Music.MIDSTREAM_JAM,
-                mapTile: new MapTileCoordinate(86, 10),
+                mapTile: Tile(86, 10),
                 startingBosses: new[] { Boss.Rita }
             );
 
@@ -58,7 +58,7 @@ namespace rabi_splitter_WPF
             new BossFight (
                 displayName: "Cicini",
                 music: Music.HI_TECH_DUEL,
-                mapTile: new MapTileCoordinate(22, 14),
+                mapTile: Tile(22, 14),
                 startingBosses: new[] { Boss.Cicini }
             );
 
@@ -66,7 +66,7 @@ namespace rabi_splitter_WPF
             new BossFight (
                 displayName: "Cocoa2",
                 music: Music.GET_ON_WITH_IT,
-                mapTile: new MapTileCoordinate(14, 10),
+                mapTile: Tile(14, 10),
                 startingBosses: new[] { Boss.Cocoa2 }
             );
 
@@ -179,7 +179,7 @@ namespace rabi_splitter_WPF
                 displayName: "Side Chapter",
                 music: Music.GET_ON_WITH_IT,
                 map: Map.RabiRabiTown,
-                mapTile: new MapTileCoordinate(133, 12),
+                mapTile: Tile(133, 12),
                 extraCondition: (startingBosses, music, map, mapTile) => {
                     return startingBosses.Count == 3;
                 }

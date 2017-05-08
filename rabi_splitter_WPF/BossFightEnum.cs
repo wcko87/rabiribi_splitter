@@ -79,6 +79,11 @@ namespace rabi_splitter_WPF
             }
         }
 
+        private static MapTileCoordinate Tile(int x, int y)
+        {
+            return new MapTileCoordinate(x, y);
+        }
+
         public override bool Equals(object obj)
         {
             var otherValue = obj as BossFight;
