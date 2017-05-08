@@ -7,6 +7,7 @@ namespace rabi_splitter_WPF
 {
     public static partial class BossFightIdentifier
     {
+        private static ILookup<MapTileCoordinate, BossFight> _matchMapTile;
         private static ILookup<Tuple<Music, Map>, BossFight> _matchMusicAndMap;
         private static ILookup<Music, BossFight> _matchMusic;
         private static ILookup<Map, BossFight> _matchMap;
@@ -15,6 +16,7 @@ namespace rabi_splitter_WPF
         static BossFightIdentifier()
         {
             // Build dictionaries here.
+            var specifiedMapTile = new List<BossFight>();
             var specifiedMusicAndMap = new List<BossFight>();
             var specifiedMusicOnly = new List<BossFight>();
             var specifiedMapOnly = new List<BossFight>();
@@ -22,7 +24,14 @@ namespace rabi_splitter_WPF
             
             foreach (var bossFight in BossFight.GetBossFights())
             {
-                //if (bossFight == null) continue;
+                if (bossFight == null || bossFight == BossFight.UNKNOWN) continue;
+
+                if (bossFight.mapTile != null)
+                {
+                    specifiedMapTile.Add(bossFight);
+                    continue;
+                }
+
                 if (bossFight.music != null)
                 {
                     if (bossFight.map != null) specifiedMusicAndMap.Add(bossFight);
@@ -35,17 +44,18 @@ namespace rabi_splitter_WPF
                 }
             }
 
+            _matchMapTile = specifiedMapTile.ToLookup(bossFight => bossFight.mapTile.Value, bossFight => bossFight);
             _matchMusicAndMap = specifiedMusicAndMap.ToLookup(bossFight => new Tuple<Music, Map>(bossFight.music.Value, bossFight.map.Value), bossFight => bossFight);
             _matchMusic = specifiedMusicOnly.ToLookup(bossFight => bossFight.music.Value, bossFight => bossFight);
             _matchMap = specifiedMapOnly.ToLookup(bossFight => bossFight.map.Value, bossFight => bossFight);
             _remainingDescriptions = specifiedNeither.ToArray();
         }
 
-        private static bool Matches(BossFight bossFight, HashSet<Boss> startingBosses, Music music, Map map)
+        private static bool Matches(BossFight bossFight, HashSet<Boss> startingBosses, Music music, Map map, MapTileCoordinate mapTile)
         {
             if (bossFight.startingBosses != null && !bossFight.startingBosses.SetEquals(startingBosses)) return false;
             if (bossFight.extraCondition == null) return true;
-            return bossFight.extraCondition(startingBosses, music, map);
+            return bossFight.extraCondition(startingBosses, music, map, mapTile);
         }
 
         public static BossFight IdentifyBossFight(MemorySnapshot snapshot)
@@ -56,28 +66,36 @@ namespace rabi_splitter_WPF
 
             var music = music_.Value;
             var map = map_.Value;
+            var mapTile = snapshot.mapTile;
             var startingBosses = new HashSet<Boss>(snapshot.bossList
                 .Select(bossStats => StaticData.GetBoss(bossStats.id))
                 .Where(boss => boss != null)
                 .Select(boss => boss.Value)
             );
-            
+
+            foreach (var bossFight in _matchMapTile[mapTile])
+            {
+                if ((bossFight.music == null || music == bossFight.music) &&
+                    (bossFight.map == null || map == bossFight.map) &&
+                    Matches(bossFight, startingBosses, music, map, mapTile)) return bossFight;
+            }
+
             foreach (var bossFight in _matchMusicAndMap[new Tuple<Music, Map>(music, map)])
             {
-                if (Matches(bossFight, startingBosses, music, map)) return bossFight;
+                if (Matches(bossFight, startingBosses, music, map, mapTile)) return bossFight;
             }
 
             foreach (var bossFight in _matchMusic[music])
             {
-                if (Matches(bossFight, startingBosses, music, map)) return bossFight;
+                if (Matches(bossFight, startingBosses, music, map, mapTile)) return bossFight;
             }
 
             foreach (var bossFight in _matchMap[map])
             {
-                if (Matches(bossFight, startingBosses, music, map)) return bossFight;
+                if (Matches(bossFight, startingBosses, music, map, mapTile)) return bossFight;
             }
 
-            return _remainingDescriptions.FirstOrDefault(bossFight => Matches(bossFight, startingBosses, music, map)) ?? BossFight.UNKNOWN;
+            return _remainingDescriptions.FirstOrDefault(bossFight => Matches(bossFight, startingBosses, music, map, mapTile)) ?? BossFight.UNKNOWN;
         }
 
     }

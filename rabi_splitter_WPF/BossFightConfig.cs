@@ -46,6 +46,30 @@ namespace rabi_splitter_WPF
                 startingBosses: new[] {Boss.Ashuri}
             );
 
+        public static BossFight Rita =
+            new BossFight (
+                displayName: "Rita",
+                music: Music.MIDSTREAM_JAM,
+                mapTile: new MapTileCoordinate(86, 10),
+                startingBosses: new[] { Boss.Rita }
+            );
+
+        public static BossFight Cicini =
+            new BossFight (
+                displayName: "Cicini",
+                music: Music.HI_TECH_DUEL,
+                mapTile: new MapTileCoordinate(22, 14),
+                startingBosses: new[] { Boss.Cicini }
+            );
+
+        public static BossFight Cocoa2 =
+            new BossFight (
+                displayName: "Cocoa2",
+                music: Music.GET_ON_WITH_IT,
+                mapTile: new MapTileCoordinate(14, 10),
+                startingBosses: new[] { Boss.Cocoa2 }
+            );
+
         public static BossFight BigBox =
             new BossFight (
                 displayName: "Big Box",
@@ -149,13 +173,14 @@ namespace rabi_splitter_WPF
                 map: Map.WarpDestination,
                 startingBosses: new[] {Boss.Noah3}
             );
-
+        
         public static BossFight SideChapter =
             new BossFight (
                 displayName: "Side Chapter",
                 music: Music.GET_ON_WITH_IT,
                 map: Map.RabiRabiTown,
-                extraCondition: (startingBosses, music, map) => {
+                mapTile: new MapTileCoordinate(133, 12),
+                extraCondition: (startingBosses, music, map, mapTile) => {
                     return startingBosses.Count == 3;
                 }
             );

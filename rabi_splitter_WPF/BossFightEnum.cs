@@ -19,19 +19,22 @@ namespace rabi_splitter_WPF
         public readonly string displayName;
         public readonly Music? music;
         public readonly Map? map;
+        public readonly MapTileCoordinate? mapTile;
         public readonly HashSet<Boss> startingBosses;
-        public readonly Func<HashSet<Boss>, Music, Map, bool> extraCondition;
+        public readonly Func<HashSet<Boss>, Music, Map, MapTileCoordinate, bool> extraCondition;
 
         private BossFight(string displayName = null,
                             Music? music = null,
                             Map? map = null,
+                            MapTileCoordinate? mapTile = null,
                             Boss[] startingBosses = null,
-                            Func<HashSet<Boss>, Music, Map, bool> extraCondition = null)
+                            Func<HashSet<Boss>, Music, Map, MapTileCoordinate, bool> extraCondition = null)
         {
             _value = nextAvailableValue++;
             this.displayName = displayName;
             this.music = music;
             this.map = map;
+            this.mapTile = mapTile;
             this.startingBosses = (startingBosses != null) ? new HashSet<Boss>(startingBosses) : null;
             this.extraCondition = extraCondition;
         }

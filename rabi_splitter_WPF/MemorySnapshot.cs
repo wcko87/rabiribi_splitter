@@ -26,6 +26,22 @@ namespace rabi_splitter_WPF
             
             return new MapTileCoordinate(x, y);
         }
+
+        #region Equals, Hashcode
+        // override object.Equals
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType()) return false;
+            var other = (MapTileCoordinate)obj;
+            return x == other.x && y == other.y;
+        }
+
+        // override object.GetHashCode
+        public override int GetHashCode()
+        {
+            return x.GetHashCode() * 31 + y.GetHashCode();
+        }
+        #endregion
     }
 
     public struct BossStats
