@@ -97,7 +97,7 @@ namespace rabi_splitter_WPF
         public static BossFight Kotri3 =
             new BossFight (
                 displayName: "Kotri3",
-                music: Music.BRAWL_BREAKS,
+                music: Music.BRAWL_BREAKS_VER_2,
                 map: Map.SubterraneanArea,
                 startingBosses: new[] {Boss.Kotri}
             );
