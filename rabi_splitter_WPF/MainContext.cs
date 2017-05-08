@@ -241,6 +241,7 @@ namespace rabi_splitter_WPF
         private string _text17;
         private string _text18;
         private string _text19;
+        private string _text20;
 
         public string Text1
         {
@@ -448,6 +449,17 @@ namespace rabi_splitter_WPF
                 if (value == _text19) return;
                 _text19 = value;
                 OnPropertyChanged(nameof(Text19));
+            }
+        }
+
+        public string Text20
+        {
+            get { return _text20; }
+            set
+            {
+                if (value == _text20) return;
+                _text20 = value;
+                OnPropertyChanged(nameof(Text20));
             }
         }
 

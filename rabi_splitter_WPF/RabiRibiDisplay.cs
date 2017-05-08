@@ -243,7 +243,7 @@ namespace rabi_splitter_WPF
                     bosstext += "[" + boss.entityArrayIndex + "] " + StaticData.GetBossName(boss.id) + ": " + boss.hp + "/" + boss.maxHp + "\n";
                 }
 
-                mainContext.Text16 = bosstext;
+                mainContext.Text20 = bosstext;
             }
         }
 
