@@ -44,34 +44,34 @@
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" Text="{Binding Text1}" FontSize="16"/>
-                    <TextBlock Grid.Row="0" Grid.Column="1" TextWrapping="Wrap" Text="{Binding Text2}" FontSize="16"/>
-                    <TextBlock Grid.Row="0" Grid.Column="2" TextWrapping="Wrap" Text="{Binding Text3}" FontSize="16"/>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Text1}" FontSize="16"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Text2}" FontSize="16"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Text3}" FontSize="16"/>
 
-                    <TextBlock Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" Text="{Binding Text4}" FontSize="16"/>
-                    <TextBlock Grid.Row="1" Grid.Column="1" TextWrapping="Wrap" Text="{Binding Text5}" FontSize="16"/>
-                    <TextBlock Grid.Row="1" Grid.Column="2" TextWrapping="Wrap" Text="{Binding Text6}" FontSize="16"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding Text4}" FontSize="16"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Text5}" FontSize="16"/>
+                    <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Text6}" FontSize="16"/>
 
-                    <TextBlock Grid.Row="2" Grid.Column="0" TextWrapping="Wrap" Text="{Binding Text7}" FontSize="16"/>
-                    <TextBlock Grid.Row="2" Grid.Column="1" TextWrapping="Wrap" Text="{Binding Text8}" FontSize="16"/>
-                    <TextBlock Grid.Row="2" Grid.Column="2" TextWrapping="Wrap" Text="{Binding Text9}" FontSize="16"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding Text7}" FontSize="16"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Text8}" FontSize="16"/>
+                    <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding Text9}" FontSize="16"/>
 
-                    <TextBlock Grid.Row="3" Grid.Column="0" TextWrapping="Wrap" Text="{Binding Text10}" FontSize="16"/>
-                    <TextBlock Grid.Row="3" Grid.Column="1" TextWrapping="Wrap" Text="{Binding Text11}" FontSize="16"/>
-                    <TextBlock Grid.Row="3" Grid.Column="2" TextWrapping="Wrap" Text="{Binding Text12}" FontSize="16"/>
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="{Binding Text10}" FontSize="16"/>
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Text11}" FontSize="16"/>
+                    <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding Text12}" FontSize="16"/>
 
                     <TextBlock Grid.Row="4" Grid.ColumnSpan="2" Grid.Column="0" TextWrapping="Wrap" Text="{Binding Text13}" FontSize="16"/>
-                    <TextBlock Grid.Row="4" Grid.Column="2" TextWrapping="Wrap" Text="{Binding Text14}" FontSize="16"/>
+                    <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding Text14}" FontSize="16"/>
 
                     <ScrollViewer Grid.Row="5" Grid.RowSpan="5" Grid.ColumnSpan="2" Grid.Column="0" >
                         <TextBlock TextWrapping="Wrap" Text="{Binding Text20}" FontSize="16"/>
                     </ScrollViewer>
-                    <TextBlock Grid.Row="5" Grid.Column="2" TextWrapping="Wrap" Text="{Binding Text15}" FontSize="16"/>
+                    <TextBlock Grid.Row="5" Grid.Column="2" Text="{Binding Text15}" FontSize="16"/>
 
-                    <TextBlock Grid.Row="6" Grid.Column="2" TextWrapping="Wrap" Text="{Binding Text16}" FontSize="16"/>
-                    <TextBlock Grid.Row="7" Grid.Column="2" TextWrapping="Wrap" Text="{Binding Text17}" FontSize="16"/>
-                    <TextBlock Grid.Row="8" Grid.Column="2" TextWrapping="Wrap" Text="{Binding Text18}" FontSize="16"/>
-                    <TextBlock Grid.Row="9" Grid.Column="2" TextWrapping="Wrap" Text="{Binding Text19}" FontSize="16"/>
+                    <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding Text16}" FontSize="16"/>
+                    <TextBlock Grid.Row="7" Grid.Column="2" Text="{Binding Text17}" FontSize="16"/>
+                    <TextBlock Grid.Row="8" Grid.Column="2" Text="{Binding Text18}" FontSize="16"/>
+                    <TextBlock Grid.Row="9" Grid.Column="2" Text="{Binding Text19}" FontSize="16"/>
 
                 </Grid>
             </StackPanel>
