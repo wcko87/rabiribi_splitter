@@ -235,6 +235,8 @@ namespace rabi_splitter_WPF
 
             mainContext.Text14 = $"PLAYTIME: {snapshot.playtime}";
 
+            mainContext.Text15 = $"Map Tile: ({snapshot.mapTile.x}, {snapshot.mapTile.y})";
+
             {
                 string bosstext = "Boss Fight: " + (inGameState.currentActivity == InGameActivity.BOSS_BATTLE) + "\n";
                 bosstext += "Bosses: " + snapshot.bossList.Count + "\n";

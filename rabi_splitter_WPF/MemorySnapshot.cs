@@ -6,6 +6,28 @@ using System.Text;
 
 namespace rabi_splitter_WPF
 {
+    public struct MapTileCoordinate
+    {
+        public readonly int x;
+        public readonly int y;
+
+        public MapTileCoordinate(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+
+        public static MapTileCoordinate FromWorldPosition(int mapid, float px, float py)
+        {
+            // Note: a game-tile is 64x64
+            // A map-tile is 1280x720. (20 x 11.25 game tiles)
+            int x = (int)(px / 1280) + mapid * 25;
+            int y = (int)(py / 720);
+            
+            return new MapTileCoordinate(x, y);
+        }
+    }
+
     public struct BossStats
     {
         public int entityArrayIndex;
@@ -36,6 +58,7 @@ namespace rabi_splitter_WPF
 
         public readonly float px;
         public readonly float py;
+        public readonly MapTileCoordinate mapTile;
 
         public readonly int entityArrayPtr;
         public readonly int entityArraySize;
@@ -93,8 +116,8 @@ namespace rabi_splitter_WPF
 
             px = memoryHelper.GetMemoryValue<float>(entityArrayPtr + 0xC, false);
             py = memoryHelper.GetMemoryValue<float>(entityArrayPtr + 0x10, false);
+            mapTile = MapTileCoordinate.FromWorldPosition(mapid, px, py);
             
-
             // Read Entity Array and Search for boss data
             bossList = new List<BossStats>();
             nActiveEntities = 0;
