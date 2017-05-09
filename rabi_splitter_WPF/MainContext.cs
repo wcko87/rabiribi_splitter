@@ -128,7 +128,7 @@ namespace rabi_splitter_WPF
         }
     }
 
-    class DebugContext : INotifyPropertyChanged
+    public class DebugContext : INotifyPropertyChanged
     {
         private int _entityAnalysisIndex;
         private bool _bossEvent;

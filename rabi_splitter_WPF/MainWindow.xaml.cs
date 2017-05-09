@@ -27,6 +27,7 @@ namespace rabi_splitter_WPF
         private MainContext mainContext;
         private RabiRibiDisplay rabiRibiDisplay;
         private DebugContext debugContext;
+        private VariableExportContext variableExportContext;
         private static TcpClient tcpclient;
         private static NetworkStream networkStream;
         private readonly Regex titleReg = new Regex(@"ver.*?(\d+\.?\d+.*)$");
@@ -110,11 +111,14 @@ namespace rabi_splitter_WPF
             InitializeComponent();
             mainContext=new MainContext();
             debugContext=new DebugContext();
+            variableExportContext = new VariableExportContext();
             this.DataContext = mainContext;
             DebugPanel.DataContext = debugContext;
             this.Grid.ItemsSource = debugContext.BossList;
             EntityDataPanel.DataContext = debugContext;
             this.EntityStats.ItemsSource = debugContext.EntityStatsListView;
+            this.VariableExportTab.DataContext = variableExportContext;
+            this.VariableExportTab.Initialise(debugContext, variableExportContext);
             BossEventDebug.DataContext = debugContext;
             rabiRibiDisplay = new RabiRibiDisplay(mainContext, debugContext, this);
             memoryThread = new Thread(() =>

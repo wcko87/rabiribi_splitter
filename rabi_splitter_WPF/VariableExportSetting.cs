@@ -7,33 +7,72 @@ using System.Text;
 
 namespace rabi_splitter_WPF
 {
-    class ExportableVariable
+    public class ExportableVariable
     {
+        // Do not make these properties public.
+        private static int nextAvailableId = 0;
+        private readonly int _id;
+        private readonly string _displayName;
 
-
-        public List<ExportableVariable> GetAll()
+        private ExportableVariable(string displayName)
         {
-            return new List<ExportableVariable>();
+            _id = nextAvailableId++;
+            _displayName = displayName;
         }
+
+        public int Id
+        {
+            get { return _id; }
+        }
+
+        public string DisplayName
+        {
+            get { return _displayName; }
+        }
+
+        public static List<ExportableVariable> GetAll()
+        {
+            return new List<ExportableVariable>()
+            {
+                new ExportableVariable("TestVariable")
+            };
+        }
+
+        #region Equals, GetHashCode
+        public override bool Equals(object obj)
+        {
+            var otherValue = obj as ExportableVariable;
+            if (otherValue == null) return false;
+            return _id.Equals(otherValue.Id);
+        }
+
+        public override int GetHashCode()
+        {
+            return _id.GetHashCode();
+        }
+        #endregion
     }
 
-    class VariableExportSetting : INotifyPropertyChanged
+    public class VariableExportSetting : INotifyPropertyChanged
     {
         private ExportableVariable _selectedVariable;
         private string _outputFileName;
         private string _outputFormat;
         private bool _isExporting;
 
-        #region Dictionaries 
-        
-        // Captions for Split Trigger Options
-        private static readonly Dictionary<ExportableVariable, string> _variableCaptions = new Dictionary<ExportableVariable, string>()
-        {
-        };
+        #region Dictionaries
+        private static Dictionary<ExportableVariable, string> _variableCaptions;
         
         public Dictionary<ExportableVariable, string> VariableCaptions
         {
-            get {return _variableCaptions;}
+            get
+            {
+                if (_variableCaptions == null)
+                {
+                    _variableCaptions = ExportableVariable.GetAll().ToDictionary(ev => ev, ev => ev.DisplayName);
+                }
+                return _variableCaptions;
+            }
         }
         
         #endregion
