@@ -26,10 +26,15 @@ namespace rabi_splitter_WPF
         {
             get { return _variableExportSettings; }
         }
-        
+
         internal void Add(VariableExportSetting ves)
         {
             _variableExportSettings.Add(ves);
+        }
+
+        internal void Delete(VariableExportSetting ves)
+        {
+            _variableExportSettings.Remove(ves);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

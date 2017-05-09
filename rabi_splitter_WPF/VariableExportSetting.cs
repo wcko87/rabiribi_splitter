@@ -74,9 +74,14 @@ namespace rabi_splitter_WPF
                 return _variableCaptions;
             }
         }
-        
+
+        internal void DefaultButton_Click()
+        {
+            OutputFormat = "DEFAULT OUTPUT FORMAT: " + OutputFileName;
+        }
+
         #endregion
-        
+
         public VariableExportSetting()
         {
             // Default values
