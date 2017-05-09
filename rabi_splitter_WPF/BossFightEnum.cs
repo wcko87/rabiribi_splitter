@@ -88,16 +88,8 @@ namespace rabi_splitter_WPF
         public override bool Equals(object obj)
         {
             var otherValue = obj as BossFight;
-
-            if (otherValue == null)
-            {
-                return false;
-            }
-
-            var typeMatches = GetType().Equals(obj.GetType());
-            var valueMatches = _value.Equals(otherValue.Value);
-
-            return typeMatches && valueMatches;
+            if (otherValue == null) return false;
+            return _value.Equals(otherValue.Value);
         }
 
         public override int GetHashCode()
