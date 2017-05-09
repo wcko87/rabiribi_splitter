@@ -10,10 +10,10 @@
         <StackPanel>
             <Button Content="Add" Width="40" Height="40" DockPanel.Dock="Right" Click="AddButton_Click"/>
         </StackPanel>
-        <ListBox Name="VariableExportListBox" ItemsSource="{Binding VariableExportSettings}">
+        <ListBox Name="VariableExportListBox" Width="500" ItemsSource="{Binding VariableExportSettings}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid Name="MainPanel" Height="80" Width="500" DockPanel.Dock="Top" Margin="5,0,5,0">
+                    <Grid Name="MainPanel" Height="80" Width="480" DockPanel.Dock="Top" Margin="5,0,5,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="4*" />
                             <ColumnDefinition Width="6*" />

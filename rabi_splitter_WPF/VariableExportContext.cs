@@ -14,12 +14,7 @@ namespace rabi_splitter_WPF
 
         public VariableExportContext()
         {
-            //_variableExportSettings = new List<VariableExportSetting>();
-            _variableExportSettings =
-                new List<VariableExportSetting>
-                {
-                    new VariableExportSetting() {OutputFileName = "Test.txt" }
-                };
+            _variableExportSettings = new List<VariableExportSetting>();
         }
 
         public List<VariableExportSetting> VariableExportSettings
