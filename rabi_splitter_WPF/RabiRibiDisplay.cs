@@ -6,7 +6,7 @@ using System.Text;
 
 namespace rabi_splitter_WPF
 {
-    class RabiRibiDisplay
+    partial class RabiRibiDisplay
     {
         private MainContext mainContext;
         private DebugContext debugContext;
@@ -36,6 +36,7 @@ namespace rabi_splitter_WPF
             this.mainWindow = mainWindow;
             this.memoryReadCount = 0;
             StartNewGame();
+            ConfigureVariableExports();
         }
 
         public void ReadMemory(Process process)

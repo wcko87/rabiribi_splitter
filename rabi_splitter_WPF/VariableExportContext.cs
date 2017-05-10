@@ -44,6 +44,13 @@ namespace rabi_splitter_WPF
             }
         }
 
+        public void NotifyExportableVariableUpdate()
+        {
+            foreach (var ves in _variableExportSettings)
+            {
+                ves.NotifyExportableVariableUpdate();
+            }
+        }
         #endregion
 
         #region Variables

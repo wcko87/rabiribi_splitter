@@ -24,8 +24,10 @@ namespace rabi_splitter_WPF
     
     public abstract class ExportableVariable
     {
-        // Do not make these properties public.
         private static int nextAvailableId = 0;
+        private static List<ExportableVariable> _variableExports;
+        private static Dictionary<ExportableVariable, string> _variableCaptions = new Dictionary<ExportableVariable, string>();
+        
         private readonly int _id;
         private readonly string _displayName;
 
@@ -46,13 +48,16 @@ namespace rabi_splitter_WPF
         }
 
         internal abstract VariableTracker GetTracker();
-
-        public static List<ExportableVariable> GetAll()
+        
+        public static void DefineVariableExports(ExportableVariable[] exports)
         {
-            return new List<ExportableVariable>()
-            {
-                new ExportableVariable<int>("TestVariable", () => 1)
-            };
+            _variableExports = exports.ToList();
+            _variableCaptions = exports.ToDictionary(ev => ev, ev => ev.DisplayName);
+        }
+
+        public static Dictionary<ExportableVariable, string> VariableCaptions
+        {
+            get { return _variableCaptions; }
         }
 
         #region Equals, GetHashCode
@@ -84,6 +89,7 @@ namespace rabi_splitter_WPF
         public override bool CheckForUpdate()
         {
             T newValue = tracker();
+
             if (forceUpdate || !newValue.Equals(currentValue))
             {
                 currentValue = newValue;
@@ -158,26 +164,29 @@ namespace rabi_splitter_WPF
             if (_variableTracker == null) return false;
             return _variableTracker.CheckForUpdate();
         }
+
+        public void NotifyExportableVariableUpdate()
+        {
+            OnPropertyChanged(nameof(VariableCaptions));
+        }
         #endregion
 
         #region Dictionaries
-        private static Dictionary<ExportableVariable, string> _variableCaptions;
-
         public Dictionary<ExportableVariable, string> VariableCaptions
         {
-            get
-            {
-                if (_variableCaptions == null)
-                {
-                    _variableCaptions = ExportableVariable.GetAll().ToDictionary(ev => ev, ev => ev.DisplayName);
-                }
-                return _variableCaptions;
-            }
+            get { return ExportableVariable.VariableCaptions; }
         }
-
+        
         internal void DefaultButton_Click()
         {
-            OutputFormat = "DEFAULT OUTPUT FORMAT: " + OutputFileName;
+            if (_selectedVariable == null)
+            {
+                OutputFormat = "Variable not set.";
+            }
+            else
+            {
+                OutputFormat = $"{_selectedVariable.DisplayName}: {{0}}";
+            }
         }
 
         #endregion

@@ -27,6 +27,10 @@ namespace rabi_splitter_WPF
             return new MapTileCoordinate(x, y);
         }
 
+        public override string ToString() {
+            return $"({x}, {y})";
+        }
+
         #region Equals, Hashcode
         // override object.Equals
         public override bool Equals(object obj)
