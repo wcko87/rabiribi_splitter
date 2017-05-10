@@ -10,6 +10,7 @@ namespace rabi_splitter_WPF
     {
         private MainContext mainContext;
         private DebugContext debugContext;
+        private VariableExportContext variableExportContext;
         private MainWindow mainWindow;
         
         private RabiRibiState rabiRibiState;
@@ -20,16 +21,18 @@ namespace rabi_splitter_WPF
         // Variables used for tracking frequency of memory reads.
         private static readonly DateTime UNIX_START = new DateTime(1970, 1, 1);
         private double readFps = -1;
-        long previousFrameMillisecond = -1;
+        private long previousFrameMillisecond = -1;
+        private long lastUpdateMillisecond = -1;
 
         // internal frame counter.
         private int memoryReadCount;
 
-        public RabiRibiDisplay(MainContext mainContext, DebugContext debugContext, MainWindow mainWindow)
+        public RabiRibiDisplay(MainContext mainContext, DebugContext debugContext, VariableExportContext variableExportContext, MainWindow mainWindow)
         {
             this.rabiRibiState = new RabiRibiState();
             this.mainContext = mainContext;
             this.debugContext = debugContext;
+            this.variableExportContext = variableExportContext;
             this.mainWindow = mainWindow;
             this.memoryReadCount = 0;
             StartNewGame();
@@ -47,11 +50,25 @@ namespace rabi_splitter_WPF
             UpdateDebugArea(memoryHelper);
             UpdateEntityData(memoryHelper);
             UpdateFps();
+            UpdateVariableExport();
 
             if (snapshot.musicid >= 0) rabiRibiState.lastValidMusicId = snapshot.musicid;
             prevSnapshot = snapshot;
 
             memoryHelper.Dispose();
+        }
+
+        private void UpdateVariableExport()
+        {
+            variableExportContext.CheckForUpdates();
+            long currentFrameMillisecond = (long)(DateTime.Now - UNIX_START).TotalMilliseconds;
+            var diff = currentFrameMillisecond - lastUpdateMillisecond;
+            if (diff >= 1000)
+            {
+                if (diff >= 2000) lastUpdateMillisecond = currentFrameMillisecond;
+                else lastUpdateMillisecond += 1000;
+                variableExportContext.OutputUpdates();
+            }
         }
         
         private void UpdateFps()

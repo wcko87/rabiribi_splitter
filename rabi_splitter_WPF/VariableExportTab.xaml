@@ -41,7 +41,7 @@
                                     <Button Grid.Column="2" Content="Default" Click="DefaultButton_Click"/>
                                 </Grid>
                                 <TextBox Height="50"  DockPanel.Dock="Top" Margin="0,5,0,5" Text="{Binding Path=OutputFormat, Mode=TwoWay}" AcceptsReturn="True" Visibility="{Binding Path=IsPreviewingFormat, Converter={StaticResource InvertableBooleanToVisibilityConverter}, ConverterParameter=VisibleWhenFalse, FallbackValue=Visible}"/>
-                                <TextBlock Height="50" DockPanel.Dock="Top" Margin="0,5,0,5" Text="{Binding Path=OutputFormat, Mode=TwoWay}" Visibility="{Binding Path=IsPreviewingFormat, Converter={StaticResource InvertableBooleanToVisibilityConverter}, ConverterParameter=VisibleWhenTrue, FallbackValue=Collapsed}"/>
+                                <TextBlock Height="50" DockPanel.Dock="Top" Margin="0,5,0,5" Text="{Binding Path=FormatPreview}" Visibility="{Binding Path=IsPreviewingFormat, Converter={StaticResource InvertableBooleanToVisibilityConverter}, ConverterParameter=VisibleWhenTrue, FallbackValue=Collapsed}"/>
                             </DockPanel>
                         </DockPanel>
                         <DockPanel Grid.Column="2">

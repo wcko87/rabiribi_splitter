@@ -120,7 +120,7 @@ namespace rabi_splitter_WPF
             this.VariableExportTab.DataContext = variableExportContext;
             this.VariableExportTab.Initialise(debugContext, variableExportContext);
             BossEventDebug.DataContext = debugContext;
-            rabiRibiDisplay = new RabiRibiDisplay(mainContext, debugContext, this);
+            rabiRibiDisplay = new RabiRibiDisplay(mainContext, debugContext, variableExportContext, this);
             memoryThread = new Thread(() =>
             {
                 while (true)
