@@ -59,6 +59,7 @@ namespace rabi_splitter_WPF
         private string _outputFileName;
         private string _outputFormat;
         private bool _isExporting;
+        private bool _isPreviewingFormat;
 
         #region Dictionaries
         private static Dictionary<ExportableVariable, string> _variableCaptions;
@@ -89,6 +90,7 @@ namespace rabi_splitter_WPF
             _outputFileName = "";
             _outputFormat = "";
             _isExporting = false;
+            _isPreviewingFormat = false;
         }
 
         #region Parameters
@@ -123,6 +125,17 @@ namespace rabi_splitter_WPF
                 if (value.Equals(_outputFormat)) return;
                 _outputFormat = value;
                 OnPropertyChanged(nameof(OutputFormat));
+            }
+        }
+
+        public bool IsPreviewingFormat
+        {
+            get { return _isPreviewingFormat; }
+            set
+            {
+                if (value.Equals(_isPreviewingFormat)) return;
+                _isPreviewingFormat = value;
+                OnPropertyChanged(nameof(IsPreviewingFormat));
             }
         }
 

@@ -6,6 +6,9 @@
              xmlns:local="clr-namespace:rabi_splitter_WPF"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="540">
+    <UserControl.Resources>
+        <local:InvertableBooleanToVisibilityConverter x:Key="InvertableBooleanToVisibilityConverter"/>
+    </UserControl.Resources>
     <DockPanel>
         <StackPanel>
             <Button Content="Add" Width="40" Height="40" DockPanel.Dock="Right" Click="AddButton_Click"/>
@@ -27,11 +30,18 @@
                         </StackPanel>
                         <DockPanel Grid.Column="1" Margin="15,0,15,0">
                             <DockPanel>
-                                <DockPanel DockPanel.Dock="Top">
-                                    <TextBlock DockPanel.Dock="Left" Text="Format"/>
-                                    <Button DockPanel.Dock="Right" Content="Default Format" Click="DefaultButton_Click" Width="120" HorizontalAlignment="Right"/>
-                                </DockPanel>
-                                <TextBox Margin="0,5,0,5" Text="{Binding Path=OutputFormat, Mode=TwoWay}" AcceptsReturn="True"/>
+                                <Grid DockPanel.Dock="Top">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="6*" />
+                                        <ColumnDefinition Width="5*" />
+                                        <ColumnDefinition Width="3*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" HorizontalAlignment="Left" Text="Format"/>
+                                    <ToggleButton Grid.Column="1" Margin="0,0,5,0" Content="Preview" IsChecked="{Binding Path=IsPreviewingFormat}"/>
+                                    <Button Grid.Column="2" Content="Default" Click="DefaultButton_Click"/>
+                                </Grid>
+                                <TextBox Height="50"  DockPanel.Dock="Top" Margin="0,5,0,5" Text="{Binding Path=OutputFormat, Mode=TwoWay}" AcceptsReturn="True" Visibility="{Binding Path=IsPreviewingFormat, Converter={StaticResource InvertableBooleanToVisibilityConverter}, ConverterParameter=VisibleWhenFalse, FallbackValue=Visible}"/>
+                                <TextBlock Height="50" DockPanel.Dock="Top" Margin="0,5,0,5" Text="{Binding Path=OutputFormat, Mode=TwoWay}" Visibility="{Binding Path=IsPreviewingFormat, Converter={StaticResource InvertableBooleanToVisibilityConverter}, ConverterParameter=VisibleWhenTrue, FallbackValue=Collapsed}"/>
                             </DockPanel>
                         </DockPanel>
                         <DockPanel Grid.Column="2">
