@@ -107,19 +107,19 @@ namespace rabi_splitter_WPF
                 ExportVariable<int> (
                     handle: "nextHammerExp",
                     displayName: "Next Hammer Level Exp",
-                    tracker: () => snapshot == null ? 0 : snapshot.nextHammer.Item1
+                    tracker: () => snapshot?.nextHammer == null ? 0 : snapshot.nextHammer.Item1
                 ),
 
                 ExportVariable<string> (
                     handle: "nextHammerName",
                     displayName: "Next Hammer Level Name (Short)",
-                    tracker: () => snapshot == null ? "" : snapshot.nextHammer.Item2
+                    tracker: () => snapshot?.nextHammer == null ? "" : snapshot.nextHammer.Item2
                 ),
 
                 ExportVariable<string> (
                     handle: "nextHammerNameLong",
                     displayName: "Next Hammer Level Name (Long)",
-                    tracker: () => snapshot == null ? "" : snapshot.nextHammer.Item3
+                    tracker: () => snapshot?.nextHammer == null ? "" : snapshot.nextHammer.Item3
                 ),
 
                 ExportVariable<int> (
@@ -131,19 +131,19 @@ namespace rabi_splitter_WPF
                 ExportVariable<int> (
                     handle: "nextRibbonExp",
                     displayName: "Next Ribbon Level Exp",
-                    tracker: () => snapshot == null ? 0 : snapshot.nextRibbon.Item1
+                    tracker: () => snapshot?.nextRibbon == null ? 0 : snapshot.nextRibbon.Item1
                 ),
 
                 ExportVariable<string> (
                     handle: "nextRibbonName",
                     displayName: "Next Ribbon Level Name (Short)",
-                    tracker: () => snapshot == null ? "" : snapshot.nextRibbon.Item2
+                    tracker: () => snapshot?.nextRibbon == null ? "" : snapshot.nextRibbon.Item2
                 ),
 
                 ExportVariable<string> (
                     handle: "nextRibbonNameLong",
                     displayName: "Next Ribbon Level Name (Long)",
-                    tracker: () => snapshot == null ? "" : snapshot.nextRibbon.Item3
+                    tracker: () => snapshot?.nextRibbon == null ? "" : snapshot.nextRibbon.Item3
                 ),
 
                 ExportVariable<int> (
@@ -155,19 +155,19 @@ namespace rabi_splitter_WPF
                 ExportVariable<int> (
                     handle: "nextCarrotExp",
                     displayName: "Next Carrot Level Exp",
-                    tracker: () => snapshot == null ? 0 : snapshot.nextCarrot.Item1
+                    tracker: () => snapshot?.nextCarrot == null ? 0 : snapshot.nextCarrot.Item1
                 ),
 
                 ExportVariable<string> (
                     handle: "nextCarrotName",
                     displayName: "Next Carrot Level Name (Short)",
-                    tracker: () => snapshot == null ? "" : snapshot.nextCarrot.Item2
+                    tracker: () => snapshot?.nextCarrot == null ? "" : snapshot.nextCarrot.Item2
                 ),
 
                 ExportVariable<string> (
                     handle: "nextCarrotNameLong",
                     displayName: "Next Carrot Level Name (Long)",
-                    tracker: () => snapshot == null ? "" : snapshot.nextCarrot.Item3
+                    tracker: () => snapshot?.nextCarrot == null ? "" : snapshot.nextCarrot.Item3
                 ),
 
                 ExportVariable<float> (
