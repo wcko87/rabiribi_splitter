@@ -33,6 +33,7 @@ namespace rabi_splitter_WPF
         {
             this.debugContext = debugContext;
             this.variableExportContext = variableExportContext;
+            variableExportContext.SetItemControls(VariableListBox.Items, VariableExportListBox.Items);
         }
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
@@ -40,20 +41,12 @@ namespace rabi_splitter_WPF
             var ves = new VariableExportSetting();
             ves.OutputFileName = "Hello.txt";
             variableExportContext.Add(ves);
-            VariableExportListBox.Items.Refresh();
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             var variableExportSetting = (sender as Button).DataContext as VariableExportSetting;
             variableExportContext.Delete(variableExportSetting);
-            VariableExportListBox.Items.Refresh();
-        }
-
-        private void DefaultButton_Click(object sender, RoutedEventArgs e)
-        {
-            var variableExportSetting = (sender as Button).DataContext as VariableExportSetting;
-            variableExportSetting.DefaultButton_Click();
         }
     }
 }

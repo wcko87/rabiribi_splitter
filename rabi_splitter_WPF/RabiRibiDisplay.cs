@@ -61,14 +61,18 @@ namespace rabi_splitter_WPF
 
         private void UpdateVariableExport()
         {
-            variableExportContext.CheckForUpdates();
             long currentFrameMillisecond = (long)(DateTime.Now - UNIX_START).TotalMilliseconds;
             var diff = currentFrameMillisecond - lastUpdateMillisecond;
             if (diff >= 1000)
             {
                 if (diff >= 2000) lastUpdateMillisecond = currentFrameMillisecond;
                 else lastUpdateMillisecond += 1000;
-                variableExportContext.OutputUpdates();
+                variableExportContext.UpdateVariables(true);
+            }
+            else
+            {
+                // Don't update files.
+                variableExportContext.UpdateVariables(false);
             }
         }
         

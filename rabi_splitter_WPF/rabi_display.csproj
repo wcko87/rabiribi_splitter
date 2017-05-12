@@ -66,6 +66,7 @@
     <Compile Include="RabiRibiDisplay.cs" />
     <Compile Include="RabiRibiState.cs" />
     <Compile Include="StaticData.cs" />
+    <Compile Include="StringInjectExtension.cs" />
     <Compile Include="VariableExportConfig.cs" />
     <Compile Include="VariableExportContext.cs" />
     <Compile Include="VariableExportSetting.cs" />

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using StringInject;
 
 namespace rabi_splitter_WPF
 {
@@ -11,29 +12,28 @@ namespace rabi_splitter_WPF
     {
         private readonly Func<T> tracker;
         
-        public ExportableVariable(string displayName, Func<T> tracker) : base(displayName)
+        public ExportableVariable(string handle, string displayName, Func<T> tracker) : base(handle, displayName)
         {
             this.tracker = tracker;
         }
 
-        internal override VariableTracker GetTracker()
+        public override void UpdateValue()
         {
-            return new VariableTracker<T>(tracker);
+            Value = tracker();
         }
     }
     
-    public abstract class ExportableVariable
+    public abstract class ExportableVariable : INotifyPropertyChanged
     {
-        private static int nextAvailableId = 0;
-        private static List<ExportableVariable> _variableExports;
-        private static Dictionary<ExportableVariable, string> _variableCaptions = new Dictionary<ExportableVariable, string>();
-        
         private readonly int _id;
         private readonly string _displayName;
+        private readonly string _handle;
 
-        protected ExportableVariable(string displayName)
+        private object _value;
+
+        protected ExportableVariable(string handle, string displayName)
         {
-            _id = nextAvailableId++;
+            _handle = handle;
             _displayName = displayName;
         }
 
@@ -47,81 +47,36 @@ namespace rabi_splitter_WPF
             get { return _displayName; }
         }
 
-        internal abstract VariableTracker GetTracker();
-        
-        public static void DefineVariableExports(ExportableVariable[] exports)
+        public string Handle
         {
-            _variableExports = exports.ToList();
-            _variableCaptions = exports.ToDictionary(ev => ev, ev => ev.DisplayName);
+            get { return _handle; }
         }
 
-        public static Dictionary<ExportableVariable, string> VariableCaptions
+        public object Value
         {
-            get { return _variableCaptions; }
-        }
-
-        #region Equals, GetHashCode
-        public override bool Equals(object obj)
-        {
-            var otherValue = obj as ExportableVariable;
-            if (otherValue == null) return false;
-            return _id.Equals(otherValue.Id);
-        }
-
-        public override int GetHashCode()
-        {
-            return _id.GetHashCode();
-        }
-        #endregion
-    }
-
-    public class VariableTracker<T> : VariableTracker
-    {
-        private readonly Func<T> tracker;
-        private T currentValue;
-
-        public VariableTracker(Func<T> tracker)
-        {
-            this.tracker = tracker;
-            forceUpdate = true;
-        }
-
-        public override bool CheckForUpdate()
-        {
-            T newValue = tracker();
-
-            if (forceUpdate || !newValue.Equals(currentValue))
+            get { return _value; }
+            protected set
             {
-                currentValue = newValue;
-                forceUpdate = false;
-                return true;
+                if (value.Equals(_value)) return;
+                _value = value;
+                OnPropertyChanged(nameof(Value));
             }
-            return false;
         }
+        
+        public abstract void UpdateValue();
 
-        public override object GetValue()
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged(string propertyName)
         {
-            return currentValue;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-    }
-
-    public abstract class VariableTracker
-    {
-        protected bool forceUpdate;
-
-        public void FormatChanged()
-        {
-            forceUpdate = true;
-        }
-
-        public abstract bool CheckForUpdate();
-        public abstract object GetValue();
     }
 
     public class VariableExportSetting : INotifyPropertyChanged
     {
-        private ExportableVariable _selectedVariable;
-        private VariableTracker _variableTracker;
+
         private string _outputFileName;
         private string _outputFormat;
         private string _formatPreview;
@@ -131,7 +86,6 @@ namespace rabi_splitter_WPF
         public VariableExportSetting()
         {
             // Default values
-            _selectedVariable = null;
             _outputFileName = "";
             _outputFormat = "";
             _isExporting = false;
@@ -139,11 +93,11 @@ namespace rabi_splitter_WPF
         }
 
         #region Logic
-        private string FormatOutput()
+        private string FormatOutput(Dictionary<string, object> variableValues)
         {
             try
             {
-                return string.Format(_outputFormat, _variableTracker.GetValue());
+                return _outputFormat.Inject(variableValues);
             }
             catch (FormatException e)
             {
@@ -151,59 +105,20 @@ namespace rabi_splitter_WPF
             }
         }
 
-        internal void OutputUpdate()
+        internal void OutputUpdate(Dictionary<string, object> variableValues, bool updateFile)
         {
-            if (_variableTracker == null) return;
-            var formattedOutput = FormatOutput();
+            var formattedOutput = FormatOutput(variableValues);
+            if (formattedOutput == FormatPreview) return;
             FormatPreview = formattedOutput;
-            // TODO: Write to file
-        }
-
-        internal bool CheckForUpdate()
-        {
-            if (_variableTracker == null) return false;
-            return _variableTracker.CheckForUpdate();
-        }
-
-        public void NotifyExportableVariableUpdate()
-        {
-            OnPropertyChanged(nameof(VariableCaptions));
-        }
-        #endregion
-
-        #region Dictionaries
-        public Dictionary<ExportableVariable, string> VariableCaptions
-        {
-            get { return ExportableVariable.VariableCaptions; }
-        }
-        
-        internal void DefaultButton_Click()
-        {
-            if (_selectedVariable == null)
+            if (updateFile)
             {
-                OutputFormat = "Variable not set.";
-            }
-            else
-            {
-                OutputFormat = $"{_selectedVariable.DisplayName}: {{0}}";
+                // TODO: Write to file
+
             }
         }
-
         #endregion
         
         #region Parameters
-
-        public ExportableVariable SelectedVariable
-        {
-            get { return _selectedVariable; }
-            set
-            {
-                if (value.Equals(_selectedVariable)) return;
-                _selectedVariable = value;
-                _variableTracker = _selectedVariable.GetTracker();
-                OnPropertyChanged(nameof(SelectedVariable));
-            }
-        }
 
         public string OutputFileName
         {
@@ -223,7 +138,6 @@ namespace rabi_splitter_WPF
             {
                 if (value.Equals(_outputFormat)) return;
                 _outputFormat = value;
-                if (_variableTracker != null) _variableTracker.FormatChanged();
                 OnPropertyChanged(nameof(OutputFormat));
             }
         }
@@ -261,9 +175,7 @@ namespace rabi_splitter_WPF
             }
         }
         #endregion
-
-        // Note: DO NOT OVERRIDE Equals and GetHashCode. We compare by reference equality.
-
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

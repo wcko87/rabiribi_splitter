@@ -5,48 +5,70 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:rabi_splitter_WPF"
              mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="540">
+             d:DesignHeight="500" d:DesignWidth="780">
     <UserControl.Resources>
         <local:InvertableBooleanToVisibilityConverter x:Key="InvertableBooleanToVisibilityConverter"/>
     </UserControl.Resources>
-    <DockPanel>
-        <StackPanel>
-            <Button Content="Add" Width="40" Height="40" DockPanel.Dock="Right" Click="AddButton_Click"/>
-        </StackPanel>
-        <ListBox Name="VariableExportListBox" Width="500" ItemsSource="{Binding VariableExportSettings}">
+    <DockPanel Height="500" Width="780">
+        <DockPanel DockPanel.Dock="Left" Width="260">
+            <Button Content="Add Text File Export" Width="160" Height="30" Margin="5,5,5,5" DockPanel.Dock="Top" Click="AddButton_Click"/>
+            <TextBlock Margin="5,5,0,0" DockPanel.Dock="Top" Text="Variable Handle List"/>
+            <ListBox Name="VariableListBox" ItemsSource="{Binding Variables}" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="2,2,2,2">
+                            <TextBlock FontFamily="Consolas" Margin="2,0,0,0" Text="{Binding Path=Handle}"/>
+                            <Grid Margin="15,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="3*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="1*" />
+                                    <RowDefinition Height="1*" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Column="0" Grid.Row="0" Text="Description:"/>
+                                <TextBlock Grid.Column="0" Grid.Row="1" Text="Value:"/>
+                                <TextBlock Margin="2,0,0,0" Grid.Column="1" Grid.Row="0" Text="{Binding Path=DisplayName}"/>
+                                <TextBlock Margin="2,0,0,0" Grid.Column="1" Grid.Row="1" Text="{Binding Path=Value}"/>
+                            </Grid>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+        <ListBox Name="VariableExportListBox" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Width="520" ItemsSource="{Binding VariableExportSettings}" ScrollViewer.VerticalScrollBarVisibility="Visible">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid Name="MainPanel" Height="80" Width="480" DockPanel.Dock="Top" Margin="5,0,5,0">
+                    <Grid Name="MainPanel" Height="80" DockPanel.Dock="Top" Margin="5,0,5,0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="4*" />
-                            <ColumnDefinition Width="6*" />
-                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="5*" />
+                            <ColumnDefinition Width="5*" />
+                            <ColumnDefinition Width="3*" />
                         </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0">
-                            <TextBlock Text="Variable"/>
-                            <ComboBox ItemsSource="{Binding Path=VariableCaptions}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Path=SelectedVariable, Mode=TwoWay}"/>
-                            <TextBlock Text="Output File"  Margin="0,2,0,0"/>
-                            <TextBox Text="{Binding Path=OutputFileName, Mode=TwoWay}"/>
-                        </StackPanel>
-                        <DockPanel Grid.Column="1" Margin="15,0,15,0">
-                            <DockPanel>
-                                <Grid DockPanel.Dock="Top">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="6*" />
-                                        <ColumnDefinition Width="5*" />
-                                        <ColumnDefinition Width="3*" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" HorizontalAlignment="Left" Text="Format"/>
-                                    <ToggleButton Grid.Column="1" Margin="0,0,5,0" Content="Preview" IsChecked="{Binding Path=IsPreviewingFormat}"/>
-                                    <Button Grid.Column="2" Content="Default" Click="DefaultButton_Click"/>
-                                </Grid>
-                                <TextBox Height="50"  DockPanel.Dock="Top" Margin="0,5,0,5" Text="{Binding Path=OutputFormat, Mode=TwoWay}" AcceptsReturn="True" Visibility="{Binding Path=IsPreviewingFormat, Converter={StaticResource InvertableBooleanToVisibilityConverter}, ConverterParameter=VisibleWhenFalse, FallbackValue=Visible}"/>
-                                <TextBlock Height="50" DockPanel.Dock="Top" Margin="0,5,0,5" Text="{Binding Path=FormatPreview}" Visibility="{Binding Path=IsPreviewingFormat, Converter={StaticResource InvertableBooleanToVisibilityConverter}, ConverterParameter=VisibleWhenTrue, FallbackValue=Collapsed}"/>
-                            </DockPanel>
+                        <DockPanel Grid.Column="0" Margin="0,5,0,5" >
+                            <TextBlock DockPanel.Dock="Top" HorizontalAlignment="Left" Text="Format"/>
+                            <TextBox Height="50" DockPanel.Dock="Top" Text="{Binding Path=OutputFormat, Mode=TwoWay}" AcceptsReturn="True"/>
                         </DockPanel>
-                        <DockPanel Grid.Column="2">
-                            <Button Content="X" DockPanel.Dock="Top" Width="20" HorizontalAlignment="Right" Click="CloseButton_Click"/>
-                            <ToggleButton Margin="5,5,5,5" Content="Export" DockPanel.Dock="Bottom" IsChecked="{Binding Path=IsExporting, Mode=TwoWay}"/>
+                        <DockPanel Grid.Column="1" Margin="0,5,0,5" >
+                            <TextBlock DockPanel.Dock="Top" HorizontalAlignment="Left" Text="Preview"/>
+                            <TextBlock Height="50" DockPanel.Dock="Top" Text="{Binding Path=FormatPreview}"/>
+                        </DockPanel>
+                        <DockPanel Grid.Column="2" Margin="2,0,2,0">
+                            <ToggleButton Margin="3,5,3,5" Content="Export" DockPanel.Dock="Bottom" IsChecked="{Binding Path=IsExporting, Mode=TwoWay}"/>
+                            <TextBox DockPanel.Dock="Bottom" Text="{Binding Path=OutputFileName, Mode=TwoWay}"/>
+                            <TextBlock DockPanel.Dock="Left" Text="Output File" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
+                            <Button Content="X" Width="20" Height="20"  HorizontalAlignment="Right" Click="CloseButton_Click"/>
                         </DockPanel>
                     </Grid>
                 </DataTemplate>

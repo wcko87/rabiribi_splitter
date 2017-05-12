@@ -5,55 +5,65 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace rabi_splitter_WPF
 {
     public class VariableExportContext : INotifyPropertyChanged
     {
         private List<VariableExportSetting> _variableExportSettings;
-        private HashSet<VariableExportSetting> pendingUpdates;
+        private List<ExportableVariable> _variables;
+        private Dictionary<string, object> variableValues;
+
+        private ItemCollection variableListBoxItems;
+        private ItemCollection variableExportListBoxItems;
 
         public VariableExportContext()
         {
             _variableExportSettings = new List<VariableExportSetting>();
-            pendingUpdates = new HashSet<VariableExportSetting>();
+            _variables = new List<ExportableVariable>();
+            variableValues = new Dictionary<string, object>();
         }
 
         #region Update Logic
 
-        public void OutputUpdates()
+        public void UpdateVariables(bool updateFile)
         {
-            foreach (var ves in pendingUpdates)
-            {
-                ves.OutputUpdate();
+            foreach (var variable in _variables) {
+                variable.UpdateValue();
+                variableValues[variable.Handle] = variable.Value;
             }
-            pendingUpdates.Clear();
-        }
 
-        private void RegisterUpdate(VariableExportSetting ves)
-        {
-            pendingUpdates.Add(ves);
-        }
-
-        public void CheckForUpdates()
-        {
             foreach (var ves in _variableExportSettings)
             {
-                bool hasUpdate = ves.CheckForUpdate();
-                if (hasUpdate) RegisterUpdate(ves);
+                ves.OutputUpdate(variableValues, updateFile);
             }
         }
 
-        public void NotifyExportableVariableUpdate()
+        internal void SetItemControls(ItemCollection variableListBoxItems, ItemCollection variableExportListBoxItems)
         {
-            foreach (var ves in _variableExportSettings)
-            {
-                ves.NotifyExportableVariableUpdate();
-            }
+            this.variableListBoxItems = variableListBoxItems;
+            this.variableExportListBoxItems = variableExportListBoxItems;
+        }
+
+        public void DefineVariableExports(ExportableVariable[] exports)
+        {
+            Variables = exports.ToList();
+            variableValues.Clear();
         }
         #endregion
 
-        #region Variables
+        #region Properties
+        public List<ExportableVariable> Variables
+        {
+            get { return _variables; }
+            private set
+            {
+                _variables = value;
+                variableListBoxItems.Refresh();
+            }
+        }
+
         public List<VariableExportSetting> VariableExportSettings
         {
             get { return _variableExportSettings; }
@@ -62,12 +72,13 @@ namespace rabi_splitter_WPF
         internal void Add(VariableExportSetting ves)
         {
             _variableExportSettings.Add(ves);
+            variableExportListBoxItems.Refresh();
         }
 
         internal void Delete(VariableExportSetting ves)
         {
             _variableExportSettings.Remove(ves);
-            pendingUpdates.Remove(ves);
+            variableExportListBoxItems.Refresh();
         }
         #endregion
 
