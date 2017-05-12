@@ -95,13 +95,13 @@ namespace rabi_splitter_WPF
                 ),
 
                 ExportVariable<int> (
-                    handle: "nDeaths",
+                    handle: "deaths",
                     displayName: "Deaths",
                     tracker: () => inGameState.nDeaths
                 ),
 
                 ExportVariable<int> (
-                    handle: "nRestarts",
+                    handle: "restarts",
                     displayName: "Restarts",
                     tracker: () => inGameState.nRestarts
                 ),
