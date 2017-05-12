@@ -11,7 +11,7 @@
     </UserControl.Resources>
     <DockPanel Height="500" Width="780">
         <DockPanel DockPanel.Dock="Left" Width="260">
-            <Button Content="Add Text File Export" Width="160" Height="30" Margin="5,5,5,5" DockPanel.Dock="Top" Click="AddButton_Click"/>
+            <Button Content="New Text File Export" Width="160" Height="30" Margin="5,5,5,5" DockPanel.Dock="Top" Click="AddButton_Click"/>
             <TextBlock Margin="5,5,0,0" DockPanel.Dock="Top" Text="Variable Handle List"/>
             <ListBox Name="VariableListBox" ItemsSource="{Binding Variables}" ScrollViewer.VerticalScrollBarVisibility="Visible">
                 <ListBox.ItemContainerStyle>
