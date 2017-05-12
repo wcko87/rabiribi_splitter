@@ -194,6 +194,37 @@ namespace rabi_splitter_WPF
                     tracker: () => snapshot == null ? 0 : snapshot.stamina
                 ),
 
+                ExportVariable<int> (
+                    handle: "healthups",
+                    displayName: "No. of Health Ups",
+                    tracker: () => snapshot == null ? 0 : snapshot.nHpUps
+                ),
+
+                ExportVariable<int> (
+                    handle: "manaups",
+                    displayName: "No. of Mana Ups",
+                    tracker: () => snapshot == null ? 0 : snapshot.nManaUps
+                ),
+
+                ExportVariable<int> (
+                    handle: "regenups",
+                    displayName: "No. of Regen Ups",
+                    tracker: () => snapshot == null ? 0 : snapshot.nRegenUps
+                ),
+                
+                ExportVariable<int> (
+                    handle: "packups",
+                    displayName: "No. of Pack Ups",
+                    tracker: () => snapshot == null ? 0 : snapshot.nPackUps
+                ),
+
+                ExportVariable<int> (
+                    handle: "attackups",
+                    displayName: "No. of Attack Ups",
+                    tracker: () => snapshot == null ? 0 : snapshot.nAttackUps
+                ),
+
+
                 ExportVariable<float> (
                     handle: "x",
                     displayName: "x",
