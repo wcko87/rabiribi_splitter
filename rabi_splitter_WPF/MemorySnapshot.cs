@@ -27,6 +27,10 @@ namespace rabi_splitter_WPF
             return new MapTileCoordinate(x, y);
         }
 
+        public override string ToString() {
+            return $"({x}, {y})";
+        }
+
         #region Equals, Hashcode
         // override object.Equals
         public override bool Equals(object obj)
@@ -86,6 +90,10 @@ namespace rabi_splitter_WPF
         public readonly int ribbonXp;
         public readonly float itemPercent;
 
+        public readonly Tuple<int, string, string> nextHammer;
+        public readonly Tuple<int, string, string> nextRibbon;
+        public readonly Tuple<int, string, string> nextCarrot;
+
         public readonly int nAttackUps;
         public readonly int nHpUps;
         public readonly int nManaUps;
@@ -108,6 +116,9 @@ namespace rabi_splitter_WPF
             hammerXp = memoryHelper.GetMemoryValue<int>(0xD654B4);
             ribbonXp = memoryHelper.GetMemoryValue<int>(0xD654B8);
             itemPercent = memoryHelper.GetMemoryValue<float>(0xA730E8);
+            nextHammer = StaticData.GetNextHammerLevel(hammerXp);
+            nextRibbon = StaticData.GetNextRibbonLevel(ribbonXp);
+            nextCarrot = StaticData.GetNextCarrotLevel(carrotXp);
 
             minimapPosition = memoryHelper.GetMemoryValue<int>(0xA72E08);
 

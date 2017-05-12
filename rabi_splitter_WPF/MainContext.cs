@@ -6,9 +6,38 @@ using System.Linq;
 using System.Text;
 using System.Windows.Data;
 using rabi_splitter_WPF.Annotations;
+using System.Windows;
 
 namespace rabi_splitter_WPF
 {
+    [ValueConversion(typeof(bool), typeof(Visibility))]
+    public class InvertableBooleanToVisibilityConverter : IValueConverter
+    {
+        #region IValueConverter Members
+        // Code taken from http://stackoverflow.com/a/2427307
+        enum Parameter
+        {
+            VisibleWhenTrue, VisibleWhenFalse
+        }
+
+        public object Convert(object value, Type targetType, object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            var boolValue = (bool)value;
+            var direction = (Parameter)Enum.Parse(typeof(Parameter), (string)parameter);
+
+            if (direction == Parameter.VisibleWhenTrue) return boolValue ? Visibility.Visible : Visibility.Collapsed;
+            else return boolValue ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            return null;
+        }
+        #endregion
+    }
+
     [ValueConversion(typeof(bool), typeof(bool))]
     public class InverseBooleanConverter : IValueConverter
     {
@@ -128,7 +157,7 @@ namespace rabi_splitter_WPF
         }
     }
 
-    class DebugContext : INotifyPropertyChanged
+    public class DebugContext : INotifyPropertyChanged
     {
         private int _entityAnalysisIndex;
         private bool _bossEvent;
