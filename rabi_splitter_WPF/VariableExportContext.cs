@@ -55,11 +55,11 @@ namespace rabi_splitter_WPF
                 },
                 new VariableExportSetting() {
                     OutputFileName = "ribbon.txt",
-                    OutputFormat = "Hammer: {ribbonXp}/{nextRibbonExp}\nNext: {nextRibbonNameLong}"
+                    OutputFormat = "Ribbon: {ribbonXp}/{nextRibbonExp}\nNext: {nextRibbonNameLong}"
                 },
                 new VariableExportSetting() {
                     OutputFileName = "carrot.txt",
-                    OutputFormat = "Hammer: {carrotXp}/{nextCarrotExp}\nNext: {nextCarrotNameLong}"
+                    OutputFormat = "Carrot: {carrotXp}/{nextCarrotExp}\nNext: {nextCarrotNameLong}"
                 },
             };
         }
