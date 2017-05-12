@@ -36,7 +36,8 @@ namespace rabi_splitter_WPF
 
             foreach (var ves in _variableExportSettings)
             {
-                ves.OutputUpdate(variableValues, updateFile);
+                ves.UpdateText(variableValues);
+                if (updateFile) ves.MaybeUpdateFile();
             }
         }
 

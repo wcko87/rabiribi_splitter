@@ -82,6 +82,7 @@ namespace rabi_splitter_WPF
         private string _formatPreview;
         private bool _isExporting;
         private bool _isPreviewingFormat;
+        private bool _hasChangedSinceLastFileOutput;
         
         public VariableExportSetting()
         {
@@ -90,6 +91,7 @@ namespace rabi_splitter_WPF
             _outputFormat = "";
             _isExporting = false;
             _isPreviewingFormat = false;
+            _hasChangedSinceLastFileOutput = true;
         }
 
         #region Logic
@@ -105,17 +107,27 @@ namespace rabi_splitter_WPF
             }
         }
 
-        internal void OutputUpdate(Dictionary<string, object> variableValues, bool updateFile)
+        internal void UpdateText(Dictionary<string, object> variableValues)
         {
             var formattedOutput = FormatOutput(variableValues);
-            if (formattedOutput == FormatPreview) return;
-            FormatPreview = formattedOutput;
-            if (updateFile)
+            if (formattedOutput != FormatPreview)
             {
-                // TODO: Write to file
-
+                FormatPreview = formattedOutput;
+                _hasChangedSinceLastFileOutput = true;
             }
         }
+
+        internal void MaybeUpdateFile()
+        {
+            if (!_hasChangedSinceLastFileOutput || !IsExporting) return;
+
+            System.IO.StreamWriter file = new System.IO.StreamWriter(OutputFileName);
+            file.WriteLine(FormatPreview);
+            file.Close();
+
+            _hasChangedSinceLastFileOutput = false;
+        }
+
         #endregion
         
         #region Parameters
@@ -128,6 +140,7 @@ namespace rabi_splitter_WPF
                 if (value.Equals(_outputFileName)) return;
                 _outputFileName = value;
                 OnPropertyChanged(nameof(OutputFileName));
+                _hasChangedSinceLastFileOutput = true;
             }
         }
 
