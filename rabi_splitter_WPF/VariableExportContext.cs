@@ -20,9 +20,48 @@ namespace rabi_splitter_WPF
 
         public VariableExportContext()
         {
-            _variableExportSettings = new List<VariableExportSetting>();
+            _variableExportSettings = DefaultVariableExportSettings();
             _variables = new List<ExportableVariable>();
             variableValues = new Dictionary<string, object>();
+        }
+
+        private List<VariableExportSetting> DefaultVariableExportSettings()
+        {
+            return new List<VariableExportSetting>
+            {
+                new VariableExportSetting() {
+                    OutputFileName = "deaths_restarts.txt",
+                    OutputFormat = "Deaths: {deaths}\nRestarts: {restarts}"
+                },
+                new VariableExportSetting() {
+                    OutputFileName = "map.txt",
+                    OutputFormat = "Map: {map}\nTile: {mapTile}"
+                },
+                new VariableExportSetting() {
+                    OutputFileName = "music.txt",
+                    OutputFormat = "Music: {music}"
+                },
+                new VariableExportSetting() {
+                    OutputFileName = "currentboss.txt",
+                    OutputFormat = "Current Boss: {currentBoss}\nTime: {currentBossTime:mm\\:ss\\.ff}"
+                },
+                new VariableExportSetting() {
+                    OutputFileName = "lastboss.txt",
+                    OutputFormat = "Last Boss: {lastBoss}\nTime: {lastBossTime:mm\\:ss\\.ff}"
+                },
+                new VariableExportSetting() {
+                    OutputFileName = "hammer.txt",
+                    OutputFormat = "Hammer: {hammerXp}/{nextHammerExp}\nNext: {nextHammerNameLong}"
+                },
+                new VariableExportSetting() {
+                    OutputFileName = "ribbon.txt",
+                    OutputFormat = "Hammer: {ribbonXp}/{nextRibbonExp}\nNext: {nextRibbonNameLong}"
+                },
+                new VariableExportSetting() {
+                    OutputFileName = "carrot.txt",
+                    OutputFormat = "Hammer: {carrotXp}/{nextCarrotExp}\nNext: {nextCarrotNameLong}"
+                },
+            };
         }
 
         #region Update Logic
