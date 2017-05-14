@@ -36,9 +36,11 @@ namespace rabi_splitter_WPF
                     break;
                 case TypeCode.Int32:
 
+                case TypeCode.Single:
                 case TypeCode.UInt32:
                     datasize = 4;
                     break;
+                case TypeCode.Double:
                 case TypeCode.Int64:
                 case TypeCode.UInt64:
                     datasize = 8;
@@ -73,9 +75,9 @@ namespace rabi_splitter_WPF
                 case TypeCode.Char:
                     return (T)Convert.ChangeType((char)buffer[0], typeof(T));
 
-
+                case TypeCode.Single:
+                    return (T)Convert.ChangeType(BitConverter.ToSingle(buffer, 0), typeof(T));
                 case TypeCode.Int16:
-               
                     return (T)Convert.ChangeType(BitConverter.ToInt16(buffer,0), typeof(T));
                    
                 case TypeCode.UInt16:
@@ -84,7 +86,10 @@ namespace rabi_splitter_WPF
                     return (T)Convert.ChangeType(BitConverter.ToInt32(buffer, 0), typeof(T));
                 case TypeCode.UInt32:
                     return (T)Convert.ChangeType(BitConverter.ToUInt32(buffer, 0), typeof(T));
-                   
+
+                case TypeCode.Double:
+                    return (T)Convert.ChangeType(BitConverter.ToDouble(buffer, 0), typeof(T));
+
                 case TypeCode.Int64:
                     return (T)Convert.ChangeType(BitConverter.ToInt64(buffer, 0), typeof(T));
                 case TypeCode.UInt64:
