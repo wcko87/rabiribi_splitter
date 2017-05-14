@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{7BEE24D8-8C97-41A3-9F90-6C60D450C3C3}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>rabi_splitter_WPF</RootNamespace>
+    <RootNamespace>rabi_splitter_WNF</RootNamespace>
     <AssemblyName>rabi_splitter</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -33,7 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>irisu.ico</ApplicationIcon>
+    <ApplicationIcon>miru.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -97,7 +97,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="irisu.ico" />
+    <Resource Include="miru.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

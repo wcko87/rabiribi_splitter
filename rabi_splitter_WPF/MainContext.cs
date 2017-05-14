@@ -165,84 +165,42 @@ namespace rabi_splitter_WPF
         public bool _autoReset;
         public bool _advancedSettings;
         private bool _practiceMode;
-        #endregion
-
-        #region _advanced
         private bool _debugMode;
         private bool _dontSplitOnReload;
-        private bool _splitOnSideCh;
-        private bool _splitOnCyberFlower;
-        private bool _splitOnShRita;
-        private bool _splitOnShPandora;
         #endregion
 
-        #region _prologue
-        private bool _splitOnCocoa1;
-        private bool _splitOnRibbon;
-        private bool _splitOnAshuri1;
-        #endregion
-
-        #region _miscellaneous
-        private bool _splitOnBigBox;
-        private bool _splitOnHoloMaid;
-        private bool _splitOnComputer;
-        private bool _splitOnHoM;
-        private bool _splitOnFC2;
-        private bool _splitOnLibrary;
-        #endregion
-
-        #region _bosses
-        //Bosses 1
-        private bool _splitOnRumi;
-        private bool _splitOnRita;
-        private bool _splitOnNieve;
-        private bool _splitOnNixie;
-        private bool _splitOnAruraune;
-        private bool _splitOnPandora;
-        private bool _splitOnIrisu;
+        #region _splits
+        private bool _splitOnCarrotBomb;
+        private bool _splitOnRiverbank;
+        private bool _splitOnEvernight;
         private bool _splitOnSaya;
-        private bool _splitOnCicini;
-        private bool _splitOnSyaro;
+        private bool _splitOnAquarium;
 
-        //Bosses 2
-        private bool _splitOnCocoa2;
-        private bool _splitOnAshuri2;
-        private bool _splitOnLilith1;
-        private bool _splitOnLilith2;
-        private bool _splitOnVanilla;
-        private bool _splitOnChocolate;
         private bool _splitOnKotri1;
-        private bool _splitOnKotri2;
-        private bool _splitOnKotri3;
-        private bool _splitOnKeke;
-
-        //Bosses 3
-        private bool _splitOnSeana1;
-        private bool _splitOnSeana2;
-        private bool _splitOnMiriam;
-        private bool _splitOnMiru;
-        private bool _splitOnNoah1;
-        private bool _splitOnNoah2;
-        private bool _splitOnNoah3;
-        private bool _splitOnAlius1;
-        private bool _splitOnAlius2;
+        private bool _splitOnRita;
+        private bool _splitOnVanilla;
+        private bool _splitOnTown;
         private bool _splitOnAlius3;
+
+        private bool _splitOnHospital;
+        private bool _splitOnMiru;
+        private bool _splitOnBalcony;
+        private bool _splitOnNoah1;
+        private bool _splitOnNoah3;
         #endregion
 
         #region _unsorted
         private bool _musicStart;
         private bool _musicEnd;
-        private bool _miruDe; 
-        private bool _alius1;
+        private bool _miruDe;
         private bool _tm2;
-        private bool _irisu1;
+        private bool _alius1;
         #endregion
 
         private int _serverPort;
         private string _gameVer;
         private string _gameMusic;
         private bool _igt;
-
 
         public string BOSSTimer
         {
@@ -324,9 +282,6 @@ namespace rabi_splitter_WPF
                 OnPropertyChanged(nameof(PracticeMode));
             }
         }
-        #endregion
-
-        #region Advanced
         public bool DebugMode
         {
             get { return _debugMode; }
@@ -347,214 +302,37 @@ namespace rabi_splitter_WPF
                 OnPropertyChanged(nameof(DontSplitOnReload));
             }
         }
-        public bool SplitOnSideCh
-        {
-            get { return _splitOnSideCh; }
-            set
-            {
-                if (value == _splitOnSideCh) return;
-                _splitOnSideCh = value;
-                OnPropertyChanged(nameof(SplitOnSideCh));
-            }
-        }
-        public bool SplitOnCyberFlower
-        {
-            get { return _splitOnCyberFlower; }
-            set
-            {
-                if (value == _splitOnCyberFlower) return;
-                _splitOnCyberFlower = value;
-                OnPropertyChanged(nameof(SplitOnCyberFlower));
-            }
-        }
-        public bool SplitOnShRita
-        {
-            get { return _splitOnShRita; }
-            set
-            {
-                if (value == _splitOnShRita) return;
-                _splitOnShRita = value;
-                OnPropertyChanged(nameof(SplitOnShRita));
-            }
-        }
-        public bool SplitOnShPandora
-        {
-            get { return _splitOnShPandora; }
-            set
-            {
-                if (value == _splitOnShPandora) return;
-                _splitOnShPandora = value;
-                OnPropertyChanged(nameof(SplitOnShPandora));
-            }
-        }
         #endregion
 
-        #region Prologue
-        public bool SplitOnCocoa1
+        #region Splits
+        public bool SplitOnCarrotBomb
         {
-            get { return _splitOnCocoa1; }
+            get { return _splitOnCarrotBomb; }
             set
             {
-                if (value == _splitOnCocoa1) return;
-                _splitOnCocoa1 = value;
-                OnPropertyChanged(nameof(SplitOnCocoa1));
+                if (value == _splitOnCarrotBomb) return;
+                _splitOnCarrotBomb = value;
+                OnPropertyChanged(nameof(SplitOnCarrotBomb));
             }
         }
-        public bool SplitOnRibbon
+        public bool SplitOnRiverbank
         {
-            get { return _splitOnRibbon; }
+            get { return _splitOnRiverbank; }
             set
             {
-                if (value == _splitOnRibbon) return;
-                _splitOnRibbon = value;
-                OnPropertyChanged(nameof(SplitOnRibbon));
+                if (value == _splitOnRiverbank) return;
+                _splitOnRiverbank = value;
+                OnPropertyChanged(nameof(SplitOnRiverbank));
             }
         }
-        public bool SplitOnAshuri1
+        public bool SplitOnEvernight
         {
-            get { return _splitOnAshuri1; }
+            get { return _splitOnEvernight; }
             set
             {
-                if (value == _splitOnAshuri1) return;
-                _splitOnAshuri1 = value;
-                OnPropertyChanged(nameof(SplitOnAshuri1));
-            }
-        }
-        #endregion
-
-        #region Miscellaneous
-        public bool SplitOnBigBox
-        {
-            get { return _splitOnBigBox; }
-            set
-            {
-                if (value == _splitOnBigBox) return;
-                _splitOnBigBox = value;
-                OnPropertyChanged(nameof(SplitOnBigBox));
-            }
-        }
-        public bool SplitOnHoloMaid
-        {
-            get { return _splitOnHoloMaid; }
-            set
-            {
-                if (value == _splitOnHoloMaid) return;
-                _splitOnHoloMaid = value;
-                OnPropertyChanged(nameof(SplitOnHoloMaid));
-            }
-        }
-        public bool SplitOnComputer
-        {
-            get { return _splitOnComputer; }
-            set
-            {
-                if (value == _splitOnComputer) return;
-                _splitOnComputer = value;
-                OnPropertyChanged(nameof(SplitOnComputer));
-            }
-        }
-        public bool SplitOnHoM
-        {
-            get { return _splitOnHoM; }
-            set
-            {
-                if (value == _splitOnHoM) return;
-                _splitOnHoM = value;
-                OnPropertyChanged(nameof(SplitOnHoM));
-            }
-        }
-        public bool SplitOnFC2
-        {
-            get { return _splitOnFC2; }
-            set
-            {
-                if (value == _splitOnFC2) return;
-                _splitOnFC2 = value;
-                OnPropertyChanged(nameof(SplitOnFC2));
-            }
-        }
-        public bool SplitOnLibrary
-        {
-            get { return _splitOnLibrary; }
-            set
-            {
-                if (value == _splitOnLibrary) return;
-                _splitOnLibrary = value;
-                OnPropertyChanged(nameof(SplitOnLibrary));
-            }
-        }
-        #endregion
-
-        #region Bosses
-        //Bosses 1
-        public bool SplitOnRumi
-        {
-            get { return _splitOnRumi; }
-            set
-            {
-                if (value == _splitOnRumi) return;
-                _splitOnRumi = value;
-                OnPropertyChanged(nameof(SplitOnRumi));
-            }
-        }
-        public bool SplitOnRita
-        {
-            get { return _splitOnRita; }
-            set
-            {
-                if (value == _splitOnRita) return;
-                _splitOnRita = value;
-                OnPropertyChanged(nameof(SplitOnRita));
-            }
-        }
-        public bool SplitOnNieve
-        {
-            get { return _splitOnNieve; }
-            set
-            {
-                if (value == _splitOnNieve) return;
-                _splitOnNieve = value;
-                OnPropertyChanged(nameof(SplitOnNieve));
-            }
-        }
-        public bool SplitOnNixie
-        {
-            get { return _splitOnNixie; }
-            set
-            {
-                if (value == _splitOnNixie) return;
-                _splitOnNixie = value;
-                OnPropertyChanged(nameof(SplitOnNixie));
-            }
-        }
-        public bool SplitOnAruraune
-        {
-            get { return _splitOnAruraune; }
-            set
-            {
-                if (value == _splitOnAruraune) return;
-                _splitOnAruraune = value;
-                OnPropertyChanged(nameof(SplitOnAruraune));
-            }
-        }
-        public bool SplitOnPandora
-        {
-            get { return _splitOnPandora; }
-            set
-            {
-                if (value == _splitOnPandora) return;
-                _splitOnPandora = value;
-                OnPropertyChanged(nameof(SplitOnPandora));
-            }
-        }
-        public bool SplitOnIrisu
-        {
-            get { return _splitOnIrisu; }
-            set
-            {
-                if (value == _splitOnIrisu) return;
-                _splitOnIrisu = value;
-                OnPropertyChanged(nameof(SplitOnIrisu));
+                if (value == _splitOnEvernight) return;
+                _splitOnEvernight = value;
+                OnPropertyChanged(nameof(SplitOnEvernight));
             }
         }
         public bool SplitOnSaya
@@ -567,85 +345,14 @@ namespace rabi_splitter_WPF
                 OnPropertyChanged(nameof(SplitOnSaya));
             }
         }
-        public bool SplitOnCicini
+        public bool SplitOnAquarium
         {
-            get { return _splitOnCicini; }
+            get { return _splitOnAquarium; }
             set
             {
-                if (value == _splitOnCicini) return;
-                _splitOnCicini = value;
-                OnPropertyChanged(nameof(SplitOnCicini));
-            }
-        }
-        public bool SplitOnSyaro
-        {
-            get { return _splitOnSyaro; }
-            set
-            {
-                if (value == _splitOnSyaro) return;
-                _splitOnSyaro = value;
-                OnPropertyChanged(nameof(SplitOnSyaro));
-            }
-        }
-        //Bosses 2
-        public bool SplitOnCocoa2
-        {
-            get { return _splitOnCocoa2; }
-            set
-            {
-                if (value == _splitOnCocoa2) return;
-                _splitOnCocoa2 = value;
-                OnPropertyChanged(nameof(SplitOnCocoa2));
-            }
-        }
-        public bool SplitOnAshuri2
-        {
-            get { return _splitOnAshuri2; }
-            set
-            {
-                if (value == _splitOnAshuri2) return;
-                _splitOnAshuri2 = value;
-                OnPropertyChanged(nameof(SplitOnAshuri2));
-            }
-        }
-        public bool SplitOnLilith1
-        {
-            get { return _splitOnLilith1; }
-            set
-            {
-                if (value == _splitOnLilith1) return;
-                _splitOnLilith1 = value;
-                OnPropertyChanged(nameof(SplitOnLilith1));
-            }
-        }
-        public bool SplitOnLilith2
-        {
-            get { return _splitOnLilith2; }
-            set
-            {
-                if (value == _splitOnLilith2) return;
-                _splitOnLilith2 = value;
-                OnPropertyChanged(nameof(SplitOnLilith2));
-            }
-        }
-        public bool SplitOnVanilla
-        {
-            get { return _splitOnVanilla; }
-            set
-            {
-                if (value == _splitOnVanilla) return;
-                _splitOnVanilla = value;
-                OnPropertyChanged(nameof(SplitOnVanilla));
-            }
-        }
-        public bool SplitOnChocolate
-        {
-            get { return _splitOnChocolate; }
-            set
-            {
-                if (value == _splitOnChocolate) return;
-                _splitOnChocolate = value;
-                OnPropertyChanged(nameof(SplitOnChocolate));
+                if (value == _splitOnAquarium) return;
+                _splitOnAquarium = value;
+                OnPropertyChanged(nameof(SplitOnAquarium));
             }
         }
         public bool SplitOnKotri1
@@ -658,125 +365,34 @@ namespace rabi_splitter_WPF
                 OnPropertyChanged(nameof(SplitOnKotri1));
             }
         }
-        public bool SplitOnKotri2
+        public bool SplitOnRita
         {
-            get { return _splitOnKotri2; }
+            get { return _splitOnRita; }
             set
             {
-                if (value == _splitOnKotri2) return;
-                _splitOnKotri2 = value;
-                OnPropertyChanged(nameof(SplitOnKotri2));
+                if (value == _splitOnRita) return;
+                _splitOnRita = value;
+                OnPropertyChanged(nameof(SplitOnRita));
             }
         }
-        public bool SplitOnKotri3
+        public bool SplitOnVanilla
         {
-            get { return _splitOnKotri3; }
+            get { return _splitOnVanilla; }
             set
             {
-                if (value == _splitOnKotri3) return;
-                _splitOnKotri3 = value;
-                OnPropertyChanged(nameof(SplitOnKotri3));
+                if (value == _splitOnVanilla) return;
+                _splitOnVanilla = value;
+                OnPropertyChanged(nameof(SplitOnVanilla));
             }
         }
-        public bool SplitOnKeke
+        public bool SplitOnTown
         {
-            get { return _splitOnKeke; }
+            get { return _splitOnTown; }
             set
             {
-                if (value == _splitOnKeke) return;
-                _splitOnKeke = value;
-                OnPropertyChanged(nameof(SplitOnKeke));
-            }
-        }
-        //Bosses 3
-        public bool SplitOnSeana1
-        {
-            get { return _splitOnSeana1; }
-            set
-            {
-                if (value == _splitOnSeana1) return;
-                _splitOnSeana1 = value;
-                OnPropertyChanged(nameof(SplitOnSeana1));
-            }
-        }
-        public bool SplitOnSeana2
-        {
-            get { return _splitOnSeana2; }
-            set
-            {
-                if (value == _splitOnSeana2) return;
-                _splitOnSeana2 = value;
-                OnPropertyChanged(nameof(SplitOnSeana2));
-            }
-        }
-        public bool SplitOnMiriam
-        {
-            get { return _splitOnMiriam; }
-            set
-            {
-                if (value == _splitOnMiriam) return;
-                _splitOnMiriam = value;
-                OnPropertyChanged(nameof(SplitOnMiriam));
-            }
-        }
-        public bool SplitOnMiru
-        {
-            get { return _splitOnMiru; }
-            set
-            {
-                if (value == _splitOnMiru) return;
-                _splitOnMiru = value;
-                OnPropertyChanged(nameof(SplitOnMiru));
-            }
-        }
-        public bool SplitOnNoah1
-        {
-            get { return _splitOnNoah1; }
-            set
-            {
-                if (value == _splitOnNoah1) return;
-                _splitOnNoah1 = value;
-                OnPropertyChanged(nameof(SplitOnNoah1));
-            }
-        }
-        public bool SplitOnNoah2
-        {
-            get { return _splitOnNoah2; }
-            set
-            {
-                if (value == _splitOnNoah2) return;
-                _splitOnNoah2 = value;
-                OnPropertyChanged(nameof(SplitOnNoah2));
-            }
-        }
-        public bool SplitOnNoah3
-        {
-            get { return _splitOnNoah3; }
-            set
-            {
-                if (value == _splitOnNoah3) return;
-                _splitOnNoah3 = value;
-                OnPropertyChanged(nameof(SplitOnNoah3));
-            }
-        }
-        public bool SplitOnAlius1
-        {
-            get { return _splitOnAlius1; }
-            set
-            {
-                if (value == _splitOnAlius1) return;
-                _splitOnAlius1 = value;
-                OnPropertyChanged(nameof(SplitOnAlius1));
-            }
-        }
-        public bool SplitOnAlius2
-        {
-            get { return _splitOnAlius2; }
-            set
-            {
-                if (value == _splitOnAlius2) return;
-                _splitOnAlius2 = value;
-                OnPropertyChanged(nameof(SplitOnAlius2));
+                if (value == _splitOnTown) return;
+                _splitOnTown = value;
+                OnPropertyChanged(nameof(SplitOnTown));
             }
         }
         public bool SplitOnAlius3
@@ -789,9 +405,70 @@ namespace rabi_splitter_WPF
                 OnPropertyChanged(nameof(SplitOnAlius3));
             }
         }
+        public bool SplitOnHospital
+        {
+            get { return _splitOnHospital; }
+            set
+            {
+                if (value == _splitOnHospital) return;
+                _splitOnHospital = value;
+                OnPropertyChanged(nameof(SplitOnHospital));
+            }
+        }
+        public bool SplitOnMiru
+        {
+            get { return _splitOnMiru; }
+            set
+            {
+                if (value == _splitOnMiru) return;
+                _splitOnMiru = value;
+                OnPropertyChanged(nameof(SplitOnMiru));
+            }
+        }
+        public bool SplitOnBalcony
+        {
+            get { return _splitOnBalcony; }
+            set
+            {
+                if (value == _splitOnBalcony) return;
+                _splitOnBalcony = value;
+                OnPropertyChanged(nameof(SplitOnBalcony));
+            }
+        }
+        public bool SplitOnNoah1
+        {
+            get { return _splitOnNoah1; }
+            set
+            {
+                if (value == _splitOnNoah1) return;
+                _splitOnNoah1 = value;
+                OnPropertyChanged(nameof(SplitOnNoah1));
+            }
+        }
+        public bool SplitOnNoah3
+        {
+            get { return _splitOnNoah3; }
+            set
+            {
+                if (value == _splitOnNoah3) return;
+                _splitOnNoah3 = value;
+                OnPropertyChanged(nameof(SplitOnNoah3));
+            }
+        }
         #endregion
 
+
         #region Unsorted
+        public bool Tm2
+        {
+            get { return _splitOnCarrotBomb; }
+            set
+            {
+                if (value == _tm2) return;
+                _tm2 = value;
+                OnPropertyChanged(nameof(Tm2));
+            }
+        }
         public bool MiruDe
         {
             get { return _miruDe; }
@@ -811,26 +488,6 @@ namespace rabi_splitter_WPF
                 if (value == _alius1) return;
                 _alius1 = value;
                 OnPropertyChanged(nameof(Alius1));
-            }
-        }
-        public bool Tm2
-        {
-            get { return _tm2; }
-            set
-            {
-                if (value == _tm2) return;
-                _tm2 = value;
-                OnPropertyChanged(nameof(Tm2));
-            }
-        }
-        public bool Irisu1
-        {
-            get { return _irisu1; }
-            set
-            {
-                if (value == _irisu1) return;
-                _irisu1 = value;
-                OnPropertyChanged(nameof(Irisu1));
             }
         }
         public bool Noah1Reload
@@ -936,8 +593,7 @@ namespace rabi_splitter_WPF
         public int previousBlackness = -1;
         public string oldtitle;
         public int veridx;
-        public int lastmoney;
-        public int lastHasFlower;
+        public int lastHasBomb;
         public int lastmapid;
         public int lastmusicid;
         public int lastplaytime = 0;
@@ -957,73 +613,34 @@ namespace rabi_splitter_WPF
             //General Settings
             this.AutoStart = false;
             this.AutoReset = false;
-            this.AdvancedSettings = false;
             this.ServerPort = 16834;
-
-            //Additional Settings
             this.DebugMode = false;
-            this.DontSplitOnReload = true;
-            this.SplitOnSideCh = false;
-            this.SplitOnCyberFlower = true;
-            this.SplitOnShRita = false;
-            this.SplitOnShPandora = false;
 
-            //Prologue
-            this.SplitOnCocoa1 = true;
-            this.SplitOnRibbon = true;
-            this.SplitOnAshuri1 = true;
+            //Splits
+            this.SplitOnCarrotBomb = true;
+            this.SplitOnRiverbank = true;
+            this.SplitOnEvernight = true;
+            this.SplitOnSaya = true;
+            this.SplitOnAquarium = true;
 
-            //Miscellaneous
-            this.SplitOnBigBox = false;
-            this.SplitOnHoloMaid = false;
-            this.SplitOnComputer = true;
-            this.SplitOnHoM = false;
-            this.SplitOnFC2 = false;
-            this.SplitOnLibrary = false;
-
-            //Bosses 1
-            this.SplitOnRumi = false;
-            this.SplitOnRita = true;
-            this.SplitOnNieve = true;
-            this.SplitOnNixie = true;
-            this.SplitOnAruraune = false;
-            this.SplitOnPandora = true;
-            this.SplitOnIrisu = false;
-            this.SplitOnSaya = false;
-            this.SplitOnCicini = true;
-            this.SplitOnSyaro = true;
-
-            //Bosses 2
-            this.SplitOnCocoa2 = true;
-            this.SplitOnAshuri2 = true;
-            this.SplitOnLilith1 = false;
-            this.SplitOnLilith2 = false;
-            this.SplitOnVanilla = true;
-            this.SplitOnChocolate = true;
             this.SplitOnKotri1 = true;
-            this.SplitOnKotri2 = true;
-            this.SplitOnKotri3 = true;
-            this.SplitOnKeke = false;
-
-            //Bosses 3
-            this.SplitOnSeana1 = false;
-            this.SplitOnSeana2 = false;
-            this.SplitOnMiriam = false;
-            this.SplitOnMiru = true;
-            this.SplitOnNoah1 = true;
-            this.SplitOnNoah2 = false;
-            this.SplitOnNoah3 = true;
-            this.SplitOnAlius1 = false;
-            this.SplitOnAlius2 = true;
+            this.SplitOnRita = true;
+            this.SplitOnVanilla = false;
+            this.SplitOnTown = true;
             this.SplitOnAlius3 = true;
+
+            this.SplitOnHospital = true;
+            this.SplitOnMiru = true;
+            this.SplitOnBalcony = true;
+            this.SplitOnNoah1 = true;
+            this.SplitOnNoah3 = true;
 
             //Other + Unsorted
             this.MusicEnd = true;
             this.MusicStart = false;
-            this.MiruDe = true;          
-            this.Alius1 = true;
+            this.MiruDe = true;
             this.Tm2 = true;
-            this.Irisu1 = true;      
+            this.Alius1 = true;    
             this.Igt = true;
             this.Noah1Reload = false;
             this.ForceAlius1 = false;

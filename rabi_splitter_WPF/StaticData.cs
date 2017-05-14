@@ -149,12 +149,14 @@ namespace rabi_splitter_WPF
         public static int[] EnemyPtrAddr = {0x00940EE0, 0x00964A1C, 0x0096BA3C, 0x0096DA3C};
         public static int[] EnemyEnitiyHPOffset = {0x4c8, 0x4d0, 0x4d8, 0x4d8};
         public static int[] EnemyEnitiyIDOffset = {0x4e4, 0x4ec, 0x4F4, 0x4F4};
-        public static int[] EnemyEntityXPositionOffset = { 0, 0, 0, 0xC };
-        public static int[] EnemyEntityYPositionOffset = { 0, 0, 0, 0x10 };
+        public static int[] EnemyEntityXPositionOffset = { 0xC, 0, 0, 0xC };
+        public static int[] EnemyEntityYPositionOffset = { 0x10, 0, 0, 0x10 };
         public static int[] EnemyEntitySize = {0x6F4, 0x6FC, 0x704, 0x704};
         public static int[] MaxEntityEntry = {50, 50, 50, 50};
         public static int[] MoneyAddress = {0xD3823C, 0xD5B9FC, 0xD63D2C, 0xD654CC};
-        public static int[] CyberFlowerAddr = { 0, 0, 0, 0xD6330C };
+
+        public static int[] CarrotBombAddr = { 0xD3602C, 0, 0, 0 };
+
         public static string[] VerNames = {"1.65", "1.70", "1.71", "1.75"};
         public static int[] MusicAddr = {0xA46294, 0xA69D98, 0xA70E28, 0x4FAB60};
 
