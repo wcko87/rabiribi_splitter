@@ -138,37 +138,41 @@ namespace rabi_splitter_WPF
 
                 #endregion
 
-                #region Splits
+                #region Non-Music Splits
 
-                //Carrot Bomb
-                if (mainContext.SplitOnCarrotBomb)
+                // Side Chapter
+                if (mainContext.SplitOnSideCh)
                 {
-                    int hasBomb = MemoryHelper.GetMemoryValue<int>(process, StaticData.CarrotBombAddr[mainContext.veridx]);
-                    if (hasBomb == 1 && mainContext.lastHasBomb == 0)
+                    if (mainContext.lastmapid == 5 && mainContext.lastmusicid == 44 && (mapid != 5 || musicid != 44))
                     {
-                        DebugLog("[Split] Obtained Carrot Bomb");
-                        mainContext.SplitOnCarrotBomb = false;
+                        DebugLog("[Split] Finished Side Chapter");
                         SpeedrunSendSplit();
                     }
-                    mainContext.lastHasBomb = hasBomb;
                 }
-                //Riverbank
-                if (mainContext.SplitOnRiverbank && (mainContext.lastmapid == 0 && mapid == 4))
+
+                //Computer
+                if (mainContext.SplitOnComputer)
                 {
-                    DebugLog("[Split] Entered Riverbank");
-                    SpeedrunSendSplit();
+                    var newmoney = MemoryHelper.GetMemoryValue<int>(process, StaticData.MoneyAddress[mainContext.veridx]);
+                    if (newmoney - mainContext.lastmoney == 17500)
+                    {
+                        DebugLog("[Split] Found Computer");
+                        SpeedrunSendSplit();
+                    }
+                    mainContext.lastmoney = newmoney;
                 }
-                //Aquarium
-                if (mainContext.SplitOnAquarium && (mainContext.lastmapid == 3 && mapid == 1))
+
+                //Cyber Flower
+                if (mainContext.SplitOnCyberFlower)
                 {
-                    DebugLog("[Split] Exited Aquarium");
-                    SpeedrunSendSplit();
-                }
-                //Town
-                if (mainContext.SplitOnTown && (mainContext.lastmapid == 2 && mapid == 5))
-                {
-                    DebugLog("[Split] Entered Town with 2TM");
-                    SpeedrunSendSplit();
+                    int hasFlower = MemoryHelper.GetMemoryValue<int>(process, StaticData.CyberFlowerAddr[mainContext.veridx]);
+                    if (hasFlower == 1 && mainContext.lastHasFlower == 0)
+                    {
+                        DebugLog("[Split] Obtained Cyber Flower");
+                        mainContext.SplitOnCyberFlower = false;
+                        SpeedrunSendSplit();
+                    }
+                    mainContext.lastHasFlower = hasFlower;
                 }
 
                 #endregion
@@ -188,152 +192,60 @@ namespace rabi_splitter_WPF
                             DebugLog("Title Music Detected");
                             if (mainContext.AutoReset)
                             {
-                                DebugLog("Pacifist; Don't Split");
+                                DebugLog("[Reset]");
+                                SpeedrunSendReset();
                             }
                             //Run "Preset Refresh" here.
-                            mainContext.SplitOnCarrotBomb = true;
                         }
                         else
                         {
-                            #region Splits
-                            //Evernight
-                            if (mainContext.SplitOnEvernight && (mainContext.lastmusicid == 20 && musicid == 18))
-                            {
-                                DebugLog("[Split] Entered Evernight");
-                                SpeedrunSendSplit();
-                            }
-                            //Saya
-                            if (mainContext.SplitOnSaya && (mainContext.lastmusicid == 51 && musicid == 18))
+                            #region Prologue
+                            //Prologue Cocoa
+                            if (mainContext.SplitOnCocoa1 && (mainContext.lastmusicid == 44 && musicid == 1))
                             {
                                 if (!reloaded)
                                 {
-                                    DebugLog("[Split] Defeated Nothing(?)");
+                                    DebugLog("[Split] Cocoa 1 Defeated");
                                     SpeedrunSendSplit();
                                 }
                                 else
                                 {
-                                    DebugLog("Reloaded; Don't Split");
+                                    DebugLog("Reloaded Cocoa 1; Don't Split");
                                 }
                             }
-                            //Saya
-                            if (mainContext.SplitOnSaya && (mainContext.lastmusicid == 51 && musicid == 18))
+
+                            //Prologue Ribbon
+                            if (mainContext.SplitOnRibbon && (mainContext.lastmusicid == 44 && musicid == 2))
                             {
                                 if (!reloaded)
                                 {
-                                    DebugLog("[Split] Defeated Nothing(?)");
+                                    DebugLog("[Split] Ribbon Defeated");
                                     SpeedrunSendSplit();
                                 }
                                 else
                                 {
-                                    DebugLog("Reloaded; Don't Split");
+                                    DebugLog("Reloaded Ribbon; Don't Split");
                                 }
                             }
-                            //Kotri1
-                            if (mainContext.SplitOnKotri1 && (mainContext.lastmusicid == 39 && musicid == 13))
+
+                            //Prologue Ashuri
+                            if (mainContext.SplitOnAshuri1 && (mainContext.lastmusicid == 44 && musicid == 9))
                             {
                                 if (!reloaded)
                                 {
-                                    DebugLog("[Split] Skipped/Defeated Kotri 1");
+                                    DebugLog("[Split] Ashuri 1 Defeated");
                                     SpeedrunSendSplit();
                                 }
                                 else
                                 {
-                                    DebugLog("Reloaded; Don't Split");
+                                    DebugLog("Reloaded Ashuri 1; Don't Split");
                                 }
                             }
-                            //Rita
-                            if (mainContext.SplitOnRita && (mainContext.lastmusicid == 34 && musicid == 16))
-                            {
-                                if (!reloaded)
-                                {
-                                    DebugLog("[Split] Skipped/Defeated Rita");
-                                    SpeedrunSendSplit();
-                                }
-                                else
-                                {
-                                    DebugLog("Reloaded; Don't Split");
-                                }
-                            }
-                            //Vanilla
-                            if (mainContext.SplitOnVanilla && (mainContext.lastmusicid == 51 && musicid == 26))
-                            {
-                                if (!reloaded)
-                                {
-                                    DebugLog("[Split] Skipped/Defeated Vanilla");
-                                    SpeedrunSendSplit();
-                                }
-                                else
-                                {
-                                    DebugLog("Reloaded; Don't Split");
-                                }
-                            }
-                            //Alius 3
-                            if (mainContext.SplitOnAlius3 && (mainContext.lastmusicid == 12 && musicid == 54))
-                            {
-                                if (!reloaded)
-                                {
-                                    DebugLog("[Split] ASG3");
-                                    SpeedrunSendSplit();
-                                }
-                                else
-                                {
-                                    DebugLog("Reloaded; Don't Split");
-                                }
-                            }
-                            //MRE
-                            if (mainContext.SplitOnHospital && musicid == 54 && mapid == 8)
-                            {
-                                int entityArrayPtr = MemoryHelper.GetMemoryValue<int>(process, StaticData.EnemyPtrAddr[mainContext.veridx]);
-                                float xPosition = MemoryHelper.GetMemoryValue<float>(process, entityArrayPtr + StaticData.EnemyEntityXPositionOffset[mainContext.veridx], false);
-                                if (xPosition > 25600)
-                                {
-                                    DebugLog("[Split] MRE Successful!");
-                                    SpeedrunSendSplit();
-                                }
-                            }
-                            //Balcony
-                            if (mainContext.SplitOnBalcony && (mainContext.lastmusicid == 52 && musicid == 37))
-                            {
-                                if (!reloaded)
-                                {
-                                    DebugLog("[Split] Balcony RCS Successful!");
-                                    SpeedrunSendSplit();
-                                }
-                                else
-                                {
-                                    DebugLog("Reloaded; Don't Split");
-                                }
-                            }
-                            //Noah 1
-                            if (mainContext.SplitOnNoah1 && (mainContext.lastmusicid == 43 && musicid == 42))
-                            {
-                                if (!reloaded)
-                                {
-                                    DebugLog("[Split] Defeated Noah");
-                                    SpeedrunSendSplit();
-                                }
-                                else
-                                {
-                                    DebugLog("Reloaded; Don't Split");
-                                }
-                            }
-                            //Noah 3
-                            if (mainContext.SplitOnNoah3 && (mainContext.lastmusicid == 42 && musicid == 12))
-                            {
-                                if (!reloaded)
-                                {
-                                    DebugLog("[Split] Defeated Noah 3");
-                                    SpeedrunSendSplit();
-                                }
-                                else
-                                {
-                                    DebugLog("Reloaded; Don't Split");
-                                }
-                            }
+
                             #endregion
 
                             #region Miscellaneous
-                            /*
+
                             // Mr. Big Box & Holo-Defense System
                             if ((mainContext.SplitOnBigBox || mainContext.SplitOnHoloMaid) && mainContext.lastmusicid == 33 && musicid == 19)
                             {
@@ -369,9 +281,42 @@ namespace rabi_splitter_WPF
                                     }
                                 }
                             }
-                            */
+
+                            // Hall of Memories
+                            if (mainContext.SplitOnHoM && (mainContext.lastmusicid == 30 && musicid != 30))
+                            {
+                                DebugLog("[Split] Hall of Memories Completed");
+                                mainContext.SplitOnHoM = false;
+                                SpeedrunSendSplit();
+                            }
+
+                            // Forgotten Cave II
+                            if (mainContext.SplitOnFC2 && (mainContext.lastmusicid == 6 && musicid != 6))
+                            {
+                                DebugLog("[Split] Forgotten Cave II Completed");
+                                mainContext.SplitOnFC2 = false;
+                                SpeedrunSendSplit();
+                            }
+
+                            // Library  
+                            if (mainContext.SplitOnLibrary && (mapid == 1 && mainContext.lastmusicid != 42 && musicid == 42))
+                            {
+                                DebugLog("[Split] Library Completed");
+                                mainContext.SplitOnLibrary = false;
+                                SpeedrunSendSplit();
+                            }
+
+                            #endregion
+
+                            #region Bosses
+
+                            //
+                            //
+                            //
+
                             #endregion
                         }
+
 
                         #region Old Code
                         /*else
@@ -687,6 +632,7 @@ namespace rabi_splitter_WPF
             DebugPanel.DataContext = debugContext;
             this.Grid.ItemsSource = debugContext.BossList;
             BossEventDebug.DataContext = debugContext;
+            this.PracticeModePanel.DataContext = practiceModeContext;
             memoryThread = new Thread(() =>
             {
                 while (true)
