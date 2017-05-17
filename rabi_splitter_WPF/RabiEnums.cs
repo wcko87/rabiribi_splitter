@@ -135,6 +135,15 @@ namespace rabi_splitter_WPF
         }
     }
 
+    // A set of (exp, string)
+    public class ExpDescriptions : List<Tuple<int, string, string>>
+    {
+        public void Add(int exp, string shortDescript, string description)
+        {
+            Add(new Tuple<int, string, string>(exp, shortDescript, description));
+        }
+    }
+
     public static partial class StaticData {
 
         private static readonly Dictionary<int, Boss> _getBoss;
@@ -230,6 +239,24 @@ namespace rabi_splitter_WPF
         public static bool IsBossMusic(int musicId)
         {
             return 0 <= musicId && musicId < _isBossMusic.Length && _isBossMusic[musicId];
+        }
+
+        public static Tuple<int, string, string> GetNextHammerLevel(int exp) {
+            int index = 0;
+            while (index < HammerLevels.Count && exp >= HammerLevels[index].Item1) ++index;
+            return index < HammerLevels.Count ? HammerLevels[index] : null;
+        }
+
+        public static Tuple<int, string, string> GetNextRibbonLevel(int exp) {
+            int index = 0;
+            while (index < RibbonLevels.Count && exp >= RibbonLevels[index].Item1) ++index;
+            return index < RibbonLevels.Count ? RibbonLevels[index] : null;
+        }
+
+        public static Tuple<int, string, string> GetNextCarrotLevel(int exp) {
+            int index = 0;
+            while (index < CarrotLevels.Count && exp >= CarrotLevels[index].Item1) ++index;
+            return index < CarrotLevels.Count ? CarrotLevels[index] : null;
         }
     }
 }

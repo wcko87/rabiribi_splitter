@@ -23,15 +23,12 @@ namespace rabi_splitter_WPF
         private MemorySnapshot prevSnapshot;
         private MemorySnapshot snapshot;
 
-        public int previousBlackness = -1;
-        public int lastplaytime = 0;
-        public bool bossbattle;
-        public List<int> lastbosslist;
-        public DateTime LastTMAddTime;
+        private string[] datastrings;
         
 
         public RabiRibiDisplay(MainContext mainContext, DebugContext debugContext, MainWindow mainWindow)
         {
+            this.datastrings = new string[StaticData.EnenyEntitySize[mainContext.veridx]];
             this.mainContext = mainContext;
             this.debugContext = debugContext;
             this.mainWindow = mainWindow;
@@ -43,45 +40,67 @@ namespace rabi_splitter_WPF
             // Snapshot Game Memory
             snapshot = new MemorySnapshot(process, mainContext.veridx);
 
-            mainContext.Text1 = "Music: " + StaticData.GetMusicName(snapshot.musicid);
-            mainContext.Text2 = "Map: " +  StaticData.GetMapName(snapshot.mapid);
-            mainContext.Text3 = gameState == null ? "" : ("Deaths: " + gameState.nDeaths + "\n" + "Resets: " + gameState.nRestarts);
+            #region Game State Machine
 
-            mainContext.Text4 = "HP: " + snapshot.hp;
-            mainContext.Text5 = "MaxHP: " + snapshot.maxhp;
+            if (gameState.CurrentActivityIs(GameActivity.STARTING)) {
+                // Detect start game
+                if (snapshot.playtime < 200)
+                {
+                    gameState.currentActivity = GameActivity.WALKING;
+                    DebugLog("IGT start?");
+                }
+            } else {
+                if (MusicChanged())
+                {
+                    if (StaticData.IsBossMusic(snapshot.musicid))
+                    {
+                        gameState.currentActivity = GameActivity.BOSS_BATTLE;
+                    }
+                    else
+                    {
+                        gameState.currentActivity = GameActivity.WALKING;
+                    }
+                }
+            }
 
-            mainContext.Text6 = "Amulet: " + snapshot.amulet;
-            mainContext.Text7 = "Boost: " + snapshot.boost;
-            mainContext.Text8 = "Mana: " + snapshot.mana;
-            mainContext.Text9 = "Stamina: " + snapshot.stamina;
-
-            mainContext.Text10 = "x: " + snapshot.px;
-            mainContext.Text11 = "y: " + snapshot.py;
-
+            #endregion
+            
             #region Detect Reload
-
-            bool reloaded = false;
-            if (prevSnapshot != null) {
-                reloaded = snapshot.playtime != 0 && snapshot.playtime < prevSnapshot.playtime;
-                if (reloaded)
+            
+            bool reloaded = (prevSnapshot != null) && (snapshot.playtime < prevSnapshot.playtime);
+            if (gameState.IsGameStarted() && snapshot.playtime > 0)
+            {
+                if (snapshot.playtime < gameState.lastNonZeroPlayTime)
                 {
                     if (InGame())
                     {
                         gameState.nRestarts++;
                     }
-                    DebugLog("Reload Game!");
+                    DebugLog("Reload Game! " + snapshot.playtime + " <- " + gameState.lastNonZeroPlayTime);
+                }
+                gameState.lastNonZeroPlayTime = snapshot.playtime;
+            }
+                
+            if (gameState.IsGameStarted() && prevSnapshot != null)
+            {
+                // Issue: This sometimes detects warps as resets too.
+                if (snapshot.animationFrame < prevSnapshot.animationFrame)
+                {
+                    if (InGame())
+                    {
+                        gameState.nRestartsAlt++;
+                    }
+                    DebugLog("Reload Game (Alt)!");
                 }
             }
 
             #endregion
 
             #region Detect Death
-
-            bool died = false;
+            
             if (prevSnapshot != null)
             {
-                died = snapshot.hp == 0 && prevSnapshot.hp > 0;
-                if (died)
+                if (snapshot.hp == 0 && prevSnapshot.hp > 0)
                 {
                     if (InGame())
                     {
@@ -90,11 +109,23 @@ namespace rabi_splitter_WPF
                     DebugLog("Death!");
                 }
             }
-           
+
+            if (prevSnapshot != null)
+            {
+                if (snapshot.IsDeathSprite() && !prevSnapshot.IsDeathSprite())
+                {
+                    if (InGame())
+                    {
+                        gameState.nDeathsAlt++;
+                    }
+                    DebugLog("Death (Alt)!");
+                }
+            }
+
             #endregion
 
             #region Detect Start Game
-            
+
             if (prevSnapshot != null && (snapshot.CurrentMusicIs(Music.MAIN_MENU) || snapshot.CurrentMusicIs(Music.ARTBOOK_INTRO))
                 && prevSnapshot.blackness == 0 && snapshot.blackness >= 100000)
             {
@@ -110,12 +141,40 @@ namespace rabi_splitter_WPF
                 DebugLog("newmap: " + snapshot.mapid + ":" + StaticData.GetMapName(snapshot.mapid));
             }
 
+            mainContext.Text1 = "Music: " + StaticData.GetMusicName(snapshot.musicid);
+            mainContext.Text2 = "Map: " + StaticData.GetMapName(snapshot.mapid);
+            mainContext.Text3 = gameState == null ? "" : ("Deaths: " + gameState.nDeaths// + " [" + gameState.nDeathsAlt + "]"
+                                                 + "\n" + "Resets: " + gameState.nRestarts);// + " [" + gameState.nRestartsAlt + "]");
 
-            #region checkTM
+            mainContext.Text4 = "HP: " + snapshot.hp + " / " + snapshot.maxhp;
+            mainContext.Text5 = "Amulet: " + snapshot.amulet + "\n" + "Boost: " + snapshot.boost;
+            mainContext.Text6 = "MP: " + snapshot.mana + "\n" + "SP: " + snapshot.stamina;
+
+            var nextHammer = StaticData.GetNextHammerLevel(snapshot.hammerXp);
+            var nextRibbon = StaticData.GetNextRibbonLevel(snapshot.ribbonXp);
+            var nextCarrot = StaticData.GetNextCarrotLevel(snapshot.carrotXp);
+            mainContext.Text7 = "Hammer: " + snapshot.hammerXp + (nextHammer == null ? "" : ("/" + nextHammer.Item1 + "\n" + "NEXT: " + nextHammer.Item2));
+            mainContext.Text8 = "Ribbon: " + snapshot.ribbonXp + (nextRibbon == null ? "" : ("/" + nextRibbon.Item1 + "\n" + "NEXT: " + nextRibbon.Item2));
+            mainContext.Text9 = "Carrot: " + snapshot.carrotXp + (nextCarrot == null ? "" : ("/" + nextCarrot.Item1 + "\n" + "NEXT: " + nextCarrot.Item2));
+
+            mainContext.Text10 = "x: " + snapshot.px + "\n" + "y: " + snapshot.py;
+            mainContext.Text11 = "[A/H/M/P/R] ups:\n" + snapshot.nAttackUps + "/" + snapshot.nHpUps + "/" + snapshot.nManaUps + "/" + snapshot.nPackUps + "/" + snapshot.nRegenUps;
 
 
+            mainContext.Text12 = "Entities: " + snapshot.entityArraySize + "\n" + "Active: " + snapshot.nActiveEntities;
 
-            #endregion
+            mainContext.Text13 = "Sprite: " + snapshot.GetCurrentSprite() + "\n" + "Action: " + snapshot.GetCurrentAction();
+            mainContext.Text14 = "AnimFrame: " + snapshot.animationFrame;
+            {
+                string bosstext = "Boss Fight: " + (gameState.currentActivity == GameActivity.BOSS_BATTLE) + "\n";
+                bosstext += "Bosses: " + snapshot.bossList.Count + "\n";
+                foreach (var boss in snapshot.bossList)
+                {
+                    bosstext += "[" + boss.entityArrayIndex + "] " + StaticData.GetBossName(boss.id) + ": " + boss.hp + "/" + boss.maxHp + "\n";
+                }
+
+                mainContext.Text16 = bosstext;
+            }
 
 
 
@@ -579,6 +638,7 @@ namespace rabi_splitter_WPF
 //// END NEW CODE
 
             UpdateDebugArea(process);
+            UpdateEntityData(process);
 
             prevSnapshot = snapshot;
         }
@@ -609,6 +669,30 @@ namespace rabi_splitter_WPF
         {
             return MusicChanged() && snapshot.CurrentMusicIs(music);
         }
+        
+        private void UpdateEntityData(Process process)
+        {
+            // Read entire entity data for specific entity
+            {
+                var entityStatsList = debugContext.EntityStatsListData;
+
+                int entitySize = StaticData.EnenyEntitySize[mainContext.veridx];
+                int baseArrayPtr = snapshot.entityArrayPtr + entitySize * debugContext.EntityAnalysisIndex;
+                int[] entitydataint = new int[entitySize / 4];
+                float[] entitydatafloat = new float[entitySize / 4];
+
+                debugContext.targetEntityListSize = entitySize / 4;
+                int length = Math.Min(entitySize, entityStatsList.Count * 4);
+                for (int i = 0; i < length; i += 4)
+                {
+                    int index = i / 4;
+                    int value_int = MemoryHelper.GetMemoryValue<int>(process, baseArrayPtr + i, false);
+                    float value_float = MemoryHelper.GetMemoryValue<float>(process, baseArrayPtr + i, false);
+                    entityStatsList[index].IntVal = value_int;
+                    entityStatsList[index].FloatVal = value_float;
+                }
+            }
+        }
 
         private void UpdateDebugArea(Process process)
         {
@@ -626,7 +710,7 @@ namespace rabi_splitter_WPF
                 ptr += StaticData.EnenyEntitySize[mainContext.veridx];
             }
 
-            debugContext.BossEvent = bossbattle;
+            debugContext.BossEvent = gameState.currentActivity == GameActivity.BOSS_BATTLE;
         }
 
         private void DebugLog(string log)

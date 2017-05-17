@@ -7,6 +7,7 @@ namespace rabi_splitter_WPF
 {
     enum GameActivity
     {
+        STARTING,
         WALKING,
         BOSS_BATTLE,
     }
@@ -16,12 +17,27 @@ namespace rabi_splitter_WPF
         public int nRestarts;
         public int nDeaths;
 
+        public int nRestartsAlt;
+        public int nDeathsAlt;
+
         public GameActivity currentActivity;
         public int currentBoss;
 
+        public int lastNonZeroPlayTime = -1;
+
         public RabiGameState()
         {
-            currentActivity = GameActivity.WALKING;
+            currentActivity = GameActivity.STARTING;
+        }
+
+        public bool CurrentActivityIs(GameActivity gameActivity)
+        {
+            return currentActivity == gameActivity;
+        }
+
+        public bool IsGameStarted()
+        {
+            return !CurrentActivityIs(GameActivity.STARTING);
         }
 
 

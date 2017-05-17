@@ -150,9 +150,50 @@ namespace rabi_splitter_WPF
             Music.MISCHIEVOUS_MASQUERADE,
         };
 
+        public static ExpDescriptions HammerLevels = new ExpDescriptions
+        {
+            {600, "+Rang", "Attack Range Increase"},
+            {1000, "UpDr", "Up-drill"},
+            {1650, "Quad", "Quad-combo"},
+            {2050, "Spd1", "Combo Speed Increase (Lv.1)"},
+            {2500, "DwnDr", "Down-drill"},
+            {2750, "Dmg1", "Hammer Drill Damage Increase (Lv.1)"},// / Up-drill Exp Increase"},
+            {3100, "Penta", "Penta-combo (Ground-drill)"},
+            {3750, "Spd2", "Combo Speed Increase (Lv.2)"},
+            {5500, "-SP", "SP Usage Reduced"},
+            {6450, "Spd3", "Combo Speed Increase (Lv.3)"},
+            {7500, "Dmg2", "Hammer Drill Damage Increase (Lv.2)"},// / Up-drill/Down-drill Exp Increase"},
+        };
+
+        public static ExpDescriptions RibbonLevels = new ExpDescriptions
+        {
+            {100, "CSpd1", "Charge Speed Increase (Lv.1)"},
+            {600, "CSpd2", "Charge Speed Increase (Lv.2)"},
+            {1100, "BSpd1", "Boost Attack Speed Increase (Lv.1)"},
+            {1650, "CSpd3", "Charge Speed Increase (Lv.3)"},
+            {2800, "BSpd2", "Boost Attack Speed Increase (Lv.2)"},
+            {3300, "CSpd4", "Charge Speed Increase (Lv.4)"},
+            {3800, "BGag1", "Boost Gauge Charges Faster (Lv.1)"},
+            {4500, "BSpd3", "Boost Attack Speed Increase (Lv.3)"},
+            {5800, "BGag2", "Boost Gauge Charges Faster (Lv.2)"},
+            {7000, "BGag3", "Boost Gauge Charges Faster (Lv.3)"},
+        };
+
+        public static ExpDescriptions CarrotLevels = new ExpDescriptions
+        {
+            {7, "Del1", "Shorter Delay (Lv.1)"},
+            {25, "Dmg1", "Damage Increase (Lv.1)"},
+            {50, "Del2", "Shorter Delay (Lv.2)"},
+            {100, "Rad", "Effect Radius Increase"},
+            {175, "Dmg2", "Damage Increase (Lv.2)"},// / Exp Increase"},
+            {275, "Del3", "Shorter Delay (Lv.3)"},
+            {500, "Dmg3", "Damage Increase (Lv.3)"},// / Exp Increase"},
+        };
+
         public static int[] MapAddress = {0xA3353C, 0xA57020, 0xA5E0AC, 0xA600AC};
         public static int[] EnemyPtrAddr = {0x00940EE0, 0x00964A1C, 0x0096BA3C, 0x0096DA3C};
         public static int[] EnemyEntityHPOffset = {0x4c8, 0x4d0, 0x4d8, 0x4d8};
+        public static int[] EnenyEntityMaxHPOffset = { 0, 0, 0, 0x4e8 };
         public static int[] EnemyEntityIDOffset = {0x4e4, 0x4ec, 0x4F4, 0x4F4};
         public static int[] EnemyEntityXPositionOffset = { 0xC, 0xC, 0xC, 0xC };
         public static int[] EnemyEntityYPositionOffset = { 0x10, 0x10, 0x10, 0x10 };
