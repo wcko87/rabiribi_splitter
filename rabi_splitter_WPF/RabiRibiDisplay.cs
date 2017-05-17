@@ -10,7 +10,7 @@ namespace rabi_splitter_WPF
     {
         private MainContext mainContext;
         private DebugContext debugContext;
-        private VariableExportContext variableExportContext;
+        private PracticeModeContext practiceModeContext;
         private MainWindow mainWindow;
         
         private RabiRibiState rabiRibiState;
@@ -27,21 +27,21 @@ namespace rabi_splitter_WPF
         // internal frame counter.
         private int memoryReadCount;
 
-        public RabiRibiDisplay(MainContext mainContext, DebugContext debugContext, VariableExportContext variableExportContext, MainWindow mainWindow)
+        public RabiRibiDisplay(MainContext mainContext, DebugContext debugContext, PracticeModeContext practiceModeContext, MainWindow mainWindow)
         {
             this.rabiRibiState = new RabiRibiState();
             this.mainContext = mainContext;
             this.debugContext = debugContext;
-            this.variableExportContext = variableExportContext;
+            this.practiceModeContext = practiceModeContext;
             this.mainWindow = mainWindow;
             this.memoryReadCount = 0;
             StartNewGame();
-            ConfigureVariableExports();
         }
 
         public void ReadMemory(Process process)
         {
             ++memoryReadCount;
+            practiceModeContext.ResetSendTriggers();
             var memoryHelper = new MemoryHelper(process);
 
             // Snapshot Game Memory
@@ -49,31 +49,13 @@ namespace rabi_splitter_WPF
 
             Update();
             UpdateDebugArea(memoryHelper);
-            UpdateEntityData(memoryHelper);
             UpdateFps();
-            UpdateVariableExport();
 
             if (snapshot.musicid >= 0) rabiRibiState.lastValidMusicId = snapshot.musicid;
             prevSnapshot = snapshot;
 
+            SendPracticeModeMessages();
             memoryHelper.Dispose();
-        }
-
-        private void UpdateVariableExport()
-        {
-            long currentFrameMillisecond = (long)(DateTime.Now - UNIX_START).TotalMilliseconds;
-            var diff = currentFrameMillisecond - lastUpdateMillisecond;
-            if (diff >= 1000)
-            {
-                if (diff >= 2000) lastUpdateMillisecond = currentFrameMillisecond;
-                else lastUpdateMillisecond += 1000;
-                variableExportContext.UpdateVariables(true);
-            }
-            else
-            {
-                // Don't update files.
-                variableExportContext.UpdateVariables(false);
-            }
         }
         
         private void UpdateFps()
@@ -85,7 +67,7 @@ namespace rabi_splitter_WPF
                 if (readFps < 0) readFps = newFps;
                 else readFps = 0.9 * readFps + 0.1 * newFps;
 
-                mainContext.Text19 = $"Reads Per Second:\n{readFps:.0.00}";
+                var fpsDisplay = $"Reads Per Second:\n{readFps:.0.00}";
             }
             previousFrameMillisecond = currentFrameMillisecond;
         }
@@ -686,21 +668,10 @@ namespace rabi_splitter_WPF
                 }
 
                 #endregion
-
-
-
+                
 //// END NEW CODE
-
-            UpdateDebugArea(process);
-            UpdateEntityData(process);
-
             prevSnapshot = snapshot;
         }
-
-        private void StartNewGame()
-        {
-            gameState = new RabiGameState();
-            gameStatus = GameStatus.INGAME;
         
         private void StartNewGame()
         {
@@ -734,30 +705,6 @@ namespace rabi_splitter_WPF
             return MusicChanged() && snapshot.CurrentMusicIs(music);
         }
         
-        private void UpdateEntityData(MemoryHelper memoryHelper)
-        {
-            // Read entire entity data for specific entity
-            {
-                var entityStatsList = debugContext.EntityStatsListData;
-
-                int entitySize = StaticData.EnenyEntitySize[mainContext.veridx];
-                int baseArrayPtr = snapshot.entityArrayPtr + entitySize * debugContext.EntityAnalysisIndex;
-                int[] entitydataint = new int[entitySize / 4];
-                float[] entitydatafloat = new float[entitySize / 4];
-
-                debugContext.targetEntityListSize = entitySize / 4;
-                int length = Math.Min(entitySize, entityStatsList.Count * 4);
-                for (int i = 0; i < length; i += 4)
-                {
-                    int index = i / 4;
-                    int value_int = memoryHelper.GetMemoryValue<int>(baseArrayPtr + i, false);
-                    float value_float = memoryHelper.GetMemoryValue<float>(baseArrayPtr + i, false);
-                    entityStatsList[index].IntVal = value_int;
-                    entityStatsList[index].FloatVal = value_float;
-                }
-            }
-        }
-
         private void UpdateDebugArea(MemoryHelper memoryHelper)
         {
             int ptr = snapshot.entityArrayPtr;
@@ -768,10 +715,10 @@ namespace rabi_splitter_WPF
             for (var i = 0; i < 50; i++)
             {
                 debugContext.BossList[i].BossID = memoryHelper.GetMemoryValue<int>(
-                    ptr + StaticData.EnenyEnitiyIDOffset[mainContext.veridx], false);
+                    ptr + StaticData.EnemyEntityIDOffset[mainContext.veridx], false);
                 debugContext.BossList[i].BossHP = memoryHelper.GetMemoryValue<int>(
-                    ptr + StaticData.EnenyEnitiyHPOffset[mainContext.veridx], false);
-                ptr += StaticData.EnenyEntitySize[mainContext.veridx];
+                    ptr + StaticData.EnemyEntityHPOffset[mainContext.veridx], false);
+                ptr += StaticData.EnemyEntitySize[mainContext.veridx];
             }
 
             debugContext.BossEvent = inGameState.currentActivity == InGameActivity.BOSS_BATTLE;
@@ -782,25 +729,66 @@ namespace rabi_splitter_WPF
             this.debugContext.Log($"[ {memoryReadCount:D8}] {log}");
         }
 
-        private void sendsplit()
+        #region LiveSplit Messages
+        private void SpeedrunSendSplit()
         {
-            mainWindow.SendMessage("split\r\n");
+            if (!mainContext.PracticeMode) SendMessage("split\r\n");
         }
 
-        private void sendreset()
+        private void SpeedrunSendReset()
         {
-            mainWindow.SendMessage("reset\r\n");
+            if (!mainContext.PracticeMode) SendMessage("reset\r\n");
         }
 
-        private void sendstarttimer()
+        private void SpeedrunSendStartTimer()
         {
-            mainWindow.SendMessage("starttimer\r\n");
+            if (!mainContext.PracticeMode) SendMessage("starttimer\r\n");
         }
 
         private void sendigt(float time)
         {
-            mainWindow.SendMessage($"setgametime {time}\r\n");
+            SendMessage($"setgametime {time}\r\n");
         }
 
+        private void PracticeModeSendTrigger(SplitTrigger trigger)
+        {
+            if (mainContext.PracticeMode) DebugLog("Practice Mode Trigger " + (trigger.ToString()));
+            practiceModeContext.SendTrigger(SplitCondition.Trigger(trigger));
+        }
+
+        private void PracticeModeMapChangeTrigger(int oldMapId, int newMapId)
+        {
+            if (mainContext.PracticeMode) DebugLog("Practice Mode Trigger Map Change " + oldMapId + " -> " + newMapId);
+            practiceModeContext.SendTrigger(SplitCondition.MapChange(oldMapId, newMapId));
+        }
+
+        private void PracticeModeMusicChangeTrigger(int oldMusicId, int newMusicId)
+        {
+            if (mainContext.PracticeMode) DebugLog("Practice Mode Trigger Music Change " + oldMusicId + " -> " + newMusicId);
+            practiceModeContext.SendTrigger(SplitCondition.MusicChange(oldMusicId, newMusicId));
+        }
+
+        private void SendPracticeModeMessages()
+        {
+            if (!mainContext.PracticeMode) return;
+            if (practiceModeContext.SendStartTimerThisFrame())
+            {
+                SendMessage("starttimer\r\n");
+            }
+            if (practiceModeContext.SendSplitTimerThisFrame())
+            {
+                SendMessage("split\r\n");
+            }
+            if (practiceModeContext.SendResetTimerThisFrame())
+            {
+                SendMessage("reset\r\n");
+            }
+        }
+
+        private void SendMessage(string message)
+        {
+            mainWindow.SendMessage(message);
+        }
+        #endregion
     }
 }

@@ -35,7 +35,6 @@ namespace rabi_splitter_WPF
 
         private void ReadMemory()
         {
-            practiceModeContext.ResetSendTriggers();
             var processlist = Process.GetProcessesByName("rabiribi");
             if (processlist.Length > 0)
             {
@@ -75,65 +74,9 @@ namespace rabi_splitter_WPF
                 mainContext.GameMusic = "N/A";
             }
             mainContext.NotifyTimer();
-            SendPracticeModeMessages();
         }
 
         #region The Rest
-        private void SpeedrunSendSplit()
-        {
-            if (!mainContext.PracticeMode) SendMessage("split\r\n");
-        }
-
-        private void SpeedrunSendReset()
-        {
-            if (!mainContext.PracticeMode) SendMessage("reset\r\n");
-        }
-
-        private void SpeedrunSendStartTimer()
-        {
-            if (!mainContext.PracticeMode) SendMessage("starttimer\r\n");
-        }
-        
-        private void sendigt(float time)
-        {
-            SendMessage($"setgametime {time}\r\n");
-        }
-
-        private void PracticeModeSendTrigger(SplitTrigger trigger)
-        {
-            if (mainContext.PracticeMode) DebugLog("Practice Mode Trigger " + (trigger.ToString()));
-            practiceModeContext.SendTrigger(SplitCondition.Trigger(trigger));
-        }
-
-        private void PracticeModeMapChangeTrigger(int oldMapId, int newMapId)
-        {
-            if (mainContext.PracticeMode) DebugLog("Practice Mode Trigger Map Change " + oldMapId + " -> " + newMapId);
-            practiceModeContext.SendTrigger(SplitCondition.MapChange(oldMapId, newMapId));
-        }
-
-        private void PracticeModeMusicChangeTrigger(int oldMusicId, int newMusicId)
-        {
-            if (mainContext.PracticeMode) DebugLog("Practice Mode Trigger Music Change " + oldMusicId + " -> " + newMusicId);
-            practiceModeContext.SendTrigger(SplitCondition.MusicChange(oldMusicId, newMusicId));
-        }
-
-        private void SendPracticeModeMessages()
-        {
-            if (!mainContext.PracticeMode) return;
-            if (practiceModeContext.SendStartTimerThisFrame())
-            {
-                SendMessage("starttimer\r\n");
-            }
-            if (practiceModeContext.SendSplitTimerThisFrame())
-            {
-                SendMessage("split\r\n");
-            }
-            if (practiceModeContext.SendResetTimerThisFrame())
-            {
-                SendMessage("reset\r\n");
-            }
-        }
-
         public void SendMessage(string message)
         {
             if (tcpclient != null && tcpclient.Connected)
@@ -174,13 +117,9 @@ namespace rabi_splitter_WPF
             this.DataContext = mainContext;
             DebugPanel.DataContext = debugContext;
             this.Grid.ItemsSource = debugContext.BossList;
-            EntityDataPanel.DataContext = debugContext;
-            this.EntityStats.ItemsSource = debugContext.EntityStatsListView;
-            this.VariableExportTab.DataContext = variableExportContext;
-            this.VariableExportTab.Initialise(debugContext, variableExportContext);
             BossEventDebug.DataContext = debugContext;
             this.PracticeModePanel.DataContext = practiceModeContext;
-            rabiRibiDisplay = new RabiRibiDisplay(mainContext, debugContext, variableExportContext, this);
+            rabiRibiDisplay = new RabiRibiDisplay(mainContext, debugContext, practiceModeContext, this);
             memoryThread = new Thread(() =>
             {
                 while (true)
