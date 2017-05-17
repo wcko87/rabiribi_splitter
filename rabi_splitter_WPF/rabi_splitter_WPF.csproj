@@ -69,7 +69,7 @@
     <Compile Include="RabiEnums.cs" />
     <Compile Include="MemorySnapshot.cs" />
     <Compile Include="RabiGameState.cs" />
-    <Compile Include="RabiRibiDisplay.cs" />
+    <Compile Include="MainController.cs" />
     <Compile Include="StaticData.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
