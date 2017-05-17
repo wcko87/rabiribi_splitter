@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace rabi_splitter_WPF
 {
-    public  static  class MemoryHelper
+    public class MemoryHelper : IDisposable
     {
         [DllImport("kernel32.dll")]
         public static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
@@ -21,7 +21,26 @@ namespace rabi_splitter_WPF
 
         private const int PROCESS_WM_READ = 0x0010;
 
-        public static T GetMemoryValue<T>(Process process, int addr,bool baseaddr=true)
+        private readonly IntPtr processHandle;
+        private readonly int processHandleInt;
+        private readonly int baseAddress;
+
+        public MemoryHelper(Process process)
+        {
+            processHandle = OpenProcess(PROCESS_WM_READ, false, process.Id);
+            processHandleInt = (int)processHandle;
+            baseAddress = process.MainModule.BaseAddress.ToInt32();
+        }
+        
+        /*
+        public static T GetMemoryValue<T>(Process process, int addr, bool baseaddr = true)
+        {
+            var memoryHelper = new MemoryHelper(process);
+            return memoryHelper.GetMemoryValue<T>(addr, baseaddr);
+        }
+        */
+
+        public T GetMemoryValue<T>(int addr, bool baseaddr = true)
         {
             int datasize;
             switch (Type.GetTypeCode(typeof(T)))
@@ -33,39 +52,40 @@ namespace rabi_splitter_WPF
                 case TypeCode.SByte:
                     datasize = 1;
                     break;
+
                 case TypeCode.Int16:
                 case TypeCode.UInt16:
                     datasize = 2;
                     break;
-                case TypeCode.Int32:
 
+                case TypeCode.Int32:
                 case TypeCode.Single:
                 case TypeCode.UInt32:
                     datasize = 4;
                     break;
+
                 case TypeCode.Double:
                 case TypeCode.Int64:
                 case TypeCode.UInt64:
                     datasize = 8;
                     break;
+
                 default:
                     throw new Exception("not supported");
             }
 
             byte[] buffer = new byte[datasize];
             int bytesRead = 0;
-
-            IntPtr processHandle = OpenProcess(PROCESS_WM_READ, false, process.Id);
+            
             if (baseaddr)
-            { ReadProcessMemory((int) processHandle, process.MainModule.BaseAddress.ToInt32() + addr, buffer,
-                    datasize, ref bytesRead);}
+            {
+                ReadProcessMemory(processHandleInt, baseAddress + addr, buffer, datasize, ref bytesRead);
+            }
             else
             {
-                ReadProcessMemory((int)processHandle, addr, buffer,
-                       datasize, ref bytesRead);
-
+                ReadProcessMemory(processHandleInt, addr, buffer, datasize, ref bytesRead);
             }
-            CloseHandle(processHandle);
+
             switch (Type.GetTypeCode(typeof(T)))
             {
 
@@ -82,7 +102,6 @@ namespace rabi_splitter_WPF
                     return (T)Convert.ChangeType(BitConverter.ToSingle(buffer, 0), typeof(T));
                 case TypeCode.Int16:
                     return (T)Convert.ChangeType(BitConverter.ToInt16(buffer,0), typeof(T));
-                   
                 case TypeCode.UInt16:
                     return (T)Convert.ChangeType(BitConverter.ToUInt16(buffer, 0), typeof(T));
                 case TypeCode.Int32:
@@ -101,9 +120,31 @@ namespace rabi_splitter_WPF
                 default:
                     throw new Exception("not supported");
             }
-
+            
         }
 
 
+        #region IDisposable Support
+        private bool disposed = false;
+
+        protected virtual void DisposeUnmanagedResources()
+        {
+            if (disposed) return;
+            
+            CloseHandle(processHandle);
+
+            disposed = true;
+        }
+        
+        ~MemoryHelper() {
+            DisposeUnmanagedResources();
+        }
+        
+        public void Dispose()
+        {
+            DisposeUnmanagedResources();
+            // GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }

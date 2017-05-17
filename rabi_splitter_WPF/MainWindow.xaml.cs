@@ -36,7 +36,6 @@ namespace rabi_splitter_WPF
         private void ReadMemory()
         {
             practiceModeContext.ResetSendTriggers();
-
             var processlist = Process.GetProcessesByName("rabiribi");
             if (processlist.Length > 0)
             {
@@ -64,6 +63,7 @@ namespace rabi_splitter_WPF
                     mainContext.GameVer = rabiver;
                     mainContext.oldtitle = process.MainWindowTitle;
                 }
+
                 if (mainContext.veridx < 0) return;
 
                 rabiRibiDisplay.ReadMemory(process);
@@ -174,9 +174,13 @@ namespace rabi_splitter_WPF
             this.DataContext = mainContext;
             DebugPanel.DataContext = debugContext;
             this.Grid.ItemsSource = debugContext.BossList;
+            EntityDataPanel.DataContext = debugContext;
+            this.EntityStats.ItemsSource = debugContext.EntityStatsListView;
+            this.VariableExportTab.DataContext = variableExportContext;
+            this.VariableExportTab.Initialise(debugContext, variableExportContext);
             BossEventDebug.DataContext = debugContext;
             this.PracticeModePanel.DataContext = practiceModeContext;
-            rabiRibiDisplay = new RabiRibiDisplay(mainContext, debugContext, this);
+            rabiRibiDisplay = new RabiRibiDisplay(mainContext, debugContext, variableExportContext, this);
             memoryThread = new Thread(() =>
             {
                 while (true)
