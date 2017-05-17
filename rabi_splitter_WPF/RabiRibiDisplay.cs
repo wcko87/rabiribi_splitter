@@ -22,7 +22,6 @@ namespace rabi_splitter_WPF
         private static readonly DateTime UNIX_START = new DateTime(1970, 1, 1);
         private double readFps = -1;
         private long previousFrameMillisecond = -1;
-        private long lastUpdateMillisecond = -1;
 
         // internal frame counter.
         private int memoryReadCount;
