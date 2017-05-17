@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:rabi_splitter_WPF"
         mc:Ignorable="d" SizeToContent="Width"
-        Title="Irisu is watching you" d:DataContext="{d:DesignData local:MainContext}"  d:DesignWidth="835.476" Height="471.176">
+        Title="Irisu Is Watching You" d:DataContext="{d:DesignData local:MainContext}"  d:DesignWidth="900" Height="470">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <local:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
@@ -13,74 +13,177 @@
     </Window.Resources>
     <DockPanel>
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Left">
-            <TextBlock Text="v0.4.0" Margin="0,0,30,0" VerticalAlignment="Top" />
+            <TextBlock Text="v1.0" Margin="5,0,20,0" VerticalAlignment="Top" />
             <TextBlock Text="GitHub" MouseUp="TextBlock_MouseUp" Cursor="Hand" Foreground="Blue" TextDecorations="Underline" VerticalAlignment="Top"   />
         </StackPanel>
         <DockPanel Margin="5" DockPanel.Dock="Top">
-            <StackPanel Margin="0,0,100,0">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,3">
-                    <TextBlock TextWrapping="Wrap" Text="LiveSplit Server Port" VerticalAlignment="Center" FontSize="16" Margin="0,0,10,0"/>
-                    <TextBox  TextWrapping="Wrap" Text="{Binding ServerPort}" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Padding="6,0"/>
-                    <Button x:Name="BtnConnect" Content="Connect" VerticalAlignment="Center" FontSize="16" Width="80" Click="BtnConnect_Click"/>
+            <StackPanel Margin="3" Width="530">
+                <StackPanel HorizontalAlignment="Center" Margin="0,0,0,0">
+                    <TextBlock TextWrapping="Wrap" Text="Rabi-Ribi Auto Splitter" VerticalAlignment="Center" FontSize="20" Margin="0,0,0,0"/>
+                    <Button x:Name="BtnConnect" Content="Connect" VerticalAlignment="Center" FontSize="16" Height="25" Width="80" Margin="0,10,0,10" Click="BtnConnect_Click"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,3">
-                    <TextBlock TextWrapping="Wrap" Text="Rabi-Ribi Status: " FontSize="16"/>
-                    <TextBlock TextWrapping="Wrap" Text="{Binding GameVer}" FontSize="16"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,3">
-                    <TextBlock TextWrapping="Wrap" Text="Practice Timer: " FontSize="16"/>
-                    <TextBlock TextWrapping="Wrap" Text="{Binding BOSSTimer}" FontSize="16"/>
-                    <TextBlock TextWrapping="Wrap" Text="|" FontSize="16" Margin="10,0"/>
-                    <TextBlock TextWrapping="Wrap" Text="{Binding RoutingTimer}" FontSize="16"/>
-                </StackPanel>
-                <CheckBox Content="Practice Mode" HorizontalAlignment="Left" FontSize="15" Margin="0,0,0,4" IsChecked="{Binding PracticeMode, Mode=TwoWay}"/>
-                <StackPanel Visibility="{Binding PracticeMode, Converter={StaticResource InvertableBooleanToVisibilityConverter}, ConverterParameter=VisibleWhenTrue, FallbackValue=Collapsed}">
-                    <StackPanel Name="PracticeModePanel" d:DataContext="{d:DesignData local:PracticeModeContext}">
-                        <local:SplitConditionSettings VerticalAlignment="Top" Label="Start Timer When" SplitConditionObject="{Binding StartTimerSetting}"/>
-                        <local:SplitConditionSettings VerticalAlignment="Top" Label="Split Timer When" SplitConditionObject="{Binding SplitTimerSetting}"/>
-                        <local:SplitConditionSettings VerticalAlignment="Top" Label="Reset Timer When" SplitConditionObject="{Binding ResetTimerSetting}"/>
-                    </StackPanel>
-                </StackPanel>
-                <StackPanel Visibility="{Binding PracticeMode, Converter={StaticResource InvertableBooleanToVisibilityConverter}, ConverterParameter=VisibleWhenFalse, FallbackValue=Visible}">
-                    <CheckBox Content="Split when BOSS music STARTS" HorizontalAlignment="Left" FontSize="15" Margin="0,0,0,4" IsChecked="{Binding MusicStart, Mode=TwoWay}"/>
-                    <CheckBox Content="Split when BOSS music ENDS" HorizontalAlignment="Left" FontSize="15" Margin="0,0,0,4" IsChecked="{Binding MusicEnd, Mode=TwoWay}"/>
-                    <CheckBox Content="Split when the computer is found" HorizontalAlignment="Left" FontSize="15" Margin="0,0,0,4" IsChecked="{Binding Computer, Mode=TwoWay}"/>
-                    <CheckBox Content="Split when Miru despawns" HorizontalAlignment="Left" FontSize="15" Margin="0,0,0,4" IsChecked="{Binding MiruDe, Mode=TwoWay}"/>
-                    <CheckBox Content="Ignore the Side Chapter" HorizontalAlignment="Left" FontSize="15" Margin="0,0,0,4" IsChecked="{Binding SideCh, Mode=TwoWay}"/>
-                    <CheckBox Content="Force split after Alius I" HorizontalAlignment="Left" FontSize="15" Margin="0,0,0,4" IsChecked="{Binding ForceAlius1, Mode=TwoWay}"  />
-                    <CheckBox Content="Ignore the &quot;M.R.&quot; (Reload on Noah 1)" HorizontalAlignment="Left" FontSize="15" Margin="0,0,0,4" IsChecked="{Binding Noah1Reload, Mode=TwoWay}" IsEnabled="{Binding AutoReset, Converter={StaticResource InverseBooleanConverter},Mode=TwoWay}"/>
-                    <CheckBox Content="Split when Town Member +2 or Nixie despawns" HorizontalAlignment="Left" FontSize="15" Margin="0,0,0,4" IsChecked="{Binding Tm2, Mode=TwoWay}"/>
-                    <CheckBox Content="Ignore Irisu Phase 1" HorizontalAlignment="Left" FontSize="15" Margin="0,0,0,4" IsChecked="{Binding Irisu1, Mode=TwoWay}"/>
-                    <CheckBox Content="Don't split on reload during boss (1.75, experimental)" HorizontalAlignment="Left" FontSize="15" Margin="0,0,0,4" IsChecked="{Binding DontSplitOnReload, Mode=TwoWay}"/>
-                    <CheckBox Content="Track In-Game Time" HorizontalAlignment="Left" FontSize="15" Margin="0,0,0,4" IsChecked="{Binding Igt, Mode=TwoWay}"/>
-                    <CheckBox Content="Start timer on game start (1.75 only)" HorizontalAlignment="Left" FontSize="15" Margin="0,0,0,4" IsChecked="{Binding AutoStart, Mode=TwoWay}"/>
-                    <CheckBox Content="Reset timer when returning to title screen" HorizontalAlignment="Left" FontSize="15" Margin="0,0,0,4" IsChecked="{Binding AutoReset, Mode=TwoWay}"/>
-                    <CheckBox Content="Show debug area" HorizontalAlignment="Left" FontSize="15" Margin="0,0,0,4" IsChecked="{Binding DebugArea, Mode=TwoWay}"/>
-                </StackPanel>
-            </StackPanel>
-            <DockPanel Visibility="{Binding DebugArea, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay}" >
-                <TextBlock TextWrapping="Wrap" Text="debug area" Height="15.24" Width="352.251" DockPanel.Dock="Top"/>
-                <CheckBox x:Name="BossEventDebug" IsEnabled="False" Content="(DEBUG)BOSS event tracked" FontSize="15" VerticalAlignment="Top" HorizontalAlignment="Left" IsChecked="{Binding BossEvent, Mode=TwoWay}" DockPanel.Dock="Top"/>
-                <TextBlock TextWrapping="Wrap" Text="{Binding GameMusic}" HorizontalAlignment="Left" FontSize="15" Margin="0,0,0,4" DockPanel.Dock="Top"/>
-                <Grid x:Name="DebugPanel" d:DataContext="{d:DesignData local:DebugContext}" DockPanel.Dock="Top">
+                <Grid x:Name="TopSettings">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*"/>
                         <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
                     </Grid.RowDefinitions>
+
+                    <TextBlock TextWrapping="Wrap" Text="General Settings" FontSize="14"/>
+                    <CheckBox Content="Auto-Start Timer" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding AutoStart, Mode=TwoWay}"/>
+                    <CheckBox Content="Auto-Reset Timer" Grid.Row="2" Grid.Column="0" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding AutoReset, Mode=TwoWay}"/>
+                    <CheckBox Content="Advanced Settings" Grid.Row="3" Grid.Column="0" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding AdvancedSettings, Mode=TwoWay}"/>
+                    <CheckBox Content="Practice Mode" Grid.Row="4" Grid.Column="0" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding PracticeMode, Mode=TwoWay}"/>
+
+                    <TextBlock TextWrapping="Wrap" Text="Status/Data" Grid.Row="0" Grid.Column="1" FontSize="14"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="1" Grid.Column="1" Margin="20,0,0,0">
+                        <TextBlock TextWrapping="Wrap" Text="LiveSplit Server Port " FontSize="14"/>
+                        <TextBox TextWrapping="Wrap" Text="{Binding ServerPort}" Height ="18" VerticalContentAlignment="Top" VerticalAlignment="Top" FontSize="12"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="2" Grid.Column="1" Margin="20,0,0,0">
+                        <TextBlock TextWrapping="Wrap" Text="Rabi-Ribi Status: " FontSize="14"/>
+                        <TextBlock TextWrapping="Wrap" Text="{Binding GameVer}" FontSize="14"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="3" Grid.Column="1" Margin="20,0,0,0">
+                        <TextBlock TextWrapping="Wrap" Text="Detected Boss: " FontSize="14"/>
+                        <TextBlock TextWrapping="Wrap" Text="N/A" FontSize="14"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="4" Grid.Column="1" Margin="20,0,0,0">
+                        <TextBlock TextWrapping="Wrap" Text="Segment Timer: " FontSize="14"/>
+                        <TextBlock TextWrapping="Wrap" Text="{Binding BOSSTimer}" FontSize="14"/>
+                        <TextBlock TextWrapping="Wrap" Text="||" FontSize="14" Margin="5,0"/>
+                        <TextBlock TextWrapping="Wrap" Text="{Binding RoutingTimer}" FontSize="14"/>
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel Visibility="{Binding AdvancedSettings, Converter={StaticResource InvertableBooleanToVisibilityConverter}, ConverterParameter=VisibleWhenFalse, FallbackValue=Collapsed}">
+                    <StackPanel Visibility="{Binding PracticeMode, Converter={StaticResource InvertableBooleanToVisibilityConverter}, ConverterParameter=VisibleWhenTrue, FallbackValue=Collapsed}">
+                        <StackPanel Name="PracticeModePanel" d:DataContext="{d:DesignData local:PracticeModeContext}">
+                            <local:SplitConditionSettings VerticalAlignment="Top" Label="Start Timer When" SplitConditionObject="{Binding StartTimerSetting}"/>
+                            <local:SplitConditionSettings VerticalAlignment="Top" Label="Split Timer When" SplitConditionObject="{Binding SplitTimerSetting}"/>
+                            <local:SplitConditionSettings VerticalAlignment="Top" Label="Reset Timer When" SplitConditionObject="{Binding ResetTimerSetting}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Visibility="{Binding AdvancedSettings, Converter={StaticResource InvertableBooleanToVisibilityConverter}, ConverterParameter=VisibleWhenTrue, FallbackValue=Collapsed}">
+                    <StackPanel Visibility="{Binding PracticeMode, Converter={StaticResource InvertableBooleanToVisibilityConverter}, ConverterParameter=VisibleWhenFalse, FallbackValue=Collapsed}">
+                        <TextBlock TextWrapping="Wrap" Text="Additional Settings" FontSize="14" Margin="0,10,0,0"/>
+                        <CheckBox Content="Show Debug Area" Grid.Row="3" Grid.Column="0" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding DebugMode, Mode=TwoWay}"/>
+                        <CheckBox Content="Reload Split Prevention" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding DontSplitOnReload, Mode=TwoWay}"/>
+                        <TextBlock TextWrapping="Wrap" Text="Additional Splits" FontSize="14" Margin="0,10,0,0"/>
+                        <CheckBox Content="Side Chapter" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnSideCh, Mode=TwoWay}"/>
+                        <CheckBox Content="Cyber Flower" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnCyberFlower, Mode=TwoWay}"/>
+                        <CheckBox Content="Shadow Rita" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnShRita, Mode=TwoWay}"/>
+                        <CheckBox Content="Shadow Pandora" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnShPandora, Mode=TwoWay}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Visibility="{Binding PracticeMode, Converter={StaticResource InvertableBooleanToVisibilityConverter}, ConverterParameter=VisibleWhenFalse, FallbackValue=Collapsed}">
+                    <StackPanel Visibility="{Binding AdvancedSettings, Converter={StaticResource InvertableBooleanToVisibilityConverter}, ConverterParameter=VisibleWhenFalse, FallbackValue=Collapsed}">
+                        <TextBlock TextWrapping="Wrap" Text="Split Settings" FontSize="14" Margin="0,10,0,0"/>
+
+                        <Grid x:Name="SplitSettings">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2.5*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="2*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock TextWrapping="Wrap" Text="Prologue" FontSize="14"/>
+                            <CheckBox Content="Cocoa 1" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnCocoa1, Mode=TwoWay}"/>
+                            <CheckBox Content="Ribbon" Grid.Row="2" Grid.Column="0" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnRibbon, Mode=TwoWay}"/>
+                            <CheckBox Content="Ashuri 1" Grid.Row="3" Grid.Column="0" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnAshuri1, Mode=TwoWay}"/>
+                            <TextBlock TextWrapping="Wrap" Text="Miscellaneous" Grid.Row="4" Grid.Column="0" FontSize="14"/>
+                            <CheckBox Content="Mr. Big Box" Grid.Row="5" Grid.Column="0" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnBigBox, Mode=TwoWay}"/>
+                            <CheckBox Content="Holo-Defense" Grid.Row="6" Grid.Column="0" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnHoloMaid, Mode=TwoWay}"/>
+                            <CheckBox Content="Computer" Grid.Row="7" Grid.Column="0" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnComputer, Mode=TwoWay}"/>
+                            <CheckBox Content="Hall of Memories" Grid.Row="8" Grid.Column="0" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnHoM, Mode=TwoWay}"/>
+                            <CheckBox Content="Forgotten Cave II" Grid.Row="9" Grid.Column="0" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnFC2, Mode=TwoWay}"/>
+                            <CheckBox Content="Library" Grid.Row="10" Grid.Column="0" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnLibrary, Mode=TwoWay}"/>
+
+                            <TextBlock TextWrapping="Wrap" Text="Bosses" Grid.Row="0" Grid.Column="1" FontSize="14"/>
+                            <CheckBox Content="Rumi" Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnRumi, Mode=TwoWay}"/>
+                            <CheckBox Content="Rita" Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnRita, Mode=TwoWay}"/>
+                            <CheckBox Content="Nieve" Grid.Row="3" Grid.Column="1" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnNieve, Mode=TwoWay}"/>
+                            <CheckBox Content="Nixie" Grid.Row="4" Grid.Column="1" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnNixie, Mode=TwoWay}"/>
+                            <CheckBox Content="Aruraune" Grid.Row="5" Grid.Column="1" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnAruraune, Mode=TwoWay}"/>
+                            <CheckBox Content="Pandora" Grid.Row="6" Grid.Column="1" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnPandora, Mode=TwoWay}"/>
+                            <CheckBox Content="Irisu" Grid.Row="7" Grid.Column="1" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnIrisu, Mode=TwoWay}"/>
+                            <CheckBox Content="Saya" Grid.Row="8" Grid.Column="1" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnSaya, Mode=TwoWay}"/>
+                            <CheckBox Content="Cicini" Grid.Row="9" Grid.Column="1" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnCicini, Mode=TwoWay}"/>
+                            <CheckBox Content="Syaro" Grid.Row="10" Grid.Column="1" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnSyaro, Mode=TwoWay}"/>
+
+                            <CheckBox Content="Cocoa 2" Grid.Row="1" Grid.Column="2" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnCocoa2, Mode=TwoWay}"/>
+                            <CheckBox Content="Ashuri 2" Grid.Row="2" Grid.Column="2" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnAshuri2, Mode=TwoWay}"/>
+                            <CheckBox Content="Lilith 1" Grid.Row="3" Grid.Column="2" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnLilith1, Mode=TwoWay}"/>
+                            <CheckBox Content="Lilith 2" Grid.Row="4" Grid.Column="2" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnLilith2, Mode=TwoWay}"/>
+                            <CheckBox Content="Vanilla" Grid.Row="5" Grid.Column="2" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnVanilla, Mode=TwoWay}"/>
+                            <CheckBox Content="Chocolate" Grid.Row="6" Grid.Column="2" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnChocolate, Mode=TwoWay}"/>
+                            <CheckBox Content="Kotri 1" Grid.Row="7" Grid.Column="2" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnKotri1, Mode=TwoWay}"/>
+                            <CheckBox Content="Kotri 2" Grid.Row="8" Grid.Column="2" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnKotri2, Mode=TwoWay}"/>
+                            <CheckBox Content="Kotri 3" Grid.Row="9" Grid.Column="2" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnKotri3, Mode=TwoWay}"/>
+                            <CheckBox Content="Keke Bunny" Grid.Row="10" Grid.Column="2" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnKeke, Mode=TwoWay}"/>
+
+                            <CheckBox Content="Seana 1" Grid.Row="1" Grid.Column="3" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnSeana1, Mode=TwoWay}"/>
+                            <CheckBox Content="Seana 2" Grid.Row="2" Grid.Column="3" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnSeana2, Mode=TwoWay}"/>
+                            <CheckBox Content="Miriam" Grid.Row="3" Grid.Column="3" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnMiriam, Mode=TwoWay}"/>
+                            <CheckBox Content="Miru" Grid.Row="4" Grid.Column="3" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnMiru, Mode=TwoWay}"/>
+                            <CheckBox Content="Noah 1" Grid.Row="5" Grid.Column="3" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnNoah1, Mode=TwoWay}"/>
+                            <CheckBox Content="Noah 2" Grid.Row="6" Grid.Column="3" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnNoah2, Mode=TwoWay}"/>
+                            <CheckBox Content="???" Grid.Row="7" Grid.Column="3" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnNoah3, Mode=TwoWay}"/>
+                            <CheckBox Content="Alius I" Grid.Row="8" Grid.Column="3" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnAlius1, Mode=TwoWay}"/>
+                            <CheckBox Content="Alius II" Grid.Row="9" Grid.Column="3" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnAlius2, Mode=TwoWay}"/>
+                            <CheckBox Content="Alius III" Grid.Row="10" Grid.Column="3" VerticalAlignment="Bottom" FontSize="14" Margin="20,0,0,0" IsChecked="{Binding SplitOnAlius3, Mode=TwoWay}"/>
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+
+            </StackPanel>
+            <DockPanel Visibility="{Binding DebugMode, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay}" >
+                <TextBlock TextWrapping="Wrap" Text="Debug Area" FontSize="16" DockPanel.Dock="Top" Margin="0,0,0,2"/>
+                <CheckBox x:Name="BossEventDebug" IsEnabled="False" VerticalAlignment="Bottom" Margin="0,0,0,2" Content="(DEBUG) BOSS Event Tracked" FontSize="14" HorizontalAlignment="Left" IsChecked="{Binding BossEvent, Mode=TwoWay}" DockPanel.Dock="Top"/>
+                <TextBlock TextWrapping="Wrap" Text="{Binding GameMusic}" HorizontalAlignment="Left" FontSize="14" Margin="0,0,0,2" DockPanel.Dock="Top"/>
+                <Grid x:Name="DebugPanel" d:DataContext="{d:DesignData local:DebugContext}" DockPanel.Dock="Top" Margin="0,0,10,2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="2*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="330"/>
+                    </Grid.ColumnDefinitions>
                     <DataGrid  x:Name="Grid" ItemsSource="{Binding BossList}" CanUserAddRows="False"  IsReadOnly="True" AutoGenerateColumns="False"  SelectionUnit="FullRow"  
-                        d:DataContext="{d:DesignData local:BossData}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+                        d:DataContext="{d:DesignData local:BossData}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="0,0,0,0">
                         <DataGrid.Columns>
                             <DataGridTextColumn Binding="{Binding BossIdx}" ClipboardContentBinding="{Binding BossIdx}" Header="Index"/>
                             <DataGridTextColumn Binding="{Binding BossID}" ClipboardContentBinding="{Binding BossID}" Header="Entity ID"/>
                             <DataGridTextColumn Binding="{Binding BossHP}" ClipboardContentBinding="{Binding BossHP}" Header="HP"/>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <TextBox TextWrapping="Wrap" Text="{Binding DebugLog, Mode=TwoWay}"  Grid.Row="1" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" TextChanged="TextBox_TextChanged" VerticalScrollBarVisibility="Visible"/>
+                    <TextBox TextWrapping="Wrap" Text="{Binding DebugLog, Mode=TwoWay}" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" TextChanged="TextBox_TextChanged" VerticalScrollBarVisibility="Visible" Margin="0,0,0,0" Grid.Row="1"/>
                 </Grid>
             </DockPanel>
-
         </DockPanel>
     </DockPanel>
-
 </Window>
 
