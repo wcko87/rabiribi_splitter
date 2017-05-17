@@ -828,6 +828,7 @@ namespace rabi_splitter_WPF
                 OnPropertyChanged(nameof(Tm2));
             }
         }
+
         public bool Irisu1
         {
             get { return _irisu1; }
@@ -838,16 +839,7 @@ namespace rabi_splitter_WPF
                 OnPropertyChanged(nameof(Irisu1));
             }
         }
-        public bool Noah1Reload
-        {
-            get { return _noah1Reload; }
-            set
-            {
-                if (value == _noah1Reload) return;
-                _noah1Reload = value;
-                OnPropertyChanged(nameof(Noah1Reload));
-            }
-        }
+
         public bool MusicStart
         {
             get { return _musicStart; }
@@ -916,25 +908,6 @@ namespace rabi_splitter_WPF
                 if (value == _forceAlius1) return;
                 _forceAlius1 = value;
                 OnPropertyChanged(nameof(ForceAlius1));
-            }
-        }
-        public bool Bossbattle
-        {
-            get { return bossbattle; }
-            set
-            {
-                if (value == bossbattle) return;
-                bossbattle = value;
-                if (value)
-                {
-                    this.LastBossStart = DateTime.Now;
-                }
-                else
-                {
-                    this.LastBossEnd=DateTime.Now;
-                }
-               
-               
             }
         }
         
@@ -1024,7 +997,6 @@ namespace rabi_splitter_WPF
             this.Tm2 = true;
             this.Irisu1 = true;      
             this.Igt = true;
-            this.Noah1Reload = false;
             this.ForceAlius1 = false;
         }
 

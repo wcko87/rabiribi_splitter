@@ -172,7 +172,7 @@ namespace rabi_splitter_WPF
             #endregion
 
             #region Detect Boss Change
-            
+
             {
                 var currBosses = new HashSet<int>(snapshot.bossList.Select(bossStats => bossStats.id));
                 var prevBosses = new HashSet<int>(prevSnapshot.bossList.Select(bossStats => bossStats.id));
@@ -200,7 +200,7 @@ namespace rabi_splitter_WPF
                 }
                 DebugLog("Death!");
             }
-            
+
             // Alternate death detection code.
             if (snapshot.IsDeathSprite() && !prevSnapshot.IsDeathSprite())
             {
@@ -241,7 +241,7 @@ namespace rabi_splitter_WPF
                 DebugLog($"New Map: [{snapshot.mapid}] {StaticData.GetMapName(snapshot.mapid)}");
             }
             #endregion
-            
+
             #region Non-Music Splits
 
             // Side Chapter
@@ -291,7 +291,7 @@ namespace rabi_splitter_WPF
                 DebugLog($"New Music: [{currMusicId}] {StaticData.GetMusicName(currMusicId)}");
                 mainContext.GameMusic = StaticData.GetMusicName(currMusicId);
 
-                if (currMusic == Music.THEME_OF_RABI_RIBI_8BIT || currMusic == Music.THEME_OF_RABI_RIBI || 
+                if (currMusic == Music.THEME_OF_RABI_RIBI_8BIT || currMusic == Music.THEME_OF_RABI_RIBI ||
                     currMusic == Music.MAIN_MENU)
                 {
                     DebugLog("Title Music Detected");
@@ -425,201 +425,8 @@ namespace rabi_splitter_WPF
 
                     #endregion
                 }
-
-
-                #region Old Code
-                /*else
-                {
-                    var bossmusicflag = StaticData.BossMusics.Contains(musicid);
-                    if (bossmusicflag)
-                    {
-                        if (mainContext.Bossbattle)
-                        {
-                            if (mainContext.Noah1Reload && (mainContext.lastmusicid == 52 || musicid == 52))
-                            {
-                                DebugLog("noah 1 reload? ignore");
-                            }
-                            else
-                            {
-                                if (mainContext.MusicStart || mainContext.MusicEnd)
-                                {
-                                    if (!mainContext.DontSplitOnReload || !reloading) SpeedrunSendSplit();
-                                    if (!reloading) PracticeModeSendTrigger(SplitTrigger.BossEnd);
-                                    DebugLog("new boss music, " + (reloading ? "don't split (reload)" : "split"));
-                                }
-                                if (musicid == 37)
-                                {
-                                    mainContext.Noah1Reload = true;
-                                    DebugLog("noah1 music start, ignore MR forever");
-                                }
-                            }
-
-                            mainContext.lastmusicid = musicid;
-                            return;
-                        }
-                    }
-                    if (!mainContext.Bossbattle)
-                    {
-
-                        if (musicid == 54 && mainContext.Alius1 && !mainContext.ForceAlius1)
-                        {
-                            mainContext.Bossbattle = false;
-                            mainContext.Alius1 = false;
-                            DebugLog("Alius music, ignore once");
-
-                        }
-                        else if (musicid == 42 && mapid == 1 && mainContext.Irisu1)
-                        {
-                            mainContext.Bossbattle = false;
-                            DebugLog("Irisu P1, ignore");
-
-                        }
-                        else
-                        {
-                            if (bossmusicflag)
-                            {
-                                if (mapid == 5 && musicid == 44 && mainContext.SideCh)
-                                {
-                                    mainContext.Bossbattle = false;
-                                    DebugLog("sidechapter, ignore");
-
-                                }
-                                else
-                                {
-                                    PracticeModeSendTrigger(SplitTrigger.BossStart);
-                                    mainContext.Bossbattle = true;
-                                    mainContext.lastbosslist = new List<int>();
-                                    mainContext.lastnoah3hp = -1;
-                                    if (musicid == 37)
-                                    {
-                                        mainContext.Noah1Reload = true;
-                                        DebugLog("noah1 music start, ignore MR forever");
-                                    }
-                                    if (mainContext.MusicStart)
-                                    {
-                                        SpeedrunSendSplit();
-                                        DebugLog("music start, split");
-
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (!bossmusicflag) //boss music end!
-                        {
-                            mainContext.Bossbattle = false;
-                            if (mainContext.MusicEnd)
-                            {
-                                if (!mainContext.DontSplitOnReload || !reloading) SpeedrunSendSplit();
-                                if (!reloading) PracticeModeSendTrigger(SplitTrigger.BossEnd);
-                                DebugLog(reloading ? "music end, don't split (reload)" : "music end, split");
-
-                            }
-                        }
-                    }
-                }
-                mainContext.lastmusicid = musicid;*/
                 #endregion
             }
-            #endregion
-
-            #region Old Stuff P.2
-
-            if (mainContext.Bossbattle)
-            {
-                if (mainContext.MiruDe || false)//todo noah3 option
-                {
-                    int Noah3HP = -1;
-
-                    if (StaticData.IsValidMap(snapshot.mapid))
-                    {
-                        int ptr = MemoryHelper.GetMemoryValue<int>(process, StaticData.EnemyPtrAddr[mainContext.veridx]);
-                        List<int> bosses = new List<int>();
-                        for (var i = 0; i < 50; i++)
-                        {
-                            ptr = ptr + StaticData.EnemyEntitySize[mainContext.veridx];
-
-                            var emyid = MemoryHelper.GetMemoryValue<int>(process,
-                                ptr + StaticData.EnemyEntityIDOffset[mainContext.veridx], false);
-                            if (StaticData.IsBoss(emyid))
-                            {
-                                bosses.Add(emyid);
-                                if (emyid == 1053)
-                                {
-                                    Noah3HP = MemoryHelper.GetMemoryValue<int>(process,
-                                        ptr + StaticData.EnemyEntityHPOffset[mainContext.veridx], false);
-                                }
-
-                            }
-
-                        }
-                        if (mainContext.MiruDe && mapid == 8)
-                        {
-                            foreach (var boss in mainContext.lastbosslist)
-                            {
-                                if (boss == 1043)
-                                {
-                                    if (!bosses.Contains(boss)) //despawn
-                                    {
-                                        SpeedrunSendSplit();
-                                        DebugLog("miru despawn, split");
-                                        mainContext.Bossbattle = false;
-                                    }
-                                }
-                            }
-                        }
-
-                        if (mainContext.Tm2 && musicid == 8)
-                        {
-                            bool f = true;
-                            foreach (var boss in mainContext.lastbosslist)
-                            {
-
-                                if (boss == 1024)
-                                {
-                                    if (!bosses.Contains(boss)) //despawn
-                                    {
-                                        SpeedrunSendSplit();
-                                        DebugLog("nixie despawn, split");
-                                        mainContext.Bossbattle = false;
-                                        f = false;
-                                        break;
-                                    }
-                                }
-                            }
-
-                            int newTM = MemoryHelper.GetMemoryValue<int>(process, StaticData.TownMemberAddr[mainContext.veridx]);
-                            if (newTM - mainContext.lastTM == 1 && f) //for after 1.71 , 1.71 isn't TM+2 at once when skip Nixie, it's TM+1 twice
-                            {
-                                if (DateTime.Now - mainContext.LastTMAddTime < TimeSpan.FromSeconds(1))
-                                {
-                                    var d = DateTime.Now - mainContext.LastTMAddTime;
-                                    mainContext.Bossbattle = false;
-                                    SpeedrunSendSplit();
-                                    DebugLog("TM+2 in " + d.TotalMilliseconds + " ms, split");
-                                }
-                                mainContext.LastTMAddTime = DateTime.Now;
-                            }
-                            else if (newTM - mainContext.lastTM == 2 && f)//for 1.65-1.70
-                            {
-                                mainContext.Bossbattle = false;
-                                SpeedrunSendSplit();
-                                DebugLog("TM+2, split");
-                            }
-                            mainContext.lastTM = newTM;
-                        }
-                        mainContext.lastbosslist = bosses;
-                        mainContext.lastnoah3hp = Noah3HP;
-                    }
-                }
-            }
-
-            #endregion
-
-            //// END NEW CODE
-            prevSnapshot = snapshot;
         }
         
         private void StartNewGame()
