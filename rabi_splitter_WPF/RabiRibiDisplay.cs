@@ -52,6 +52,7 @@ namespace rabi_splitter_WPF
             UpdateFps();
 
             if (snapshot.musicid >= 0) rabiRibiState.lastValidMusicId = snapshot.musicid;
+            if (snapshot.playtime > 0) inGameState.lastNonZeroPlayTime = snapshot.playtime;
             prevSnapshot = snapshot;
 
             SendPracticeModeMessages();
@@ -72,39 +73,60 @@ namespace rabi_splitter_WPF
             previousFrameMillisecond = currentFrameMillisecond;
         }
 
+        /// <summary>
+        /// Only runs if prevSnapshot != null.
+        /// </summary>
         private void Update()
         {
+            // Do nothing if prevSnapshot == null. We want to take one more snapshot before we start doing stuff.
+            if (prevSnapshot == null) return;
+
             #region Game State Machine
 
-            if (inGameState.CurrentActivityIs(InGameActivity.STARTING)) {
+            if (inGameState.CurrentActivityIs(InGameActivity.STARTING))
+            {
                 // Detect start game
                 if (0 < snapshot.playtime && snapshot.playtime < 200 ||
-                    (prevSnapshot != null && prevSnapshot.playtime < snapshot.playtime && snapshot.playtime < prevSnapshot.playtime + 200))
+                    (prevSnapshot.playtime < snapshot.playtime && snapshot.playtime < prevSnapshot.playtime + 200))
                 {
                     inGameState.currentActivity = InGameActivity.WALKING;
                     DebugLog("IGT start?");
                 }
-            } else {
+            }
+            else
+            {
             }
 
             #endregion
 
             #region Detect Reload
 
-            bool reloading = snapshot.playtime == 0 || ((prevSnapshot != null) && (snapshot.playtime < prevSnapshot.playtime));
-            if (inGameState.IsGameStarted() && snapshot.playtime > 0)
-            {
-                if (snapshot.playtime < inGameState.lastNonZeroPlayTime)
-                {
-                    if (InGame())
-                    {
-                        inGameState.nRestarts++;
-                    }
-                    DebugLog("Reload Game! " + snapshot.playtime + " <- " + inGameState.lastNonZeroPlayTime);
-                }
-                inGameState.lastNonZeroPlayTime = snapshot.playtime;
-            }
+            // This variable is used to block splits while reloading.
+            bool reloading = snapshot.playtime == 0 || snapshot.playtime < prevSnapshot.playtime;
+            // Forces splits regardless of reload status.
+            if (!mainContext.DontSplitOnReload) reloading = false;
 
+            // Detect reload events (separate from reloading variable)
+            if (inGameState.IsGameStarted())
+            {
+                // When reloading, the frame numbers look like this:
+                // Case 1: (PLAYTIME frame steps down briefly before going to 0)
+                //         1108, 1109, 1110, 1110, 1110, 540, 0, 0, 0, 0, 0, 540, 540, 541, 542, 544,
+                // Case 2: (PLAYTIME frame goes straight to 0)
+                //         1108, 1109, 1110, 1110, 1110, 0, 0, 0, 0, 0, 540, 540, 541, 542, 544,
+                // This can sometimes cause reloads to be detected twice (which is usually not a problem though, but ocd lol)
+                // So we use a switch to "prime" the canReload flag whenever it detects the PLAYTIME increasing.
+                // the canReload flag is unset when a reload is detected, and remains unset until PLAYTIME starts increasing again.
+
+                if (snapshot.playtime > prevSnapshot.playtime) inGameState.canReload = true;
+                if (InGame() && inGameState.canReload && snapshot.playtime < prevSnapshot.playtime)
+                {
+                    PracticeModeSendTrigger(SplitTrigger.Reload);
+                    DebugLog("Game Reloaded!");
+                    inGameState.canReload = false;
+                    inGameState.nRestarts++;
+                }
+            }
             #endregion
 
             #region Detect Music change
@@ -123,7 +145,7 @@ namespace rabi_splitter_WPF
 
             #region Detect Minimap Change
 
-            if (prevSnapshot != null && (prevSnapshot.minimapPosition != snapshot.minimapPosition))
+            if (prevSnapshot.minimapPosition != snapshot.minimapPosition)
             {
                 DebugLog($"Minimap Shift! {prevSnapshot.minimapPosition} -> {snapshot.minimapPosition}");
                 if (snapshot.minimapPosition == 1)
@@ -150,8 +172,7 @@ namespace rabi_splitter_WPF
             #endregion
 
             #region Detect Boss Change
-
-            if (prevSnapshot != null)
+            
             {
                 var currBosses = new HashSet<int>(snapshot.bossList.Select(bossStats => bossStats.id));
                 var prevBosses = new HashSet<int>(prevSnapshot.bossList.Select(bossStats => bossStats.id));
@@ -168,508 +189,436 @@ namespace rabi_splitter_WPF
             }
 
             #endregion
-            
+
             #region Detect Death
+            // Original death detection code.
+            if (snapshot.hp == 0 && prevSnapshot.hp > 0)
+            {
+                if (InGame())
+                {
+                    inGameState.nDeaths++;
+                }
+                DebugLog("Death!");
+            }
             
-            if (prevSnapshot != null)
+            // Alternate death detection code.
+            if (snapshot.IsDeathSprite() && !prevSnapshot.IsDeathSprite())
             {
-                if (snapshot.hp == 0 && prevSnapshot.hp > 0)
+                if (InGame())
                 {
-                    if (InGame())
-                    {
-                        inGameState.nDeaths++;
-                    }
-                    DebugLog("Death!");
+                    inGameState.nDeathsAlt++;
                 }
+                DebugLog("Death (Alt)!");
             }
-
-            if (prevSnapshot != null)
-            {
-                if (snapshot.IsDeathSprite() && !prevSnapshot.IsDeathSprite())
-                {
-                    if (InGame())
-                    {
-                        inGameState.nDeathsAlt++;
-                    }
-                    DebugLog("Death (Alt)!");
-                }
-            }
-
             #endregion
 
-            #region Detect Start Game
+            #region Detect Start Game From Menu
 
             if (prevSnapshot != null && (snapshot.CurrentMusicIs(Music.MAIN_MENU) || snapshot.CurrentMusicIs(Music.ARTBOOK_INTRO))
                 && prevSnapshot.blackness == 0 && snapshot.blackness >= 100000)
             {
                 // Sudden increase by 100000
-                DebugLog("Start Game!");
+                if (mainContext.AutoStart) SpeedrunSendStartTimer();
+                DebugLog("[Start] Game Started!");
                 StartNewGame();
+                //mainContext.LastBossEnd = DateTime.Now;
             }
 
             #endregion
-           
-            if (prevSnapshot == null || prevSnapshot.mapid != snapshot.mapid)
+
+            #region Read IGT
+            if (snapshot.t_playtime > 0 && mainContext.Igt)
             {
-                DebugLog("newmap: " + snapshot.mapid + ":" + StaticData.GetMapName(snapshot.mapid));
+                SendIgt((float)snapshot.t_playtime / 60);
+            }
+            #endregion
+
+
+            #region Detect Map Change
+            if (prevSnapshot.mapid != snapshot.mapid)
+            {
+                PracticeModeMapChangeTrigger(prevSnapshot.mapid, snapshot.mapid);
+                DebugLog($"New Map: [{snapshot.mapid}] {StaticData.GetMapName(snapshot.mapid)}");
+            }
+            #endregion
+            
+            #region Non-Music Splits
+
+            // Side Chapter
+            if (mainContext.SplitOnSideCh)
+            {
+                // TODO???: WIP
+                if (false)
+                {
+                    DebugLog("[Split] Finished Side Chapter");
+                    SpeedrunSendSplit();
+                }
             }
 
-//// NEW CODE
-
-
-                if (mainContext.veridx < 0) return;
-
-                #region Read IGT
-
-                int igt = MemoryHelper.GetMemoryValue<int>(process, StaticData.IGTAddr[mainContext.veridx]);
-                if (igt > 0 && mainContext.Igt)
+            //Computer
+            if (mainContext.SplitOnComputer)
+            {
+                if (snapshot.money - prevSnapshot.money == 17500)
                 {
-                    sendigt((float)igt / 60);
+                    DebugLog("[Split] Found Computer");
+                    SpeedrunSendSplit();
                 }
+            }
 
-                #endregion
-
-                #region Detect Reload
-
-                bool reloaded = false;
+            //Cyber Flower
+            if (mainContext.SplitOnCyberFlower)
+            {
+                if (snapshot.cyberFlower == 1 && prevSnapshot.cyberFlower == 0)
                 {
-                    // When reloading, the frame numbers look like this:
-                    // Case 1: (PLAYTIME frame steps down briefly before going to 0)
-                    //         1108, 1109, 1110, 1110, 1110, 540, 0, 0, 0, 0, 0, 540, 540, 541, 542, 544,
-                    // Case 2: (PLAYTIME frame goes straight to 0)
-                    //         1108, 1109, 1110, 1110, 1110, 0, 0, 0, 0, 0, 540, 540, 541, 542, 544,
-                    // This can sometimes cause reloads to be detected twice (which is usually not a problem though, but ocd lol)
-                    // So we use a switch to "prime" the canReload flag whenever it detects the PLAYTIME increasing.
-                    // the canReload flag is unset when a reload is detected, and remains unset until PLAYTIME starts increasing again.
+                    DebugLog("[Split] Obtained Cyber Flower");
+                    mainContext.SplitOnCyberFlower = false;
+                    SpeedrunSendSplit();
+                }
+            }
 
-                    int playtime = MemoryHelper.GetMemoryValue<int>(process, StaticData.PlaytimeAddr[mainContext.veridx]);
-                    reloaded = playtime < mainContext.lastplaytime;
+            #endregion
 
-                    if (playtime > mainContext.lastplaytime) mainContext.canReload = true;
-                    if (mainContext.canReload && playtime < mainContext.lastplaytime)
+            #region Music Splits
+
+            if (ValidMusicChanged())
+            {
+                int prevMusicId = rabiRibiState.lastValidMusicId;
+                Music prevMusic = StaticData.GetMusic(prevMusicId).Value;
+                int currMusicId = snapshot.musicid;
+                Music currMusic = StaticData.GetMusic(currMusicId).Value;
+
+                PracticeModeMusicChangeTrigger(prevMusicId, currMusicId);
+                DebugLog($"New Music: [{currMusicId}] {StaticData.GetMusicName(currMusicId)}");
+                mainContext.GameMusic = StaticData.GetMusicName(currMusicId);
+
+                if (currMusic == Music.THEME_OF_RABI_RIBI_8BIT || currMusic == Music.THEME_OF_RABI_RIBI || 
+                    currMusic == Music.MAIN_MENU)
+                {
+                    DebugLog("Title Music Detected");
+                    if (mainContext.AutoReset)
                     {
-                        PracticeModeSendTrigger(SplitTrigger.Reload);
-                        DebugLog("Game Reloaded!");
-                        mainContext.canReload = false;
+                        DebugLog("[Reset]");
+                        SpeedrunSendReset();
                     }
-                    mainContext.lastplaytime = playtime;
-                }
-                // Forces splits regardless of reload status. Placed here so that reloads still run through the debug log.
-                if (!mainContext.DontSplitOnReload)
-                {
-                    reloaded = false;
-                }
-
-                #endregion
-
-                int mapid = MemoryHelper.GetMemoryValue<int>(process, StaticData.MapAddress[mainContext.veridx]);
-                if (mainContext.lastmapid != mapid)
-                {
-                    PracticeModeMapChangeTrigger(mainContext.lastmapid, mapid);
-                    DebugLog("New Map: [" + mapid + "] " + StaticData.GetMapName(mapid));
-                }
-
-                int musicaddr = StaticData.MusicAddr[mainContext.veridx];
-                int musicid = MemoryHelper.GetMemoryValue<int>(process, musicaddr);
-
-                #region Detect Start Game
-
-                if (musicid == 53)
-                {
-                    int blackness = MemoryHelper.GetMemoryValue<int>(process, StaticData.BlacknessAddr[mainContext.veridx]);
-                    if (mainContext.previousBlackness == 0 && blackness >= 100000)
-                    {
-                        // Sudden increase by 100000
-                        // Have to be careful, though. I don't know whether anything else causes blackness to increase by 100000
-                        if (mainContext.AutoStart) SpeedrunSendStartTimer();
-                        DebugLog("[Start] Game Started!");
-                        mainContext.LastBossEnd = DateTime.Now;
-                    }
-                    mainContext.previousBlackness = blackness;
-                }
-
-                #endregion
-
-                #region Non-Music Splits
-
-                // Side Chapter
-                if (mainContext.SplitOnSideCh)
-                {
-                    if (mainContext.lastmapid == 5 && mainContext.lastmusicid == 44 && (mapid != 5 || musicid != 44))
-                    {
-                        DebugLog("[Split] Finished Side Chapter");
-                        SpeedrunSendSplit();
-                    }
-                }
-
-                //Computer
-                if (mainContext.SplitOnComputer)
-                {
-                    var newmoney = MemoryHelper.GetMemoryValue<int>(process, StaticData.MoneyAddress[mainContext.veridx]);
-                    if (newmoney - mainContext.lastmoney == 17500)
-                    {
-                        DebugLog("[Split] Found Computer");
-                        SpeedrunSendSplit();
-                    }
-                    mainContext.lastmoney = newmoney;
-                }
-
-                //Cyber Flower
-                if (mainContext.SplitOnCyberFlower)
-                {
-                    int hasFlower = MemoryHelper.GetMemoryValue<int>(process, StaticData.CyberFlowerAddr[mainContext.veridx]);
-                    if (hasFlower == 1 && mainContext.lastHasFlower == 0)
-                    {
-                        DebugLog("[Split] Obtained Cyber Flower");
-                        mainContext.SplitOnCyberFlower = false;
-                        SpeedrunSendSplit();
-                    }
-                    mainContext.lastHasFlower = hasFlower;
-                }
-
-                #endregion
-
-                #region Music Splits
-
-                if (musicid > 0)
-                {
-                    if (mainContext.lastmusicid != musicid)
-                    {
-                        PracticeModeMusicChangeTrigger(mainContext.lastmusicid, musicid);
-                        DebugLog("New Music: [" + musicid + "] " + StaticData.GetMusicName(musicid));
-                        mainContext.GameMusic = StaticData.GetMusicName(musicid);
-
-                        if (musicid == 45 || musicid == 46 || musicid == 53)
-                        {
-                            DebugLog("Title Music Detected");
-                            if (mainContext.AutoReset)
-                            {
-                                DebugLog("[Reset]");
-                                SpeedrunSendReset();
-                            }
-                            //Run "Preset Refresh" here.
-                        }
-                        else
-                        {
-                            #region Prologue
-                            //Prologue Cocoa
-                            if (mainContext.SplitOnCocoa1 && (mainContext.lastmusicid == 44 && musicid == 1))
-                            {
-                                if (!reloaded)
-                                {
-                                    DebugLog("[Split] Cocoa 1 Defeated");
-                                    SpeedrunSendSplit();
-                                }
-                                else
-                                {
-                                    DebugLog("Reloaded Cocoa 1; Don't Split");
-                                }
-                            }
-
-                            //Prologue Ribbon
-                            if (mainContext.SplitOnRibbon && (mainContext.lastmusicid == 44 && musicid == 2))
-                            {
-                                if (!reloaded)
-                                {
-                                    DebugLog("[Split] Ribbon Defeated");
-                                    SpeedrunSendSplit();
-                                }
-                                else
-                                {
-                                    DebugLog("Reloaded Ribbon; Don't Split");
-                                }
-                            }
-
-                            //Prologue Ashuri
-                            if (mainContext.SplitOnAshuri1 && (mainContext.lastmusicid == 44 && musicid == 9))
-                            {
-                                if (!reloaded)
-                                {
-                                    DebugLog("[Split] Ashuri 1 Defeated");
-                                    SpeedrunSendSplit();
-                                }
-                                else
-                                {
-                                    DebugLog("Reloaded Ashuri 1; Don't Split");
-                                }
-                            }
-
-                            #endregion
-
-                            #region Miscellaneous
-
-                            // Mr. Big Box & Holo-Defense System
-                            if ((mainContext.SplitOnBigBox || mainContext.SplitOnHoloMaid) && mainContext.lastmusicid == 33 && musicid == 19)
-                            {
-                                int entityArrayPtr = MemoryHelper.GetMemoryValue<int>(process, StaticData.EnemyPtrAddr[mainContext.veridx]);
-                                float xPosition = MemoryHelper.GetMemoryValue<float>(process, entityArrayPtr + StaticData.EnemyEntityXPositionOffset[mainContext.veridx], false);
-
-                                // 19830 is the rough X-Coordinate of the Save Point next to Sliding Powder
-                                // Mr. Big Box
-                                if (mainContext.SplitOnBigBox && xPosition < 19830)
-                                {
-                                    if(!reloaded)
-                                    {
-                                        DebugLog("[Split] Mr. Big Box Defeated");
-                                        SpeedrunSendSplit();
-                                    }
-                                    else
-                                    {
-                                        DebugLog("Reloaded Mr. Big Box; Don't Split");
-                                    }
-                                }
-
-                                // Holo-Defense System
-                                if (mainContext.SplitOnHoloMaid && xPosition > 19830)
-                                {
-                                    if(!reloaded)
-                                    {
-                                        DebugLog("[Split] Holo-Defense System Defeated");
-                                        SpeedrunSendSplit();
-                                    }
-                                    else
-                                    {
-                                        DebugLog("Reloaded Holo-Defense System; Don't Split");
-                                    }
-                                }
-                            }
-
-                            // Hall of Memories
-                            if (mainContext.SplitOnHoM && (mainContext.lastmusicid == 30 && musicid != 30))
-                            {
-                                DebugLog("[Split] Hall of Memories Completed");
-                                mainContext.SplitOnHoM = false;
-                                SpeedrunSendSplit();
-                            }
-
-                            // Forgotten Cave II
-                            if (mainContext.SplitOnFC2 && (mainContext.lastmusicid == 6 && musicid != 6))
-                            {
-                                DebugLog("[Split] Forgotten Cave II Completed");
-                                mainContext.SplitOnFC2 = false;
-                                SpeedrunSendSplit();
-                            }
-
-                            // Library  
-                            if (mainContext.SplitOnLibrary && (mapid == 1 && mainContext.lastmusicid != 42 && musicid == 42))
-                            {
-                                DebugLog("[Split] Library Completed");
-                                mainContext.SplitOnLibrary = false;
-                                SpeedrunSendSplit();
-                            }
-
-                            #endregion
-
-                            #region Bosses
-
-                            //
-                            //
-                            //
-
-                            #endregion
-                        }
-
-
-                        #region Old Code
-                        /*else
-                        {
-                            var bossmusicflag = StaticData.BossMusics.Contains(musicid);
-                            if (bossmusicflag)
-                            {
-                                if (mainContext.Bossbattle)
-                                {
-                                    if (mainContext.Noah1Reload && (mainContext.lastmusicid == 52 || musicid == 52))
-                                    {
-                                        DebugLog("noah 1 reload? ignore");
-                                    }
-                                    else
-                                    {
-                                        if (mainContext.MusicStart || mainContext.MusicEnd)
-                                        {
-                                            if (!mainContext.DontSplitOnReload || !reloaded) SpeedrunSendSplit();
-                                            if (!reloaded) PracticeModeSendTrigger(SplitTrigger.BossEnd);
-                                            DebugLog("new boss music, " + (reloaded ? "don't split (reload)" : "split"));
-                                        }
-                                        if (musicid == 37)
-                                        {
-                                            mainContext.Noah1Reload = true;
-                                            DebugLog("noah1 music start, ignore MR forever");
-                                        }
-                                    }
-
-                                    mainContext.lastmusicid = musicid;
-                                    return;
-                                }
-                            }
-                            if (!mainContext.Bossbattle)
-                            {
-
-                                if (musicid == 54 && mainContext.Alius1 && !mainContext.ForceAlius1)
-                                {
-                                    mainContext.Bossbattle = false;
-                                    mainContext.Alius1 = false;
-                                    DebugLog("Alius music, ignore once");
-
-                                }
-                                else if (musicid == 42 && mapid == 1 && mainContext.Irisu1)
-                                {
-                                    mainContext.Bossbattle = false;
-                                    DebugLog("Irisu P1, ignore");
-
-                                }
-                                else
-                                {
-                                    if (bossmusicflag)
-                                    {
-                                        if (mapid == 5 && musicid == 44 && mainContext.SideCh)
-                                        {
-                                            mainContext.Bossbattle = false;
-                                            DebugLog("sidechapter, ignore");
-
-                                        }
-                                        else
-                                        {
-                                            PracticeModeSendTrigger(SplitTrigger.BossStart);
-                                            mainContext.Bossbattle = true;
-                                            mainContext.lastbosslist = new List<int>();
-                                            mainContext.lastnoah3hp = -1;
-                                            if (musicid == 37)
-                                            {
-                                                mainContext.Noah1Reload = true;
-                                                DebugLog("noah1 music start, ignore MR forever");
-                                            }
-                                            if (mainContext.MusicStart)
-                                            {
-                                                SpeedrunSendSplit();
-                                                DebugLog("music start, split");
-
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if (!bossmusicflag) //boss music end!
-                                {
-                                    mainContext.Bossbattle = false;
-                                    if (mainContext.MusicEnd)
-                                    {
-                                        if (!mainContext.DontSplitOnReload || !reloaded) SpeedrunSendSplit();
-                                        if (!reloaded) PracticeModeSendTrigger(SplitTrigger.BossEnd);
-                                        DebugLog(reloaded ? "music end, don't split (reload)" : "music end, split");
-
-                                    }
-                                }
-                            }
-                        }
-                        mainContext.lastmusicid = musicid;*/
-                        #endregion
-                    }
+                    //Run "Preset Refresh" here.
                 }
                 else
                 {
-                    mainContext.GameMusic = "N/A";
-                }
-                mainContext.lastmusicid = musicid;
-                mainContext.lastmapid = mapid;
-
-                #endregion
-
-                #region Old Stuff P.2
-
-                if (mainContext.Bossbattle)
-                {
-                    if (mainContext.MiruDe || false)//todo noah3 option
+                    #region Prologue
+                    //Prologue Cocoa
+                    if (mainContext.SplitOnCocoa1 &&
+                        (prevMusic == Music.GET_ON_WITH_IT && currMusic == Music.ADVENTURE_STARTS_HERE))
                     {
-                        int Noah3HP = -1;
-
-                        if (StaticData.IsValidMap(mapid))
+                        if (!reloading)
                         {
-                            int ptr = MemoryHelper.GetMemoryValue<int>(process, StaticData.EnemyPtrAddr[mainContext.veridx]);
-                            List<int> bosses = new List<int>();
-                            for (var i = 0; i < 50; i++)
+                            DebugLog("[Split] Cocoa 1 Defeated");
+                            SpeedrunSendSplit();
+                        }
+                        else
+                        {
+                            DebugLog("Reloaded Cocoa 1; Don't Split");
+                        }
+                    }
+
+                    //Prologue Ribbon
+                    if (mainContext.SplitOnRibbon &&
+                        (prevMusic == Music.GET_ON_WITH_IT && currMusic == Music.SPECTRAL_CAVE))
+                    {
+                        if (!reloading)
+                        {
+                            DebugLog("[Split] Ribbon Defeated");
+                            SpeedrunSendSplit();
+                        }
+                        else
+                        {
+                            DebugLog("Reloaded Ribbon; Don't Split");
+                        }
+                    }
+
+                    //Prologue Ashuri
+                    if (mainContext.SplitOnAshuri1 &&
+                        (prevMusic == Music.GET_ON_WITH_IT && currMusic == Music.RABI_RABI_BEACH))
+                    {
+                        if (!reloading)
+                        {
+                            DebugLog("[Split] Ashuri 1 Defeated");
+                            SpeedrunSendSplit();
+                        }
+                        else
+                        {
+                            DebugLog("Reloaded Ashuri 1; Don't Split");
+                        }
+                    }
+
+                    #endregion
+
+                    #region Miscellaneous
+
+                    // Mr. Big Box & Holo-Defense System
+                    if ((mainContext.SplitOnBigBox || mainContext.SplitOnHoloMaid) &&
+                        (prevMusic == Music.MIDBOSS_BATTLE && currMusic == Music.EXOTIC_LABORATORY))
+                    {
+                        // 19830 is the rough X-Coordinate of the Save Point next to Sliding Powder
+                        // Mr. Big Box
+                        if (mainContext.SplitOnBigBox && snapshot.px < 19830)
+                        {
+                            if (!reloading)
                             {
-                                ptr = ptr + StaticData.EnemyEntitySize[mainContext.veridx];
-
-                                var emyid = MemoryHelper.GetMemoryValue<int>(process,
-                                    ptr + StaticData.EnemyEntityIDOffset[mainContext.veridx], false);
-                                if (StaticData.IsBoss(emyid))
-                                {
-                                    bosses.Add(emyid);
-                                    if (emyid == 1053)
-                                    {
-                                        Noah3HP = MemoryHelper.GetMemoryValue<int>(process,
-                                            ptr + StaticData.EnemyEntityHPOffset[mainContext.veridx], false);
-                                    }
-
-                                }
-
+                                DebugLog("[Split] Mr. Big Box Defeated");
+                                SpeedrunSendSplit();
                             }
-                            if (mainContext.MiruDe && mapid==8)
+                            else
                             {
-                                foreach (var boss in mainContext.lastbosslist)
+                                DebugLog("Reloaded Mr. Big Box; Don't Split");
+                            }
+                        }
+
+                        // Holo-Defense System
+                        if (mainContext.SplitOnHoloMaid && snapshot.px > 19830)
+                        {
+                            if (!reloading)
+                            {
+                                DebugLog("[Split] Holo-Defense System Defeated");
+                                SpeedrunSendSplit();
+                            }
+                            else
+                            {
+                                DebugLog("Reloaded Holo-Defense System; Don't Split");
+                            }
+                        }
+                    }
+
+                    // Hall of Memories
+                    if (mainContext.SplitOnHoM &&
+                        (prevMusic == Music.ANOTHER_D && currMusic != Music.ANOTHER_D))
+                    {
+                        DebugLog("[Split] Hall of Memories Completed");
+                        mainContext.SplitOnHoM = false;
+                        SpeedrunSendSplit();
+                    }
+
+                    // Forgotten Cave II
+                    if (mainContext.SplitOnFC2 &&
+                        (prevMusic == Music.FORGOTTEN_CAVE_II && currMusic != Music.FORGOTTEN_CAVE_II))
+                    {
+                        DebugLog("[Split] Forgotten Cave II Completed");
+                        mainContext.SplitOnFC2 = false;
+                        SpeedrunSendSplit();
+                    }
+
+                    // Library  
+                    if (mainContext.SplitOnLibrary && snapshot.CurrentMapIs(Map.WesternCoast) &&
+                        (prevMusic != Music.RFN_III && currMusic == Music.RFN_III))
+                    {
+                        DebugLog("[Split] Library Completed");
+                        mainContext.SplitOnLibrary = false;
+                        SpeedrunSendSplit();
+                    }
+
+                    #endregion
+
+                    #region Bosses
+
+                    //
+                    //
+                    //
+
+                    #endregion
+                }
+
+
+                #region Old Code
+                /*else
+                {
+                    var bossmusicflag = StaticData.BossMusics.Contains(musicid);
+                    if (bossmusicflag)
+                    {
+                        if (mainContext.Bossbattle)
+                        {
+                            if (mainContext.Noah1Reload && (mainContext.lastmusicid == 52 || musicid == 52))
+                            {
+                                DebugLog("noah 1 reload? ignore");
+                            }
+                            else
+                            {
+                                if (mainContext.MusicStart || mainContext.MusicEnd)
                                 {
-                                    if (boss == 1043)
-                                    {
-                                        if (!bosses.Contains(boss)) //despawn
-                                        {
-                                            SpeedrunSendSplit();
-                                            DebugLog("miru despawn, split");
-                                            mainContext.Bossbattle = false;
-                                        }
-                                    }
+                                    if (!mainContext.DontSplitOnReload || !reloading) SpeedrunSendSplit();
+                                    if (!reloading) PracticeModeSendTrigger(SplitTrigger.BossEnd);
+                                    DebugLog("new boss music, " + (reloading ? "don't split (reload)" : "split"));
+                                }
+                                if (musicid == 37)
+                                {
+                                    mainContext.Noah1Reload = true;
+                                    DebugLog("noah1 music start, ignore MR forever");
                                 }
                             }
 
-                            if (mainContext.Tm2 && musicid == 8)
+                            mainContext.lastmusicid = musicid;
+                            return;
+                        }
+                    }
+                    if (!mainContext.Bossbattle)
+                    {
+
+                        if (musicid == 54 && mainContext.Alius1 && !mainContext.ForceAlius1)
+                        {
+                            mainContext.Bossbattle = false;
+                            mainContext.Alius1 = false;
+                            DebugLog("Alius music, ignore once");
+
+                        }
+                        else if (musicid == 42 && mapid == 1 && mainContext.Irisu1)
+                        {
+                            mainContext.Bossbattle = false;
+                            DebugLog("Irisu P1, ignore");
+
+                        }
+                        else
+                        {
+                            if (bossmusicflag)
                             {
-                                bool f = true;
-                                foreach (var boss in mainContext.lastbosslist)
-                                {
-
-                                    if (boss == 1024)
-                                    {
-                                        if (!bosses.Contains(boss)) //despawn
-                                        {
-                                            SpeedrunSendSplit();
-                                            DebugLog("nixie despawn, split");
-                                            mainContext.Bossbattle = false;
-                                            f = false;
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                int newTM = MemoryHelper.GetMemoryValue<int>(process, StaticData.TownMemberAddr[mainContext.veridx]);
-                                if (newTM - mainContext.lastTM == 1 && f) //for after 1.71 , 1.71 isn't TM+2 at once when skip Nixie, it's TM+1 twice
-                                {
-                                    if (DateTime.Now - mainContext.LastTMAddTime < TimeSpan.FromSeconds(1))
-                                    {
-                                        var d = DateTime.Now - mainContext.LastTMAddTime;
-                                        mainContext.Bossbattle = false;
-                                        SpeedrunSendSplit();
-                                        DebugLog("TM+2 in " + d.TotalMilliseconds + " ms, split");
-                                    }
-                                    mainContext.LastTMAddTime = DateTime.Now;
-                                }
-                                else if (newTM - mainContext.lastTM == 2 && f)//for 1.65-1.70
+                                if (mapid == 5 && musicid == 44 && mainContext.SideCh)
                                 {
                                     mainContext.Bossbattle = false;
-                                    SpeedrunSendSplit();
-                                    DebugLog("TM+2, split");
+                                    DebugLog("sidechapter, ignore");
+
                                 }
-                                mainContext.lastTM = newTM;
+                                else
+                                {
+                                    PracticeModeSendTrigger(SplitTrigger.BossStart);
+                                    mainContext.Bossbattle = true;
+                                    mainContext.lastbosslist = new List<int>();
+                                    mainContext.lastnoah3hp = -1;
+                                    if (musicid == 37)
+                                    {
+                                        mainContext.Noah1Reload = true;
+                                        DebugLog("noah1 music start, ignore MR forever");
+                                    }
+                                    if (mainContext.MusicStart)
+                                    {
+                                        SpeedrunSendSplit();
+                                        DebugLog("music start, split");
+
+                                    }
+                                }
                             }
-                            mainContext.lastbosslist = bosses;
-                            mainContext.lastnoah3hp = Noah3HP;
+                        }
+                    }
+                    else
+                    {
+                        if (!bossmusicflag) //boss music end!
+                        {
+                            mainContext.Bossbattle = false;
+                            if (mainContext.MusicEnd)
+                            {
+                                if (!mainContext.DontSplitOnReload || !reloading) SpeedrunSendSplit();
+                                if (!reloading) PracticeModeSendTrigger(SplitTrigger.BossEnd);
+                                DebugLog(reloading ? "music end, don't split (reload)" : "music end, split");
+
+                            }
                         }
                     }
                 }
-
+                mainContext.lastmusicid = musicid;*/
                 #endregion
-                
-//// END NEW CODE
+            }
+            #endregion
+
+            #region Old Stuff P.2
+
+            if (mainContext.Bossbattle)
+            {
+                if (mainContext.MiruDe || false)//todo noah3 option
+                {
+                    int Noah3HP = -1;
+
+                    if (StaticData.IsValidMap(snapshot.mapid))
+                    {
+                        int ptr = MemoryHelper.GetMemoryValue<int>(process, StaticData.EnemyPtrAddr[mainContext.veridx]);
+                        List<int> bosses = new List<int>();
+                        for (var i = 0; i < 50; i++)
+                        {
+                            ptr = ptr + StaticData.EnemyEntitySize[mainContext.veridx];
+
+                            var emyid = MemoryHelper.GetMemoryValue<int>(process,
+                                ptr + StaticData.EnemyEntityIDOffset[mainContext.veridx], false);
+                            if (StaticData.IsBoss(emyid))
+                            {
+                                bosses.Add(emyid);
+                                if (emyid == 1053)
+                                {
+                                    Noah3HP = MemoryHelper.GetMemoryValue<int>(process,
+                                        ptr + StaticData.EnemyEntityHPOffset[mainContext.veridx], false);
+                                }
+
+                            }
+
+                        }
+                        if (mainContext.MiruDe && mapid == 8)
+                        {
+                            foreach (var boss in mainContext.lastbosslist)
+                            {
+                                if (boss == 1043)
+                                {
+                                    if (!bosses.Contains(boss)) //despawn
+                                    {
+                                        SpeedrunSendSplit();
+                                        DebugLog("miru despawn, split");
+                                        mainContext.Bossbattle = false;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (mainContext.Tm2 && musicid == 8)
+                        {
+                            bool f = true;
+                            foreach (var boss in mainContext.lastbosslist)
+                            {
+
+                                if (boss == 1024)
+                                {
+                                    if (!bosses.Contains(boss)) //despawn
+                                    {
+                                        SpeedrunSendSplit();
+                                        DebugLog("nixie despawn, split");
+                                        mainContext.Bossbattle = false;
+                                        f = false;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            int newTM = MemoryHelper.GetMemoryValue<int>(process, StaticData.TownMemberAddr[mainContext.veridx]);
+                            if (newTM - mainContext.lastTM == 1 && f) //for after 1.71 , 1.71 isn't TM+2 at once when skip Nixie, it's TM+1 twice
+                            {
+                                if (DateTime.Now - mainContext.LastTMAddTime < TimeSpan.FromSeconds(1))
+                                {
+                                    var d = DateTime.Now - mainContext.LastTMAddTime;
+                                    mainContext.Bossbattle = false;
+                                    SpeedrunSendSplit();
+                                    DebugLog("TM+2 in " + d.TotalMilliseconds + " ms, split");
+                                }
+                                mainContext.LastTMAddTime = DateTime.Now;
+                            }
+                            else if (newTM - mainContext.lastTM == 2 && f)//for 1.65-1.70
+                            {
+                                mainContext.Bossbattle = false;
+                                SpeedrunSendSplit();
+                                DebugLog("TM+2, split");
+                            }
+                            mainContext.lastTM = newTM;
+                        }
+                        mainContext.lastbosslist = bosses;
+                        mainContext.lastnoah3hp = Noah3HP;
+                    }
+                }
+            }
+
+            #endregion
+
+            //// END NEW CODE
             prevSnapshot = snapshot;
         }
         
@@ -698,11 +647,6 @@ namespace rabi_splitter_WPF
         private bool ValidMusicChanged()
         {
             return rabiRibiState.lastValidMusicId >= 0 && snapshot.musicid >= 0 && rabiRibiState.lastValidMusicId != snapshot.musicid;
-        }
-
-        private bool MusicChangedTo(Music music)
-        {
-            return MusicChanged() && snapshot.CurrentMusicIs(music);
         }
         
         private void UpdateDebugArea(MemoryHelper memoryHelper)
@@ -745,7 +689,7 @@ namespace rabi_splitter_WPF
             if (!mainContext.PracticeMode) SendMessage("starttimer\r\n");
         }
 
-        private void sendigt(float time)
+        private void SendIgt(float time)
         {
             SendMessage($"setgametime {time}\r\n");
         }

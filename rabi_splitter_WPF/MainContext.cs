@@ -937,23 +937,17 @@ namespace rabi_splitter_WPF
                
             }
         }
-
-        public int previousBlackness = -1;
+        
         public string oldtitle;
         public int veridx;
-        public int lastmoney;
-        public int lastHasFlower;
-        public int lastmapid;
-        public int lastmusicid;
-        public int lastplaytime = 0;
-        public bool canReload = false; // set to true when playtime increases
+        /*public int lastHasFlower;
 
         private bool bossbattle;
         public List<int> lastbosslist;
         public int lastnoah3hp;
         public int lastTM;
         public DateTime LastTMAddTime;
-        private bool _noah1Reload;
+        private bool _noah1Reload;*/
         #endregion
 
 

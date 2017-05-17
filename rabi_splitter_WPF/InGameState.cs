@@ -27,6 +27,7 @@ namespace rabi_splitter_WPF
         public TimeSpan lastBossFightDuration;
 
         public int lastNonZeroPlayTime = -1;
+        public bool canReload = false;
 
         public InGameState()
         {

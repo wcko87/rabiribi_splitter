@@ -102,6 +102,8 @@ namespace rabi_splitter_WPF
 
         public readonly int minimapPosition;
 
+        public readonly int cyberFlower;
+
         public MemorySnapshot(MemoryHelper memoryHelper, int veridx)
         {
             t_playtime = memoryHelper.GetMemoryValue<int>(StaticData.IGTAddr[veridx]);
@@ -128,7 +130,7 @@ namespace rabi_splitter_WPF
             nPackUps = countItems(memoryHelper, 0xD6382C, 0xD63928);
             nRegenUps = countItems(memoryHelper, 0xD6372C, 0xD63828);
 
-            entityArrayPtr = memoryHelper.GetMemoryValue<int>(StaticData.EnenyPtrAddr[veridx]);
+            entityArrayPtr = memoryHelper.GetMemoryValue<int>(StaticData.EnemyPtrAddr[veridx]);
 
             hp = memoryHelper.GetMemoryValue<int>(entityArrayPtr + 0x4D8, false);
             maxhp = memoryHelper.GetMemoryValue<int>(entityArrayPtr + 0x4E8, false);
@@ -144,26 +146,28 @@ namespace rabi_splitter_WPF
             px = memoryHelper.GetMemoryValue<float>(entityArrayPtr + 0xC, false);
             py = memoryHelper.GetMemoryValue<float>(entityArrayPtr + 0x10, false);
             mapTile = MapTileCoordinate.FromWorldPosition(mapid, px, py);
-            
+
+            cyberFlower = memoryHelper.GetMemoryValue<int>(StaticData.CyberFlowerAddr[veridx]);
+
             // Read Entity Array and Search for boss data
             bossList = new List<BossStats>();
             nActiveEntities = 0;
             entityArraySize = 4;
-            int entitySize = StaticData.EnenyEntitySize[veridx];
+            int entitySize = StaticData.EnemyEntitySize[veridx];
             int currArrayPtr = entityArrayPtr + entitySize * 4;
             for (int i=0; i<500; ++i) {
                 // (Hard limit of reading 500 entries)
                 int entityId = memoryHelper.GetMemoryValue<int>(
-                    currArrayPtr + StaticData.EnenyEnitiyIDOffset[veridx], false);
+                    currArrayPtr + StaticData.EnemyEntityIDOffset[veridx], false);
                 int entityMaxHp = memoryHelper.GetMemoryValue<int>(
-                    currArrayPtr + StaticData.EnenyEnitiyMaxHPOffset[veridx], false);
+                    currArrayPtr + StaticData.EnenyEntityMaxHPOffset[veridx], false);
 
                 if (entityId == 0 && entityMaxHp == 0) break;
 
                 int activeFlag = memoryHelper.GetMemoryValue<int>(
-                    currArrayPtr + StaticData.EnenyEnitiyIsActiveOffset[veridx], false);
+                    currArrayPtr + StaticData.EnemyEntityIsActiveOffset[veridx], false);
                 int animationState = memoryHelper.GetMemoryValue<int>(
-                    currArrayPtr + StaticData.EnenyEnitiyAnimationOffset[veridx], false);
+                    currArrayPtr + StaticData.EnemyEntityAnimationOffset[veridx], false);
 
                 bool isAlive = activeFlag == 1 && animationState >= 0;
                 
@@ -172,7 +176,7 @@ namespace rabi_splitter_WPF
                     BossStats boss;
                     boss.entityArrayIndex = entityArraySize;
                     boss.id = entityId;
-                    boss.hp = memoryHelper.GetMemoryValue<int>(currArrayPtr + StaticData.EnenyEnitiyHPOffset[veridx], false);
+                    boss.hp = memoryHelper.GetMemoryValue<int>(currArrayPtr + StaticData.EnemyEntityHPOffset[veridx], false);
                     boss.type = StaticData.GetBoss(entityId).Value;
                     boss.maxHp = entityMaxHp;
 
