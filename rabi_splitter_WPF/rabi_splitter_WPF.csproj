@@ -57,7 +57,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BossFightConfig.cs" />
+    <Compile Include="BossFightEnum.cs" />
+    <Compile Include="BossFightIdentifier.cs" />
+    <Compile Include="InGameState.cs" />
     <Compile Include="PracticeModeContext.cs" />
+    <Compile Include="RabiRibiState.cs" />
     <Compile Include="SplitConditionSettings.xaml.cs">
       <DependentUpon>SplitConditionSettings.xaml</DependentUpon>
     </Compile>
