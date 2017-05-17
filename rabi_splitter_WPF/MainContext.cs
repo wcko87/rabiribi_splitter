@@ -149,6 +149,11 @@ namespace rabi_splitter_WPF
             }
         }
 
+        public void Log(string message)
+        {
+            this.DebugLog += message + "\n";
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -237,7 +242,7 @@ namespace rabi_splitter_WPF
         private bool _tm2;
         private bool _irisu1;
         #endregion
-
+        
         private int _serverPort;
         private string _gameVer;
         private string _gameMusic;

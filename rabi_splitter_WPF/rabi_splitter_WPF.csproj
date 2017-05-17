@@ -62,6 +62,7 @@
     <Compile Include="SplitConditionSettings.xaml.cs">
       <DependentUpon>SplitConditionSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="RabiRibiDisplay.cs" />
     <Compile Include="StaticData.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
