@@ -58,10 +58,12 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="PracticeModeContext.cs" />
-    <Compile Include="RabiEnums.cs" />
     <Compile Include="SplitConditionSettings.xaml.cs">
       <DependentUpon>SplitConditionSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="RabiEnums.cs" />
+    <Compile Include="MemorySnapshot.cs" />
+    <Compile Include="RabiGameState.cs" />
     <Compile Include="RabiRibiDisplay.cs" />
     <Compile Include="StaticData.cs" />
     <Page Include="MainWindow.xaml">
